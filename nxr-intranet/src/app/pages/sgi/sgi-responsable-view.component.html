@@ -1,0 +1,58 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Mis indicadores <small>( {{chosenType}} )</small></h6>
+                <div class="card-body">
+                    <div class="d-flex justify-content-end mb-2">
+                        <div class="form-group m-0 mr-3">
+                            <select class="form-control input-border-bottom m-0" (change)="changeType($event.target.value)">
+                              <option>SGI</option>
+                              <option>PROCESOS</option>
+                            </select>
+                        </div>
+                        <a class="btn btn-dark" [routerLink]="['general']"><i class="fas fa-book-reader"></i> REVISIÓN DE INDICADORES</a>
+                    </div>
+                    <div class="alert alert-pink" role="alert" *ngIf="indicators.length == 0">
+                        No cuentas con indicadores {{chosenType }} asignados.
+                    </div>
+                    <div *ngIf="indicators.length > 0" class="table-responsive">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th *ngIf="chosenType == 'SGI'" scope="col">ESTÁNDAR</th>
+                                    <th *ngIf="chosenType == 'PROCESOS'" scope="col">PROCESO</th>
+                                    <th scope="col">OBJETIVO</th>
+                                    <th scope="col">INDICADOR</th>
+                                    <th scope="col">META</th>
+                                    <th scope="col" *ngFor="let sm of shortMonths">{{ sm }}</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let ind of indicators; let i = index">
+                                    <td style="vertical-align:middle">{{ ind.objective.process || ind.objective.standard}}</td>
+                                    <td style="vertical-align:middle" class="text-justify">{{ ind.objective.objective }}</td>
+                                    <td style="vertical-align:middle" class="text-justify">{{ ind.indicator }}</td>
+                                    <td style="vertical-align:middle" class="text-justify">{{ ind.goal }}</td>
+                                    <td style="vertical-align:middle" *ngFor="let month of ind.evaluation.evaluations">
+                                        <h6 *ngIf="(month.month <= currentMonth && month.progress != null && month.validated && currentMonth > 1) || (month.month <= 12 && month.progress != null && month.validated && currentMonth == 1)"><span class="text-white badge" [ngClass]="{'badge-danger': month.color==='red', 'badge-warning': month.color==='yellow', 'badge-success': month.color==='green'}">{{ month.progress }}%</span></h6>
+                                        <span *ngIf="(month.month < currentMonth && month.progress != null && !month.validated && currentMonth > 1) || (month.month <= 12 && month.progress != null && !month.validated && currentMonth == 1)" data-toggle="tooltip" data-placement="top" title="Sin Registro">S/R</span>
+                                        <span *ngIf="(month.month < currentMonth && month.progress == null && currentMonth > 1) || (month.month <= 12 && month.progress == null && currentMonth == 1)" data-toggle="tooltip" data-placement="top" title="No Aplica">N/A</span>
+                                        <span *ngIf="month.month > currentMonth - 1  && currentMonth > 1">-</span>
+                                    </td>
+                                    <td style="vertical-align:middle">
+                                        <a class="text-mexicanPink btn-action" [routerLink]="[ind._id, year]">
+                                            <i class="far fa-check-circle" data-toggle="tooltip" data-placement="top" title="Registrar Cumplimiento"></i>
+                                        </a>
+                                    </td>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

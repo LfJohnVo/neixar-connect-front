@@ -1,0 +1,696 @@
+<div class="card nxr_card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="m-0">Requisición</h6>
+        <a *ngIf="( requisitionShown?.status === 'Rechazada' || requisitionShown?.status === 'Pendiente' ) && !toValidate" class=" btn btn-edit-profile m-0" [routerLink]="['editar-requisicion', requisitionShown._id]">
+            <i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar DP"></i>
+        </a>
+        <a *ngIf="requisitionShown?.status === 'Pendiente' && toValidate" class=" btn btn-edit-profile m-0 pl-2 pr-2" href="" data-toggle="modal" data-target="#validateRequisitionModal">
+            <i class="far fa-check-circle" data-toggle="tooltip" data-placement="top" title="Aprobar/Rechazar DP"></i>
+        </a>
+    </div>
+    <div class="card-body">
+        <div *ngIf="!requisitionShown" class="alert alert-pink mt-4" role="alert">
+            No hay información por mostrar.
+        </div>
+        <div *ngIf="requisitionShown" class="row">
+            <div class="col-md-4 text-center align-self-center">
+                <h5 class="username"><strong>{{ requisitionShown?.position.positionName }}</strong></h5>
+                <p class="user-position mb-0">Solicitado el {{ requisitionShown?.date_recruitment | date: 'dd/MM/y' }}</p>
+                <p class="user-position">por <strong>{{ requisitionShown?.petitioner.petitionerName }}</strong></p>
+                <p class="area-user" [ngClass]="{'mb-0': requisitionShown?.receptionDate}">Asignado a: <strong>{{ (requisitionShown?.recruiter?.p_information?.name | firstname) || '-' }} {{ requisitionShown?.recruiter?.p_information?.firstSurname }}</strong></p>
+                <p *ngIf="requisitionShown?.receptionDate" class="area-user">el {{ requisitionShown?.receptionDate | date: 'dd/MM/y' }}</p>
+                <p class="user-position mb-0"><strong>Versión DP:</strong> {{ requisitionShown?.job_description.job_descriptionName }}</p>
+            </div>
+            <div class="col-md-4 align-self-center">
+                <div class="row">
+                    <div class="col">
+                        <p class="label-info text-center">ESTATUS</p>
+                        <h5 class="d-flex justify-content-center mb-0">
+                            <span class="badge" [ngClass]="{ 
+                                'badge-secondary': requisitionShown?.status == 'Pendiente', 
+                                'badge-blue': requisitionShown?.status == 'Aprobada', 
+                                'badge-warning': requisitionShown?.status == 'En proceso', 
+                                'badge-danger': requisitionShown?.status == 'Rechazada', 
+                                'badge-green': requisitionShown?.status == 'Cubierta', 
+                                'badge-dark': requisitionShown?.status == 'Cerrada', 
+                                'badge-orange': requisitionShown?.status == 'Vencida' }">{{ requisitionShown?.status }}</span>
+                        </h5>
+                        <p *ngIf="requisitionShown?.status === 'Cubierta'" class="data-info text-center mb-0"><small><strong>{{ requisitionShown?.vacancyCover_date | date: 'dd/MM/yyyy' }}</strong></small></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="button-container d-flex justify-content-center">
+                            <button class="btn btn-time" disabled>
+                              <h5>{{ requisitionShown?.vacancies }}</h5>
+                              <p class="text-time">VACANTES</p>
+                          </button>
+                        </div>
+                        <hr class="ml-5 mr-5">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                            <p *ngIf="requisitionShown?.deadline" class="data-info text-center mb-0">Fecha límite: <small><strong>{{ requisitionShown?.deadline | date: 'dd/MM/yyyy' }}</strong></small></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <h6 class="label-info">Dirección de Operaciones o Lider de área</h6>
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center col-md-4 mb-3">
+                        <h6>
+                            <span *ngIf="requisitionShown?.approvals.do" class="badge badge-green">APROBADA</span>
+                            <span *ngIf="!requisitionShown?.approvals.do && requisitionShown?.approvals.date_do" class="badge badge-danger">RECHAZADA</span>
+                            <span *ngIf="!requisitionShown?.approvals.do && !requisitionShown?.approvals.date_do" class="badge badge-secondary">PENDIENTE</span>
+                        </h6>
+                    </div>
+                    <div class="col-md-8 mb-3">
+                        <h6 class="label-info">Dirección de Administración y Finanzas</h6>
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center col-md-4 mb-3">
+                        <h6>
+                            <span *ngIf="requisitionShown?.approvals?.daf" class="badge badge-green">APROBADA</span>
+                            <span *ngIf="!requisitionShown?.approvals?.daf && requisitionShown?.approvals?.date_daf" class="badge badge-danger">RECHAZADA</span>
+                            <span *ngIf="!requisitionShown?.approvals?.daf && !requisitionShown?.approvals?.date_daf" class="badge badge-secondary">PENDIENTE</span>
+                        </h6>
+                    </div>
+                    <div class="col-md-8">
+                        <h6 class="label-info">Gerente de Capital Humano</h6>
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center col-md-4 mb-3">
+                        <h6>
+                            <span *ngIf="requisitionShown?.approvals?.dt" class="badge badge-green">APROBADA</span>
+                            <span *ngIf="!requisitionShown?.approvals?.dt && requisitionShown?.approvals?.date_dt" class="badge badge-danger">RECHAZADA</span>
+                            <span *ngIf="!requisitionShown?.approvals?.dt && !requisitionShown?.approvals?.date_dt" class="badge badge-secondary">PENDIENTE</span>
+                        </h6>
+                    </div>
+                    <div *ngIf="addCandidatesGrant && (requisitionShown?.status === 'En proceso' || requisitionShown?.status === 'Vencida')" class="col-md-12">
+                        <div class="d-flex align-items-center justify-content-center mb-2">
+                            <a href="" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#earlyCloseVacancyModal">Cerrar Vacante</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="requisitionShown?.closingReasons" class="row">
+            <div class="col-md-12">
+                <br>
+                <div class="container-profile-info">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p class="label-info text-danger">MOTIVOS DE CIERRE</p>
+                            <p class="data-info mb-0"><small><strong>{{ requisitionShown?.vacancyClosing_date | date: 'dd/MM/yyyy' }}</strong></small> - {{ requisitionShown?.closingReasons }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="requisitionShown" class="row">
+            <div class="col-md-12">
+                <br>
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="pills-requirements-tab" data-toggle="pill" href="#pills-requirements" role="tab" aria-controls="pills-requirements" aria-selected="true">Requerimientos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="pills-equipment-tab" data-toggle="pill" href="#pills-equipment" role="tab" aria-controls="pills-equipment" aria-selected="false">Herramientas de trabajo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="pills-interviewers-tab" data-toggle="pill" href="#pills-interviewers" role="tab" aria-controls="pills-interviewers" aria-selected="false">Entrevistadores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="pills-candidates-tab" data-toggle="pill" href="#pills-candidates" role="tab" aria-controls="pills-candidates" aria-selected="false">Candidatos <span class="badge badge-pill badge-green">{{ requisitionShown?.candidates.length }}</span></a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-requirements" role="tabpanel" aria-labelledby="pills-requirements-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="container-profile-info">
+                                    <div class="row">
+                                        <div *ngIf="requisitionShown?.rejectionComments" class="col-md-12">
+                                            <p class="label-info text-danger">MOTIVOS DE RECHAZO</p>
+                                            <p class="data-info">{{ requisitionShown?.rejectionComments }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">TIPO DE CONTRATO</p>
+                                            <p class="data-info">{{ requisitionShown?.contract.type }}</p>
+                                        </div>
+                                        <div *ngIf="requisitionShown?.contract.period" class="col-md-4">
+                                            <p class="label-info">MESES DE CONTRATO</p>
+                                            <p class="data-info">{{ requisitionShown?.contract.period }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">TURNO</p>
+                                            <p class="data-info">{{ requisitionShown?.work_shift }}</p>
+                                        </div>
+                                        <div *ngIf="addCandidatesGrant" class="col-md-4">
+                                            <p class="label-info">RANGO SALARIAL</p>
+                                            <p class="data-info">{{ requisitionShown?.salary }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">EDAD</p>
+                                            <p class="data-info">{{ requisitionShown?.age }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">GÉNERO</p>
+                                            <p class="data-info">{{ requisitionShown?.gender }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">PRUEBA TÉCNICA</p>
+                                            <p class="data-info">{{ requisitionShown?.technical_test ? 'Sí' : 'No' }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">DISP. PARA VIAJAR</p>
+                                            <p *ngIf="requisitionShown?.travel === true" class="data-info">Sí</p>
+                                            <p *ngIf="requisitionShown?.travel === false" class="data-info">No</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">DISP. PARA REDICAR FUERA</p>
+                                            <p *ngIf="requisitionShown?.change_home === true" class="data-info">Sí</p>
+                                            <p *ngIf="requisitionShown?.change_home === false" class="data-info">No</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">PASAPORTE</p>
+                                            <p *ngIf="requisitionShown?.passport === true" class="data-info">Sí</p>
+                                            <p *ngIf="requisitionShown?.passport === false" class="data-info">No</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">CAUSA VACANTE</p>
+                                            <p class="data-info">{{ requisitionShown?.causes }}</p>
+                                        </div>
+                                        <div *ngIf="requisitionShown?.specific_cause" class="col-md-4">
+                                            <p class="label-info">CAUSA ESPECÍFICA</p>
+                                            <p class="data-info">{{ requisitionShown?.specific_cause }}</p>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <p class="label-info">OBSERVACIONES</p>
+                                            <p class="data-info">{{ requisitionShown?.comments || 'Sin observaciones' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="pills-equipment" role="tabpanel" aria-labelledby="pills-equipment-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="container-profile-info">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <p class="label-info">EQUIPO DE CÓMPUTO</p>
+                                            <p class="data-info">{{ requisitionShown?.equipment }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">PROGRAMAS Ó APLICACIONES</p>
+                                            <p class="data-info">{{ requisitionShown?.software }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">CORREO ELECTRÓNICO</p>
+                                            <p class="data-info">.{{ requisitionShown?.email }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">EQUIPO MÓVIL</p>
+                                            <p *ngIf="requisitionShown?.mobile === true" class="data-info">Sí</p>
+                                            <p *ngIf="requisitionShown?.mobile === false" class="data-info">No</p>
+                                        </div>
+                                        <div *ngIf="requisitionShown?.phone_service" class="col-md-4">
+                                            <p class="label-info">PLAN REQUERIDO</p>
+                                            <p class="data-info">{{ requisitionShown?.phone_service }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">CREDENCIAL DE ACCESO</p>
+                                            <p *ngIf="requisitionShown?.access_card === true" class="data-info">Sí</p>
+                                            <p *ngIf="requisitionShown?.access_card === false" class="data-info">No</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">SISTEMAS A UTILIZAR</p>
+                                            <p class="data-info">{{ requisitionShown?.systems_to_use }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="label-info">TIPOS DE ACCESO AL SISTEMA</p>
+                                            <p class="data-info">{{ requisitionShown?.access_type }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="pills-interviewers" role="tabpanel" aria-labelledby="pills-interviewers-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="container-profile-info">
+                                    <div class="row">
+                                        <div class="col-md-4" *ngFor="let interviewer of requisitionShown?.interviewers; let interviewersIndex = index;">
+                                            <p class="label-info">ENTREVISTADOR {{ interviewersIndex + 1 }}</p>
+                                            <p class="data-info">{{ interviewer.interviewerName }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="pills-candidates" role="tabpanel" aria-labelledby="pills-candidates-tab">
+                        <div *ngIf="addCandidatesGrant && (requisitionShown?.status === 'En proceso' || requisitionShown?.status === 'Vencida') && requisitionShown?.closeVacancy" class="d-flex align-items-center justify-content-end mb-2">
+                            <a href="" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#closeVacancyModal">Cubrir Vacante</a>
+                        </div>
+                        <div *ngIf="addCandidatesGrant && !requisitionShown?.closeVacancy && requisitionShown?.status != 'Cerrada'" class="d-flex align-items-center justify-content-end mb-2">
+                            <a href="" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#AssignCandidateModal"><i class="fas fa-plus-circle"></i> Postular Candidato</a>
+                        </div>
+                        <div class="table-responsive">
+                            <div *ngIf="requisitionShown?.candidates.length <= 0" class="alert alert-pink mt-4" role="alert">
+                                No hay candidatos registrados.
+                            </div>
+                            <table *ngIf="requisitionShown?.candidates.length > 0" class="table table-borderless table-striped">
+                                <thead class="card-thead">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">NOMBRE</th>
+                                        <th scope="col">FECHA POSTULACIÓN</th>
+                                        <th scope="col">ESTATUS</th>
+                                        <th scope="col">ETAPA</th>
+                                        <th scope="col">ACCIONES</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let candidate of requisitionShown?.candidates; let candidateIndex = index;">
+                                        <td scope="row">{{ candidateIndex + 1 }}</td>
+                                        <td>{{ candidate.candidate.name | titlecase }} {{ candidate.candidate.firstSurname | titlecase }} {{ candidate.candidate.secondSurname | titlecase }}</td>
+                                        <td>{{ candidate.date_assignment | date: 'dd/MM/y' }}</td>
+                                        <td [ngClass]="{ 
+                                            'text-warning': candidate?.status == 'En proceso', 
+                                            'text-danger': candidate?.status == 'Rechazado', 
+                                            'text-success': candidate?.status == 'Aprobado', 
+                                            'text-orange': candidate?.status == 'Declinado' }">{{ candidate.status }}</td>
+                                        <td>{{ candidate.stage }}</td>
+                                        <td class="d-flex align-items-center">
+                                            <a class="text-mexicanPink btn-action" (click)="getCandidateInfo( candidate.candidate._id, 'info' )"><i class="fas fa-info-circle"></i></a>
+                                            <a *ngIf="addCandidatesGrant" class="text-mexicanPink btn-action" (click)="getCandidateInfo( candidate.candidate._id, 'interview' )"><i class="fas fa-file-alt"></i></a>
+                                            <a *ngIf="addCandidatesGrant && !candidate?.economicProposal && candidate?.status === 'En proceso' && (requisitionShown?.status === 'En proceso' || requisitionShown?.status === 'Vencida' )" class="text-mexicanPink btn-action" (click)="getCandidateInfo( candidate.candidate._id, 'report' )"><i class="fas fa-tasks"></i></a>
+                                            <a *ngIf="addCandidatesGrant && (candidate?.status === 'En proceso' || candidate?.status === 'Aprobado') && ( requisitionShown?.status === 'En proceso' || requisitionShown?.status === 'Vencida' )" class="text-mexicanPink btn-action" (click)="getCandidateToReject( candidate.candidate )"><i class="fas fa-user-minus"></i></a>
+                                            <a *ngIf="addCandidatesGrant && candidate?.status === 'En proceso' && candidate?.economicProposal" class="text-mexicanPink btn-action" (click)="getCandidateToApprove( candidate.candidate )"><i class="fas fa-user-check"></i></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Validate Requisition -->
+<div class="modal fade" id="validateRequisitionModal" tabindex="-1" role="dialog" aria-labelledby="validateRequisitionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" [ngClass]="{'modal-header-danger':reject}">
+                <h6 class="modal-title">Aprobación de requisición de puesto</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <p class="modal-msg text-justify">En caso de no existir errores en la requisición de personal para el puesto de
+                        <strong>{{ requisitionShown?.position.positionName }}</strong>, por favor haz clic en el botón "Aprobar", de lo contrario selecciona "Rechazar" y describe los motivos.
+                    </p>
+                    <form [formGroup]="rejectForm" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <div id="typeInput">
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" formControlName="actionType" id="typeInputV" value="V" (click)="checkResponse('V')">
+                                        <label class="custom-control-label" for="typeInputV">Aprobar</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" formControlName="actionType" id="typeInputR" value="R" (click)="checkResponse('R')">
+                                        <label class="custom-control-label" for="typeInputR">Rechazar</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="reject" class="form-group col-md-8">
+                                <label class="modal-label text-green" for="rejectCommInput">MOTIVOS DE RECHAZO</label>
+                                <input type="text" class="form-control input-border-bottom" id="rejectCommInput" [ngClass]="{ 'is-invalid': !rejectForm.controls['rejectionComments'].valid }" placeholder="Describe los motivos de rechazo" formControlName="rejectionComments">
+                                <small *ngIf="rejectForm.controls['rejectionComments'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                    </form>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <button *ngIf="reject" type="button" class="btn btn-danger pointer" (click)='requisitionRejection()'>Rechazar</button>
+                        <button *ngIf="!reject" type="button" class="btn btn-green pointer" (click)='requisitionValidation()'>Aprobar</button>
+                        <button type="button" class="btn btn-secondary pointer" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Validate Requisition -->
+
+<!-- Modal Candidate Info -->
+<div class="modal fade" id="candidateDetailsModal" tabindex="-1" role="dialog" aria-labelledby="candidateDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Informe General</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col text-center align-self-center">
+                            <h5 class="text-green"><strong>{{ candidate?.candidate.name | uppercase }} {{ candidate?.candidate.firstSurname | uppercase }} {{ candidate?.candidate.secondSurname | uppercase }}</strong></h5>
+                            <p class="user-position mb-0">{{ candidate?.candidate.scholarship }} - {{ candidate?.candidate.certification ? 'Titulado' : 'No titulado' }}</p>
+                            <p class="user-position mb-0"><a [href]="'mailto:' + candidate?.candidate.email"><i class="fas fa-envelope"></i> {{ candidate?.candidate.email }}</a></p>
+                            <p class="user-position mb-0"><a [href]="'tel:' + candidate?.candidate.phone_number"><i class="fas fa-phone"></i> {{ candidate?.candidate.phone_number }}</a></p>
+                        </div>
+                        <div class="col text-center align-self-center">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="d-flex justify-content-center">
+                                        <span class="badge" [ngClass]="{ 
+                                            'badge-warning': candidate?.status == 'En proceso', 
+                                            'badge-danger': candidate?.status == 'Rechazado', 
+                                            'badge-success': candidate?.status == 'Aprobado', 
+                                            'badge-orange': candidate?.status == 'Declinado' }">{{ candidate?.status }}</span>
+                                    </h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p class="user-position mb-1">Postulado el {{ candidate?.date_assignment | date: 'dd/MM/y' }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="d-flex justify-content-center">
+                                        <span class="badge badge-dark">{{ candidate?.stage }}</span>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div *ngIf="addCandidatesGrant" class="col-md-4">
+                            <p class="label-info">PRETENSIÓN SALARIAL</p>
+                            <p class="data-info">{{ candidate?.candidate.economic_claims }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="label-info">INGLÉS</p>
+                            <p class="data-info">{{ candidate?.candidate.english_level }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="label-info">CURSOS Y CERTIFICACIONES</p>
+                            <p class="data-info">{{ candidate?.candidate.courses }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="label-info">SEXO</p>
+                            <p class="data-info">{{ candidate?.candidate.gender | titlecase }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="label-info">LOCALIDAD</p>
+                            <p class="data-info">{{ candidate?.candidate.address }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="label-info">ESTADO CIVIL</p>
+                            <p class="data-info">{{ candidate?.candidate.marital_status | titlecase }}</p>
+                        </div>
+                    </div>
+                    <hr class="col-md-6">
+                    <div *ngIf="candidate?.justification" class="row">
+                            <div class="col-md-12">
+                                <p class="label-info text-danger">MOTIVOS <small>(RECHAZO O DECLINACIÓN)</small></p>
+                                <p class="data-info text-justify"><small><strong>{{ candidate?.candidateRejection_date | date: 'dd/MM/yyyy' }}</strong></small> - {{ candidate?.justification }}</p>
+                            </div>
+                        </div>
+                    <div *ngIf="candidate?.initialInterview" class="row">
+                        <div class="col-md-12">
+                            <p class="label-info">ENTREVISTA INICIAL</p>
+                            <p class="data-info text-justify"><small><strong>{{ candidate?.initialInterview_date | date: 'dd/MM/yyyy' }}</strong></small> - {{ candidate?.initialInterview }}</p>
+                        </div>
+                    </div>
+                    <div *ngIf="candidate?.technicalTest" class="row">
+                        <div class="col-md-12">
+                            <p class="label-info">PRUEBA TÉCNICA</p>
+                            <p class="data-info text-justify"><small><strong>{{ candidate?.technicalTest_date | date: 'dd/MM/yyyy' }}</strong></small> - {{ candidate?.technicalTest }}</p>
+                        </div>
+                    </div>
+                    <div *ngIf="candidate?.psychometricTest" class="row">
+                        <div class="col-md-12">
+                            <p class="label-info">PRUEBA(S) PSICOMÉTRICA(S)</p>
+                            <p class="data-info text-justify"><small><strong>{{ candidate?.psychometricTest_date | date: 'dd/MM/yyyy' }}</strong></small> - {{ candidate?.psychometricTest }}</p>
+                        </div>
+                    </div>
+                    <div *ngIf="candidate?.economicProposal" class="row">
+                        <div class="col-md-12">
+                            <p class="label-info">PROPUESTA ECONÓMICA</p>
+                            <p class="data-info text-justify"><small><strong>{{ candidate?.economicProposal_date | date: 'dd/MM/yyyy' }}</strong></small> - {{ candidate?.economicProposal }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-end">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Candidate Info -->
+
+<!-- Modal Candidate Report -->
+<div class="modal fade" id="candidateReportModal" tabindex="-1" role="dialog" aria-labelledby="candidateReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Etapa</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="label-info">CANDIDATO</p>
+                            <p class="data-info">{{ candidate?.candidate.name | uppercase }} {{ candidate?.candidate.firstSurname | uppercase }} {{ candidate?.candidate.secondSurname | uppercase }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="label-info">ETAPA</p>
+                            <p class="data-info">{{ candidate?.stage }}</p>
+                        </div>
+                        <div *ngIf="stage === 'Entrevista Líder'" class="col-md-6">
+                            <p class="label-info">ENTREVISTAS REQUERIDAS</p>
+                            <p class="data-info">{{ requisitionShown?.interviewers.length }}</p>
+                        </div>
+                        <div *ngIf="stage === 'Entrevista Líder'" class="col-md-6">
+                            <p class="label-info">INFORMES DE ENTREVISTA REGISTRADOS</p>
+                            <p class="data-info">{{ candidate?.interviews.length }}</p>
+                        </div>
+                        <div *ngIf="stage != 'Entrevista Líder' && stage != 'Propuesta Económica'" class="form-group col-md-12">
+                            <p class="label-info">COMENTARIOS / RESULTADOS</p>
+                            <textarea class="form-control input-border-bottom" id="comments" placeholder="Ingresa tus comentarios acerca del candidato respecto a la etapa actual." [ngClass]="{ 'is-invalid': !comments.valid }" [formControl]="comments"></textarea>
+                        </div>
+                        <div *ngIf="stage === 'Propuesta Económica' && !candidate?.economicProposal" class="form-group col-md-6">
+                            <p class="label-info">SUELDO OFRECIDO</p>
+                            <input type="number" min="1" class="form-control input-border-bottom" id="comments" placeholder="Ingresa el sueldo mensual ofrecido." [ngClass]="{ 'is-invalid': !comments.valid }" [formControl]="comments">
+                        </div>
+                        <div class="text-center text-mexicanPink w-100" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button *ngIf="(candidate?.stage === 'Entrevista Líder' && (requisitionShown?.interviewers.length === candidate?.interviews.length) && 
+                                        candidate?.status === 'En proceso' ) || (candidate?.stage !== 'Entrevista Líder' && candidate?.stage !== 'Propuesta Económica' && candidate?.status === 'En proceso') " 
+                            type="button" 
+                            class="btn btn-green" 
+                            (click)=defineStructureComments()>
+                            Siguiente Etapa
+                </button>
+                <button *ngIf="candidate?.stage === 'Propuesta Económica' && !candidate?.economicProposal" type="button" class="btn btn-green" (click)=defineStructureComments()>Guardar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Candidate Report -->
+
+<!-- Modal Candidate Report -->
+<div class="modal fade" id="interviewReportModal" tabindex="-1" role="dialog" aria-labelledby="interviewReportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title">Informe de Entrevista</h6>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                            <div *ngIf="candidate?.interviews.length === 0" class="alert alert-pink mt-4" role="alert">
+                                No se han registrado informes de entrevista.
+                            </div>
+                            <app-interview-report-details *ngIf="candidate?.interviews.length > 0" [report]="interviewReport" [reports]="interviews"></app-interview-report-details>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal Candidate Report -->
+
+    <!-- Modal Candidate Rejection -->
+<div class="modal fade" id="rejectCandidateModal" tabindex="-1" role="dialog" aria-labelledby="rejectCandidateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-danger">
+                <h6 class="modal-title">{{ candidateToReject?.candidateName | uppercase }}</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <p class="modal-msg text-justify">Selecciona la acción a realizar y describe los motivos, después da clic en el botón "Aceptar".</p>
+                    <form [formGroup]="rejectCandidateForm" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <div id="typeInput">
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" formControlName="status" id="typeInputD" value="Declinado">
+                                        <label class="custom-control-label" for="typeInputD">Declinar</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" formControlName="status" id="typeInputR" value="Rechazado">
+                                        <label class="custom-control-label" for="typeInputR">Rechazar</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-8">
+                                <p class="label-info" for="rejectCommInput">MOTIVOS</p>
+                                <input type="text" class="form-control input-border-bottom" id="rejectCommInput" [ngClass]="{ 'is-invalid': !rejectCandidateForm.controls['justification'].valid }" placeholder="Describe los motivos" formControlName="justification">
+                                <small *ngIf="rejectCandidateForm.controls['justification'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                    </form>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <button type="button" class="btn btn-danger pointer" (click)='approvedCandidateRejection()'>Aceptar</button>
+                        <button type="button" class="btn btn-secondary pointer" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Candidate Rejection -->
+
+    <!-- Modal Candidate Rejection -->
+    <div class="modal fade" id="approveCandidateModal" tabindex="-1" role="dialog" aria-labelledby="approveCandidateModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="modal-title">{{ candidateToApprove?.candidateName | uppercase }}</h6>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <p class="modal-msg text-justify">Por favor ingresa los siguientes datos.</p>
+                            <form [formGroup]="contractSignatureForm" novalidate="novalidate">
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <p class="label-info">ID NEIXAR</p>
+                                        <input  type="number" min="1" max="9999" class="form-control input-border-bottom"  [ngClass]="{ 'is-invalid': !contractSignatureForm.controls['id_neixar'].valid }" placeholder="Ingresa el ID NEIXAR" formControlName="id_neixar">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <p class="label-info">FECHA DE INGRESO</p>
+                                        <input type="text" class="form-control input-border-bottom" placeholder="dd/mm/aaaa" [ngClass]="{ 'is-invalid': !contractSignatureForm.controls['admission_date'].valid }" formControlName="admission_date">
+                                    </div>
+                                    <div class="text-center text-mexicanPink w-100" *ngIf="errorMessage">
+                                        <span>{{ errorMessage }}</span>
+                                    </div>
+                                </div>
+                                </form>
+                            <div class="modal-footer d-flex justify-content-between">
+                                <button type="button" class="btn btn-green   pointer" (click)='approveCandidateToHire()'>Aceptar</button>
+                                <button type="button" class="btn btn-secondary pointer" data-dismiss="modal">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Modal Candidate Rejection -->
+
+    <!-- Modal Close Vacancy -->
+    <div class="modal fade" id="closeVacancyModal" tabindex="-1" role="dialog" aria-labelledby="closeVacancyModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title">Cubrir Vacante</h6>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <p class="modal-msg text-justify">¿Estás seguro de que has concluido el proceso de reclutamiento?<br>Con esta acción la vacante aparecerá como cubierta.</p>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-green pointer" (click)='closeVacancy()'>Aceptar</button>
+                            <button type="button" class="btn btn-secondary pointer" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal Close Vacancy -->
+
+    <!-- Modal Early Close Vacancy -->
+    <div class="modal fade" id="earlyCloseVacancyModal" tabindex="-1" role="dialog" aria-labelledby="earlyCloseVacancyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modal-header-warning">
+                    <h6 class="modal-title">Cerrar Vacante</h6>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <p class="modal-msg text-justify">¿Estás seguro que desear cerrar la vacante? De ser así, describe los motivos por favor.</p>
+                        <div class="form-group col-md-12">
+                            <p class="label-info" for="rejectCommInput">MOTIVOS</p>
+                            <textarea class="form-control input-border-bottom" placeholder="Describe los motivos del cierre de la vacante." [ngClass]="{ 'is-invalid': !rejectionComments.valid }" [formControl]="rejectionComments"></textarea>
+                        </div>
+                        <div class="text-center text-mexicanPink w-100" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-green pointer" (click)='earlyCloseVacancy()'>Aceptar</button>
+                            <button type="button" class="btn btn-secondary pointer" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal Early Close Vacancy -->

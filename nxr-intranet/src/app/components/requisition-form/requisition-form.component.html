@@ -1,0 +1,283 @@
+<form [formGroup]="requisitionForm" (ngSubmit)="finishBuildingRequestData()" novalidate="novalidate">
+    <div class="row">
+        <div class="col">
+            <div class="d-flex align-items-center">
+                <h5 class="header">Requerimientos</h5>
+            </div>
+            <hr class="title-separator">
+            <div class="container-profile-info">
+                <div class="row">
+                    <div class="col-md-4" formGroupName="position">
+                        <h6 class="label-info" for="positionSelect">PUESTO</h6>
+                        <select class="form-control input-border-bottom mb-3" id="positionSelect" [ngClass]="{ 'is-invalid': !requisitionForm.get('position.positionId').valid }" formControlName="positionId" (change)="getSelectedPosition($event.target.value)">
+                            <option [value]="''" disabled selected> Selecciona un puesto </option>
+                            <option *ngFor="let position of positions" [value]="position._id">{{ position.name }} ({{ position.department?.name }})</option>
+                        </select>
+                        <small *ngIf="requisitionForm.get('position.positionId').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="jobDescVersionSelect">VERSIÓN DE DP</h6>
+                        <select class="form-control input-border-bottom mb-3" id="jobDescVersionSelect" [ngClass]="{ 'is-invalid': !requisitionForm.get('job_description').valid }" formControlName="job_description" (change)="getJobDescriptionVersion($event.target.value)">
+                            <option [value]="''" disabled selected> Selecciona un puesto </option>
+                            <option *ngFor="let jobDescription of activeJobDescriptions; let jobDescIndex = index" [value]="jobDescIndex">{{ jobDescription.version }}</option>
+                        </select>
+                        <small *ngIf="requisitionForm.get('job_description').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="vacanciesInput">NÚMERO DE PLAZAS</h6>
+                        <input type="number" min="0" class="form-control input-border-bottom mb-3" id="vacanciesInput" [ngClass]="{ 'is-invalid': !requisitionForm.get('vacancies').valid }" placeholder="Ingresa el número de vacantes" formControlName="vacancies">
+                        <small *ngIf="requisitionForm.get('vacancies').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                        <small *ngIf="requisitionForm.get('vacancies').errors?.min" class="invalid-feedback">Cuando menos debe existir 1 plaza.</small>
+                    </div>
+                    <div class="col-md-4" formGroupName="contract">
+                        <h6 class="label-info" for="selectContract">TIPO DE CONTRATO</h6>
+                        <select class="form-control input-border-bottom mb-3" id="selectContract" [ngClass]="{ 'is-invalid': !requisitionForm.get('contract.type').valid }" formControlName="type" (change)="requestContractPeriodIfNotIndeterminate($event.target.value)">
+                            <option value="" selected disabled> Selecciona una opción </option>
+                            <option value="Indeterminado">Indeterminado</option>
+                            <option value="Determinado">Determinado</option>
+                            <option value="Proyecto">Por Proyecto</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4" *ngIf="requisitionForm.get('contract.type').value === 'Determinado' || requisitionForm.get('contract.type').value === 'Proyecto'" formGroupName="contract">
+                        <h6 class="label-info" for="contractMonthsInput">MESES DE CONTRATO</h6>
+                        <input type="number" min="0" class="form-control input-border-bottom mb-3" id="contractMonthsInput" [ngClass]="{ 'is-invalid': !requisitionForm.get('contract.period').valid }" placeholder="Ingresa la duración del contrato" formControlName="period">
+                        <small *ngIf="requisitionForm.get('contract.period').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                        <small *ngIf="requisitionForm.get('contract.period').errors?.min" class="invalid-feedback">El contrato no puede ser menor a 1 mes.</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="selectShift">TURNO</h6>
+                        <select class="form-control input-border-bottom mb-3" id="selectShift" [ngClass]="{ 'is-invalid': !requisitionForm.get('work_shift').valid }" formControlName="work_shift">
+                            <option value="" selected disabled> Selecciona una opción </option>
+                            <option value="Completa" >Jornada Completa</option>
+                            <option value="Rolar">Rolar</option>
+                        </select>
+                        <small *ngIf="requisitionForm.get('work_shift').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <!-- <div class="col-md-4">
+                        <h6 class="label-info" for="salaryInput">SUELDO <small>(Mín - Máx)</small></h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="salaryInput" [ngClass]="{ 'is-invalid': !requisitionForm.get('salary').valid }" placeholder="Ingresa el sueldo a ofrecer" formControlName="salary">
+                        <small *ngIf="requisitionForm.get('salary').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                        <small *ngIf="requisitionForm.get('salary').errors?.min" class="invalid-feedback">Este atributo no puede ser igual a 0.</small>
+                    </div> -->
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="ageInput">EDAD <small>(Mín - Máx)</small></h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="ageInput" [ngClass]="{ 'is-invalid': !requisitionForm.get('age').valid }" placeholder="Define el rango de edad" formControlName="age">
+                        <small *ngIf="requisitionForm.get('age').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="selectGender">GÉNERO</h6>
+                        <select class="form-control input-border-bottom mb-3" id="selectGender" [ngClass]="{ 'is-invalid': !requisitionForm.get('gender').valid }" formControlName="gender">
+                            <option value="" selected disabled> Selecciona una opción </option>
+                            <option value="Indistinto" >Indistinto</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Masculino">Masculino</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="selectCauses">CAUSA QUE ORIGINA LA VACANTE</h6>
+                        <select class="form-control input-border-bottom mb-3" id="selectCauses" [ngClass]="{ 'is-invalid': !requisitionForm.get('causes').valid }" formControlName="causes" (change)="requestSpecificCause($event.target.value)">
+                            <option value="" selected disabled> Selecciona una opción </option>
+                            <option value="Reemplazo" >Reposición de Personal</option>
+                            <option value="Proyecto">Proyecto</option>
+                            <option value="Puesto nuevo">Puesto de nueva creación</option>
+                            <option value="Otras">Otras</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4" *ngIf="requisitionForm.get('causes').value == 'Reemplazo' || requisitionForm.get('causes').value == 'Proyecto' || requisitionForm.get('causes').value == 'Otras'">
+                        <h6 class="label-info" for="causeInput">ESPECIFIQUE CAUSA</h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="causeInput" [ngClass]="{ 'is-invalid': !requisitionForm.get('specific_cause').valid }" placeholder="Describa la causa de la vacante" formControlName="specific_cause">
+                        <small *ngIf="requisitionForm.get('specific_cause').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="technicalInput">PRUEBA TÉCNICA</h6>
+                        <div id="technicalInput">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="technical_test" id="technicaltestInputS" value="true">
+                                <label class="custom-control-label" for="technicaltestInputS">Sí</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="technical_test" id="technicaltestInputN" value="false">
+                                <label class="custom-control-label" for="technicaltestInputN">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="travelInput">DISPONIBILIDAD PARA VIAJAR</h6>
+                        <div id="travelInput">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="travel" id="travelInputS" value="true">
+                                <label class="custom-control-label" for="travelInputS">Sí</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="travel" id="travelInputN" value="false">
+                                <label class="custom-control-label" for="travelInputN">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="homeInput">DISPONIBILIDAD PARA RADICAR FUERA</h6>
+                        <div id="homeInput">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="change_home" id="homeInputS" value="true">
+                                <label class="custom-control-label" for="homeInputS">Sí</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="change_home" id="homeInputN" value="false">
+                                <label class="custom-control-label" for="homeInputN">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="passportInput">PASAPORTE</h6>
+                        <div id="passportInput">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="passport" id="passportInputS" value="true">
+                                <label class="custom-control-label" for="passportInputS">Sí</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="passport" id="passportInputN" value="false">
+                                <label class="custom-control-label" for="passportInputN">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center ml-0 pl-0 col-4">
+                <h5 class="header mr-2">Entrevistadores</h5>
+                <button type="button" class="btn btn-dark" (click)="addInterviewer()"><i class="fas fa-plus-circle"></i></button>
+            </div>
+            <hr class="title-separator">
+            <div class="container-profile-info">
+                <div class="row" formArrayName="interviewers">
+                    <div class="col-md-4" *ngFor="let interviewer of requisitionForm.get('interviewers')['controls']; let interviewerIndex = index" [formGroupName]="interviewerIndex">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <h6 class="label-info m-0" for="selectInterviewer">ENTREVISTADOR {{ interviewerIndex + 1 }}</h6>
+                            <button class="text-green btn-action btn-link" [disabled]="requisitionForm.get('interviewers').controls.length === 1" (click)="deleteInterviewer( interviewerIndex )">
+                                         <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <select class="form-control input-border-bottom mb-3" id="selectInterviewer" [ngClass]="{ 'is-invalid': !interviewer.get('interviewer').valid }" formControlName="interviewer" (change)="setCompleteInterviewerData($event.target.value, interviewerIndex)">
+                            <option [value]="''" selected disabled> Selecciona una opción </option>
+                            <option *ngFor="let person of employees" [value]="person._id">{{ person.p_information?.name | firstname }} {{ person.p_information?.firstSurname }} ({{ person.w_information?.area.name }})</option>
+                        </select>
+                        <small *ngIf="interviewer.get('interviewer').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="d-flex align-items-center">
+                <h5 class="header">Herramientas de trabajo</h5>
+            </div>
+            <hr class="title-separator">
+            <div class="container-profile-info">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="selectEquipment">EQUIPO DE CÓMPUTO</h6>
+                        <select class="form-control input-border-bottom mb-3" id="selectEquipment" [ngClass]="{ 'is-invalid': !requisitionForm.get('equipment').valid }" formControlName="equipment">
+                            <option value="" selected disabled> Selecciona una opción </option>
+                            <option value="Nivel 1" >Nivel 1</option>
+                            <option value="Nivel 2" >Nivel 2</option>
+                            <option value="Nivel 3" >Nivel 3</option>
+                        </select>
+                        <small *ngIf="requisitionForm.get('equipment').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-8">
+                        <h6 class="label-info" for="softwareInput">PROGRAMAS O APLICACIONES</h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="softwareInput" [ngClass]="{ 'is-invalid': !requisitionForm.get('software').valid }" placeholder="Define los programas necesarios" formControlName="software">
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="emailInput">CORREO ELECTRÓNICO</h6>
+                        <div id="emailInput">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="email" id="emailInputC" value="com">
+                                <label class="custom-control-label" for="emailInputC">.com</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="email" id="emailInputM" value="mx">
+                                <label class="custom-control-label" for="emailInputM">.mx</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="mobileInput">EQUIPO MÓVIL</h6>
+                        <div id="mobileInput">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="mobile" id="mobileInputS" value="true" (click)="requestPhoneService(true)">
+                                <label class="custom-control-label" for="mobileInputS">Sí</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="mobile" id="mobileInputN" value="false" (click)="requestPhoneService(false)">
+                                <label class="custom-control-label" for="mobileInputN">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" *ngIf="requisitionForm.get('mobile').value == 'true'">
+                        <h6 class="label-info" for="serviceInput">PLAN REQUERIDO</h6>
+                        <div id="serviceInput">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="phone_service" id="serviceInputB" value="Básico">
+                                <label class="custom-control-label" for="serviceInputB">Básico</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="phone_service" id="serviceInputM" value="Intermedio">
+                                <label class="custom-control-label" for="serviceInputM">Intermedio</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="accessInput">CREDENCIAL DE ACCESO</h6>
+                        <div id="accessInput">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="access_card" id="accessInputS" value="true">
+                                <label class="custom-control-label" for="accessInputS">Sí</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="access_card" id="accessInputN" value="false">
+                                <label class="custom-control-label" for="accessInputN">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="systemsInput">SISTEMAS A UTILIZAR</h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="systemsInput" [ngClass]="{ 'is-invalid': !requisitionForm.get('systems_to_use').valid }" placeholder="Define los sistemas a utilizar" formControlName="systems_to_use">
+                        <small *ngIf="requisitionForm.get('systems_to_use').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="label-info" for="systemsInput">TIPOS DE ACCESO AL SISTEMA</h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="accessTypeInput" [ngClass]="{ 'is-invalid': !requisitionForm.get('access_type').valid }" placeholder="Define los tipos de acceso al sistema" formControlName="access_type">
+                        <small *ngIf="requisitionForm.get('access_type').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="d-flex align-items-center">
+                <h5 class="header">Observaciones</h5>
+            </div>
+            <hr class="title-separator">
+            <div class="container-profile-info">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h6 class="label-info" for="commentsInput">OBSERVACIONES</h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="commentsInput" [ngClass]="{ 'is-invalid': !requisitionForm.get('comments').valid }" placeholder="Si tienes observaciones adicionales, agrégalas aquí" formControlName="comments">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+        <span>{{ errorMessage }}</span>
+    </div>
+    <div class="modal-footer d-flex justify-content-end">
+        <button type="submit" class="btn btn-green">Guardar</button>
+    </div>
+</form>

@@ -1,0 +1,81 @@
+<div *ngIf="vacancies.length <= 0" class="alert alert-pink mt-4" role="alert">
+    Sin información por mostrar.
+</div>
+<div *ngIf="vacancies.length > 0" class="table-responsive">
+    <table class="table table-borderless table-striped">
+        <thead class="card-thead">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">PUESTO</th>
+                <th scope="col">FECHA DE SOLICITUD</th>
+                <th *ngIf="type != 'recruitment'" scope="col">RECLUTADOR</th>
+                <th scope="col">FECHA DE RECEPCIÓN</th>
+                <th scope="col">FECHA LÍMITE</th>
+                <th scope="col">ESTATUS</th>
+                <th scope="col">ACCIONES</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let vacancy of vacancies; let i = index">
+                <td scope="row">{{ i + 1 + ((currentPage-1) * 10) }}</td>
+                <td>{{ vacancy.position.positionName }}</td>
+                <td>{{ vacancy.date_recruitment | date: 'dd/MM/y' }}</td>
+                <td *ngIf="type != 'recruitment'">{{ vacancy.recruiter?.p_information?.name | firstname }} {{ vacancy.recruiter?.p_information?.firstSurname }}</td>
+                <td>{{ vacancy.receptionDate | date: 'dd/MM/y' }}</td>
+                <td>{{ vacancy.deadline | date: 'dd/MM/y' }}</td>
+                <td>
+                    <span class="badge badge-pill" [ngClass]="{ 
+                        'badge-secondary': vacancy.status == 'Pendiente', 
+                        'badge-blue': vacancy.status == 'Aprobada', 
+                        'badge-warning': vacancy.status == 'En proceso', 
+                        'badge-danger': vacancy.status == 'Rechazada', 
+                        'badge-green': vacancy.status == 'Cubierta', 
+                        'badge-dark': vacancy.status == 'Cerrada', 
+                        'badge-orange': vacancy.status == 'Vencida' }">{{ vacancy.status }}</span>
+                </td>
+                <td class="d-flex align-items-center">
+                    <a class="text-mexicanPink btn-action" [routerLink]="[vacancy._id]"><i class="fas fa-info-circle"></i></a>
+                    <a *ngIf="reassignAllowed && (vacancy.status === 'En proceso' || vacancy.status === 'Vencida' )" class="text-mexicanPink btn-action" (click)="getDataConfiguration( vacancy )"><i class="fas fa-user-check"></i></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Requisition Assignment-->
+<div class="modal fade" id="requisitionAssignmentModal" tabindex="-1" role="dialog" aria-labelledby="requisitionAssignmentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title">Reasignar Requisición</h6>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <p class="modal-msg text-justify">Por favor asigna la requisición de personal al reclutador correspondiente.</p>
+                        <form [formGroup]="assignmentForm" novalidate="novalidate">
+                            <div class="row">
+                                <div class="form-group col-md-8">
+                                    <select class="form-control input-border-bottom mb-3" id="selectRecruiter" [ngClass]="{ 'is-invalid': !assignmentForm.get('recruiter').valid }" formControlName="recruiter" (change)="getSelectedRecruiter($event.target.value)">
+                                            <option [value]="''" selected disabled> Selecciona una opción </option>
+                                            <option *ngFor="let recruiter of recruiters" [value]="recruiter._id">{{ recruiter.p_information?.name | firstname }} {{ recruiter.p_information?.firstSurname }} ({{ recruiter.w_information?.area.name }})</option>
+                                        </select>
+                                    <small *ngIf="assignmentForm.controls['recruiter'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                </div>
+                            </div>
+                            <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                                <span>{{ errorMessage }}</span>
+                            </div>
+                        </form>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary pointer" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-green pointer" (click)='assignRequisition()'>Asignar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <!-- End Modal Requisition Assignment -->

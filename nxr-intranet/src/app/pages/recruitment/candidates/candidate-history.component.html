@@ -1,0 +1,150 @@
+<div class="container-fluid container-page">
+  <div class="row">
+      <div class="col-md-4">
+          <div class="card nxr_card ">
+              <h6 class="card-header">Información General</h6>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-12 text-center align-self-center">
+                      <h5 class="text-green"><strong>{{ candidate?.name | uppercase }} {{ candidate?.firstSurname | uppercase }} {{ candidate?.secondSurname | uppercase }}</strong></h5>
+                      <p class="user-position mb-0">Registrado el {{ candidate?.candidate_date | date:'dd/MM/yyyy' }}</p>
+                      <h5 class="d-flex justify-content-center pb-3">
+                        <span class="badge" [ngClass]="{ 
+                          'badge-warning': candidate?.status == 'En proceso', 
+                          'badge-danger': candidate?.status == 'Rechazado', 
+                          'badge-success': candidate?.status == 'Nuevo', 
+                          'badge-orange': candidate?.status == 'Cartera' }">{{ candidate?.status }}</span>
+                      </h5>
+                  </div>
+                </div>
+                <hr>
+                <div class="row p-3">
+                    <div class="col-md-12">
+                        <p class="label-info">ESCOLARIDAD</p>
+                        <p class="data-info">{{ candidate?.scholarship }} - {{ candidate?.certification ? 'Titulado' : 'No titulado' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p class="label-info">PRETENSIÓN SALARIAL</p>
+                        <p class="data-info">{{ candidate?.economic_claims }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p class="label-info">NIVEL DE INGLÉS</p>
+                        <p class="data-info">{{ candidate?.english_level }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p class="label-info">CURSOS Y CERTIFICACIONES</p>
+                        <p class="data-info text-justify">{{ candidate?.courses }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p class="label-info">FUENTE</p>
+                        <p class="data-info text-justify mb-0">{{ candidate?.source }}</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row p-3 pb-0">
+                    <div class="col-md-12">
+                        <p class="label-info">TELÉFONO</p>
+                        <p class="data-info">{{ candidate?.phone_number }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p class="label-info">CORREO ELECTRÓNICO</p>
+                        <p class="data-info">{{ candidate?.email }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p class="label-info">FECHA DE NACIMIENTO</p>
+                        <p class="data-info">{{ candidate?.birthdate | date: 'dd/MM/yyyy' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p class="label-info">LOCALIDAD</p>
+                        <p class="data-info">{{ candidate?.address }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p class="label-info">SEXO</p>
+                        <p class="data-info">{{ candidate?.gender | titlecase }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p class="label-info">ESTADO CIVIL</p>
+                        <p class="data-info mb-0">{{ candidate?.marital_status | titlecase }}</p>
+                    </div>
+                </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="col-md-8">
+        <div class="card nxr_card ">
+            <h6 class="card-header">Historia</h6>
+            <div class="card-body">
+                <div *ngIf="vacancies.length <= 0" class="alert alert-pink mt-4" role="alert">
+                    Sin información por mostrar.
+                </div>
+                <div *ngIf="vacancies.length > 0" class="row">
+                    <!-- <div [ngClass]="{'col-md-8': interviews.length > 1, 'col-md-12': interviews.length <= 1}"> -->
+                      <div class="col-md-8">
+                      <div class="row text-center align-self-center">
+                          <div class="col-md-12">
+                            <h5 class="text-blue"><strong>{{ vacancy?.positionName }}</strong></h5>
+                            <p class="user-position mb-0">Postulado el {{ vacancy?.candidateReport?.date_assignment | date:'dd/MM/yyyy' }}</p>
+                            <h5 class="d-flex justify-content-center pb-3">
+                              <span class="badge badge-dark">{{ vacancy?.candidateReport?.stage }}</span>
+                            </h5>
+                          </div>
+                        </div>
+                        <hr>
+                        <div class="row p-3">
+                            <div *ngIf="vacancy?.candidateReport?.justification"  class="col-md-12">
+                                <p class="label-info text-danger">MOTIVOS <small>(RECHAZO O DECLINACIÓN)</small></p>
+                                <p class="data-info text-justify">{{ vacancy?.candidateReport?.justification }}</p>
+                              </div>
+                          <div *ngIf="vacancy?.candidateReport?.initialInterview"  class="col-md-12">
+                            <p class="label-info">ENTREVISTA INICIAL</p>
+                            <p class="data-info text-justify">{{ vacancy?.candidateReport?.initialInterview }}</p>
+                          </div>
+                          <div *ngIf="vacancy?.candidateReport?.technicalTest" class="col-md-12">
+                              <p class="label-info">PRUEBA TÉCNICA</p>
+                              <p class="data-info text-justify">{{ vacancy?.candidateReport?.technicalTest }}</p>
+                          </div>
+                          <div *ngIf="vacancy?.candidateReport?.psychometricTest" class="col-md-12">
+                              <p class="label-info">PRUEBA(S) PSICOMÉTRICA(S)</p>
+                              <p class="data-info text-justify">{{ vacancy?.candidateReport?.psychometricTest }}</p>
+                          </div>
+                          <div *ngIf="vacancy?.candidateReport?.economicProposal" class="col-md-12">
+                              <p class="label-info">PRUEBA(S) PSICOMÉTRICA(S)</p>
+                              <p class="data-info text-justify">{{ vacancy?.candidateReport?.psychometricTest }}</p>
+                          </div>
+                          <div *ngIf="vacancy?.candidateReport?.interviews.length >= 1" class="col-md-12">
+                              <p class="label-info">REPORTE(S) DE ENTREVISTA</p>
+                              <div class="card nxr_card mt-3">
+                                  <div class="card-body">
+                                    <app-interview-report-details *ngIf="vacancy?.candidateReport?.interviews.length > 0" [report]="interviewReport" [reports]="interviews"></app-interview-report-details>
+                                  </div>
+                              </div>
+                          </div>
+                        </div>
+                    </div>
+                    <div *ngIf="vacancies.length > 0" class="col-md-4">
+                        <div class="table-responsive">
+                            <p class="label-info">POSTULADO EN</p>
+                            <table class="table table-borderless table-striped mt-3">
+                                <thead class="card-thead">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Vacante</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let vacancy of vacancies; let vacancyIndex = index;" class="pointer" (click)="changeVacancy( vacancy.positionName )">
+                                        <td>{{ vacancyIndex + 1 }}</td>
+                                        <td>{{ vacancy.positionName }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+  </div>
+</div>

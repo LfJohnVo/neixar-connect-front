@@ -1,0 +1,99 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Panel de control</h6>
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row row-panel">
+                            <div class="col-md-12 col-lg-6 btn-col">
+                                <button [routerLink]="['areas']" class="btn btn-dark btn-block">Áreas</button>
+                            </div>
+                            <div class="col-md-12 col-lg-6 btn-col">
+                                <button [routerLink]="['departamentos']" class="btn btn-dark btn-block">Departamentos</button>
+                            </div>
+                        </div>
+                        <div class="row row-panel">
+                            <div class="col-md-12 col-lg-6 btn-col">
+                                <button [routerLink]="['puestos']" class="btn btn-dark btn-block">Puestos</button>
+                            </div>
+                            <div class="col-md-12 col-lg-6 btn-col">
+                                <button [routerLink]="['evaluaciones']" class="btn btn-dark btn-block">Evaluaciones</button>
+                            </div>
+                        </div>
+                        <!--<div class="row row-panel">
+                            <div class="col-md-12 col-lg-6 btn-col"> // NECESARIO PARA MÓDULO RECLUTAMIENTO
+                                <button [routerLink]="['reclutamiento']" class="btn btn-dark btn-block">Reclutamiento</button>
+                            </div>
+                            <div class="col-md-12 col-lg-6 btn-col">
+                                <button [routerLink]="['evaluaciones']" class="btn btn-dark btn-block">Evaluaciones</button>
+                            </div>
+                        </div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card nxr_card card-indicator">
+                <div class="card-body">
+                    <h5 class="card-number">{{ employees }}</h5>
+                    <h6 class="card-description">COLABORADORES</h6>
+                    <hr>
+                </div>
+                <div class="card-footer" (click)="viewEmployees()">
+                    Ver listado <i class="fas fa-arrow-circle-right"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card nxr_card card-indicator">
+                <div class="card-body">
+                    <h5 class="card-number">{{ temporal_contracts }}</h5>
+                    <h6 class="card-description">CONTRATOS TEMPORALES</h6>
+                    <hr>
+                </div>
+                <div class="card-footer" (click)="viewContracts()">
+                    Ver listado <i class="fas fa-arrow-circle-right"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card nxr_card card-indicator">
+                <div class="card-body">
+                    <h5 class="card-number">{{ unemployees }}</h5>
+                    <h6 class="card-description">BAJAS</h6>
+                    <hr>
+                </div>
+                <div class="card-footer" (click)="viewLeaves()">
+                    Ver listado <i class="fas fa-arrow-circle-right"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card nxr_card card-indicator">
+                <div class="card-body">
+                    <h5 class="card-number">{{ women }}</h5>
+                    <h6 class="card-description">MUJERES</h6>
+                    <hr>
+                </div>
+                <div class="card-footer" (click)="viewFemale()">
+                    Ver listado <i class="fas fa-arrow-circle-right"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card nxr_card card-indicator">
+                <div class="card-body">
+                    <h5 class="card-number">{{ men }}</h5>
+                    <h6 class="card-description">HOMBRES</h6>
+                    <hr>
+                </div>
+                <div class="card-footer" (click)="viewMale()">
+                    Ver listado <i class="fas fa-arrow-circle-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

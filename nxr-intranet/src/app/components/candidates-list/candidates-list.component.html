@@ -1,0 +1,34 @@
+<div *ngIf="candidates.length <= 0" class="alert alert-pink mt-4" role="alert">
+    Sin información por mostrar.
+</div>
+<div *ngIf="candidates.length > 0" class="table-responsive">
+    <div class="table-responsive">
+        <table class="table table-borderless table-striped">
+            <thead class="card-thead">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">NOMBRE</th>
+                    <th scope="col">ESCOLARIDAD</th>
+                    <th scope="col">TITULADO</th>
+                    <th scope="col">FUENTE</th>
+                    <th scope="col">ESTADO</th>
+                    <th scope="col">ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let candidate of candidates; let i = index">
+                    <td scope="row">{{ i + 1 + ((currentPage-1) * 10) }}</td>
+                    <td>{{ candidate.name }} {{ candidate.firstSurname }} {{ candidate.secondSurname }}</td>
+                    <td>{{ candidate.scholarship }}</td>
+                    <td *ngIf="candidate.certification">Sí</td>
+                    <td *ngIf="!candidate.certification">No</td>
+                    <td>{{ candidate.source }}</td>
+                    <td [ngClass]="{'text-success': candidate.status === 'Nuevo', 'text-warning': candidate.status === 'En proceso'}">{{ candidate.status }}</td>
+                    <td class="d-flex align-items-center">
+                        <a class="text-mexicanPink btn-action" [routerLink]="[candidate._id]"><i class="fas fa-info-circle"></i></a>
+                        <a *ngIf="isRecruiter" class="text-mexicanPink btn-action" (click)="getCandidateInfo( candidate._id )"><i class="fas fa-edit"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>

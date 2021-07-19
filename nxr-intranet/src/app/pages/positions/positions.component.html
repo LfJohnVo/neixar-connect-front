@@ -1,0 +1,278 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Catálogo de puestos <small>( {{ total }} )</small></h6>
+                <div class="card-body">
+                    <div class="d-flex justify-content-end mb-2">
+                        <a href="" class="btn btn-dark" data-toggle="modal" data-target="#NewPositionModal" (click)="getData()"><i class="fas fa-plus-circle"></i> AGREGAR</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">CLAVE DE PUESTO</th>
+                                    <th scope="col">PUESTO</th>
+                                    <th scope="col">DEPARTAMENTO</th>
+                                    <th scope="col">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let position of positions; let i = index">
+                                    <td scope="row">{{ i + 1 + ((currentPage-1) * 10) }}</td>
+                                    <td>{{ position.job_key || '' }}</td>
+                                    <td>{{ position.name }}</td>
+                                    <td>{{ position.department.name }}</td>
+                                    <td class="d-flex align-items-center">
+                                        <a class="text-mexicanPink btn-action" [routerLink]="[position._id]">
+                                            <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="Ver detalles de puesto"></i>
+                                        </a>
+                                        <a class="text-mexicanPink btn-action" data-toggle="modal" (click)="requestPosition( position._id )" href="">
+                                            <i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar puesto"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <app-pagination *ngIf="totalPages > 1" (selectedPage)="getPositions( $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Descripciones de Puesto <small>(Por aprobar)</small></h6>
+                <div class="card-body">
+                    <div *ngIf="jobDescriptions.length <= 0" class="alert alert-pink mb-0" role="alert">
+                        Sin descripciones por aprobar.
+                    </div>
+                    <div *ngIf="jobDescriptions.length > 0" class="table-responsive">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Puesto</th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let jobDescription of jobDescriptions; let i = index">
+                                    <td>{{ i + 1 + ((currentPageJD-1) * 10) }}</td>
+                                    <td>{{ jobDescription?.name }}</td>
+                                    <td class="d-flex align-items-center">
+                                        <a class="text-mexicanPink btn-action" [routerLink]="['validar-descripcion', jobDescription?.jobDescription._id]">
+                                            <i class="fas fa-check-circle" data-toggle="tooltip" data-placement="top" title="Aprobar/Rechazar DP"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <app-pagination *ngIf="totalPagesJD > 1" (selectedPage)="getJobDescriptionToValidate( $event )" [totalPages]="totalPagesJD" [pages]="pagesJD"></app-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal New Position -->
+<div class="modal fade" id="NewPositionModal" tabindex="-1" role="dialog" aria-labelledby="NewPositionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Nuevo Departamento</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form [formGroup]="PositionForm" (ngSubmit)="savePosition()" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="jobKeyInputPosition">CLAVE DEL PUESTO</label>
+                                <input type="text" class="form-control input-border-bottom" id="jobKeyInputPosition" [ngClass]="{ 'is-invalid': !PositionForm.controls['job_key'].valid }" placeholder="Ingresa la clave del puesto" formControlName="job_key">
+                                <small *ngIf="PositionForm.controls['job_key'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="nameInputPosition">PUESTO</label>
+                                <input type="text" class="form-control input-border-bottom" id="nameInputPosition" [ngClass]="{ 'is-invalid': !PositionForm.controls['name'].valid }" placeholder="Ingresa el nombre del puesto" formControlName="name">
+                                <small *ngIf="PositionForm.controls['name'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="PositionForm.controls['name'].errors?.minlength" class="invalid-feedback">Este atributo de tener al menos 3 caracteres.</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="modal-label text-green" for="departmentSelectPosition">DEPARTAMENTO</label>
+                                <select class="form-control input-border-bottom" id="departmentSelectPosition" [ngClass]="{ 'is-invalid': !PositionForm.get('department').valid }" formControlName="department">
+                                    <option [value]="''" disabled selected> Selecciona un departamento </option>
+                                    <option *ngFor="let department of departments" [value]="department._id">{{ department?.name }}</option>
+                                </select>
+                                <small *ngIf="PositionForm.controls['department'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="positionLevelSelect">TIPO DE PUESTO</label>
+                                <select class="form-control input-border-bottom mb-3" id="positionLevelSelect" [ngClass]="{ 'is-invalid': !PositionForm.get('type').valid }" formControlName="type">
+                                            <option [value]="''" selected disabled> Selecciona una opción </option>
+                                            <option value="Estratégico" >ESTRATÉGICO</option>
+                                            <option value="Táctico" >TÁCTICO</option>
+                                            <option value="Operativo" >OPERATIVO</option>
+                                        </select>
+                                <small *ngIf="PositionForm.controls['type'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="careerKeySelect">CLAVE DE CARRERA</label>
+                                <select class="form-control input-border-bottom mb-3" id="careerKeySelect" [ngClass]="{ 'is-invalid': !PositionForm.get('career_key').valid }" formControlName="career_key">
+                                        <option [value]="''" selected disabled> Selecciona una opción </option>
+                                        <optgroup label="Nivel 1 - Dirección General">
+                                            <option value="E1">E1 Director General</option>
+                                        </optgroup>
+                                        <optgroup label="Nivel 2 - Ejecutivos">
+                                            <option value="E2">E2 Director</option>
+                                        </optgroup>
+                                        <optgroup label="Nivel 3 - Gerencias">
+                                            <option value="M2">M2 Gerente II</option>
+                                            <option value="M1">M1 Gerente I</option>
+                                        </optgroup>
+                                        <optgroup label="Nivel 4 - Profesionales">
+                                            <option value="P5">P5 Líder</option>
+                                            <option value="P4">P4 Senior</option>
+                                            <option value="P3">P3 Especialista</option>
+                                            <option value="P2">P2 Profesional</option>
+                                            <option value="P1">P1 Junior</option>
+                                            <option value="P0">P0 Aprendiz</option>
+                                        </optgroup>
+                                        <optgroup label="Nivel 5- Para-Profesionales">
+                                            <option value="S3">S3 Especialista</option>
+                                            <option value="S2">S2 Profesional</option>
+                                            <option value="S1">S1 Junior</option>
+                                        </optgroup>
+                                    </select>
+                                <small *ngIf="PositionForm.controls['career_key'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="specialtyInput">ESPECIALIDAD</label>
+                                <input type="text" class="form-control input-border-bottom" id="specialtyInput" [ngClass]="{ 'is-invalid': !PositionForm.controls['specialty'].valid }" placeholder="Ingresa la especialidad del puesto" formControlName="specialty">
+                                <small *ngIf="PositionForm.controls['specialty'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="salaryInput">SUELDO <small>(Mín - Máx)</small></label>
+                                <input type="text" class="form-control input-border-bottom mb-3" id="salaryInput" [ngClass]="{ 'is-invalid': !PositionForm.get('salary').valid }" placeholder="Ingresa el rango salarial" formControlName="salary">
+                                <small *ngIf="PositionForm.get('salary').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-green">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal New Position -->
+
+<!-- Modal Edit Position -->
+<div class="modal fade" id="UpdatePositionModal" tabindex="-1" role="dialog" aria-labelledby="UpdatePositionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Editar Puesto</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form [formGroup]="editForm" (ngSubmit)="updatePosition()" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="jobKeyInputPosition">CLAVE DEL PUESTO</label>
+                                <input type="text" class="form-control input-border-bottom" id="jobKeyInputPosition" [ngClass]="{ 'is-invalid': !editForm.controls['job_key'].valid }" placeholder="Ingresa la clave del puesto" formControlName="job_key">
+                                <small *ngIf="editForm.controls['job_key'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="nameInputPosition">NOMBRE</label>
+                                <input type="text" class="form-control input-border-bottom" id="nameInputPosition" [ngClass]="{ 'is-invalid': !editForm.controls['name'].valid }" placeholder="Ingresa el nombre del área" formControlName="name">
+                                <small *ngIf="editForm.controls['name'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="editForm.controls['name'].errors?.minlength" class="invalid-feedback">Este atributo de tener al menos 3 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="departmentSelectPosition">DEPARTAMENTO</label>
+                                <select class="form-control input-border-bottom" id="departmentSelectPosition" [ngClass]="{ 'is-invalid': !editForm.get('department').valid }" formControlName="department">
+                              <option [value]="''" disabled selected> Selecciona un departamento </option>
+                              <option *ngFor="let department of departments" [value]="department._id">{{ department.name }}</option>
+                            </select>
+                                <small *ngIf="editForm.controls['department'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="positionLevelSelect">TIPO DE PUESTO</label>
+                                <select class="form-control input-border-bottom mb-3" id="positionLevelSelect" [ngClass]="{ 'is-invalid': !editForm.get('type').valid }" formControlName="type">
+                                    <option [value]="''" selected disabled> Selecciona una opción </option>
+                                    <option value="Estratégico" >ESTRATÉGICO</option>
+                                    <option value="Táctico" >TÁCTICO</option>
+                                    <option value="Operativo" >OPERATIVO</option>
+                                </select>
+                                <small *ngIf="editForm.controls['type'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="careerKeySelect">CLAVE DE CARRERA</label>
+                                <select class="form-control input-border-bottom mb-3" id="careerKeySelect" [ngClass]="{ 'is-invalid': !editForm.get('career_key').valid }" formControlName="career_key">
+                                            <option [value]="''" selected disabled> Selecciona una opción </option>
+                                            <optgroup label="Nivel 1 - Dirección General">
+                                                <option value="E1">E1 Director General</option>
+                                            </optgroup>
+                                            <optgroup label="Nivel 2 - Ejecutivos">
+                                                <option value="E2">E2 Director</option>
+                                            </optgroup>
+                                            <optgroup label="Nivel 3 - Gerencias">
+                                                <option value="M2">M2 Gerente II</option>
+                                                <option value="M1">M1 Gerente I</option>
+                                            </optgroup>
+                                            <optgroup label="Nivel 4 - Profesionales">
+                                                <option value="P5">P5 Líder</option>
+                                                <option value="P4">P4 Senior</option>
+                                                <option value="P3">P3 Especialista</option>
+                                                <option value="P2">P2 Intermedio</option>
+                                                <option value="P1">P1 Junior</option>
+                                                <option value="P0">P0 Aprendiz</option>
+                                            </optgroup>
+                                            <optgroup label="Nivel 5- Para-Profesionales">
+                                                <option value="S3">S3 Especialista</option>
+                                                <option value="S2">S2 Profesional</option>
+                                                <option value="S1">S1 Junior</option>
+                                            </optgroup>
+                                        </select>
+                                <small *ngIf="editForm.controls['career_key'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="specialtyInput">ESPECIALIDAD</label>
+                                <input type="text" class="form-control input-border-bottom" id="specialtyInput" [ngClass]="{ 'is-invalid': !editForm.controls['specialty'].valid }" placeholder="Ingresa la especialidad del puesto" formControlName="specialty">
+                                <small *ngIf="editForm.controls['specialty'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="modal-label text-green" for="salaryInput">SUELDO <small>(Mín - Máx)</small></label>
+                            <input type="text" class="form-control input-border-bottom mb-3" id="salaryInput" [ngClass]="{ 'is-invalid': !editForm.get('salary').valid }" placeholder="Ingresa el rango salarial" formControlName="salary">
+                            <small *ngIf="editForm.get('salary').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-green">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Edit Position -->

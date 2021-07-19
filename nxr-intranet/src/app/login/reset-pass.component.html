@@ -1,0 +1,44 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container login-container">
+    <div class="row justify-content-md-center">
+        <div class="jumbotron inner-container col-md-6">
+            <img class="logo-login" src="./assets/img/login.png" alt="Neixar" width="100%">
+            <hr class="white-line">
+
+            <form [formGroup]="resetPassForm" (ngSubmit)="sendNewPass()" novalidate="novalidate">
+                <div class="form-group">
+                    <div class="wrap-inputinfo col-md-8 text-center">
+                        <h5>Restablecimiento de contraseña</h5>
+                        <small class="input-login-error text-center" for="pass1">Ingresa y confirma tu nueva contraseña.</small>
+                    </div>
+                    <div class="wrap-inputinfo col-md-8">
+                        <input class="form-control inputinfo" type="password" id="pass1" name="pass1" formControlName="pass1" placeholder="Nueva contraseña" (keyup)="validatePass()">
+                        <span class="symbol-inputinfo">
+                              <i class="fas fa-lock" aria-hidden="true"></i>
+                          </span>
+                    </div>
+                    <small *ngIf="resetPassForm.controls['pass1'].errors?.required" class="input-login-error col-md-8">* Este atributo es obligatorio.</small>
+                    <small *ngIf="resetPassForm.controls['pass1'].errors?.minlength" class="input-login-error col-md-8">La contraseña de tener al menos 8 caracteres.</small>
+                    <div class="wrap-inputinfo col-md-8">
+                        <input class="form-control inputinfo" type="password" id="pass2" name="pass2" formControlName="pass2" placeholder="Confirmar contraseña" (keyup)="validatePass()">
+                        <span class="symbol-inputinfo">
+                              <i class="fas fa-lock" aria-hidden="true"></i>
+                          </span>
+                    </div>
+                    <small *ngIf="resetPassForm.controls['pass2'].errors?.required" class="input-login-error col-md-8">* Este atributo es obligatorio.</small>
+                    <small *ngIf="resetPassForm.controls['pass2'].errors?.minlength" class="input-login-error col-md-8">La contraseña de tener al menos 8 caracteres.</small>
+                </div>
+                <div class="text-center text-green" *ngIf="errorMessage">
+                    <span>{{ errorMessage }}</span>
+                </div>
+                <div class="text-center text-green" *ngIf="errorMessage2">
+                    <span>{{ errorMessage2 }}</span>
+                </div>
+                <div *ngIf="matched" class="wrap-inputinfo col-md-8">
+                    <button class="btn btn-dark btn-block btn-login" type="submit">Restablecer mi contraseña</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

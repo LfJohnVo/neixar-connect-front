@@ -1,0 +1,132 @@
+<form [formGroup]="candidateForm" (ngSubmit)="sendRequestData()" novalidate="novalidate">
+    <div class="row">
+        <div class="col">
+            <div class="container-profile-info">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="nameInput">NOMBRE(S)</h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="nameInput" [ngClass]="{ 'is-invalid': !candidateForm.get('name').valid }" placeholder="Ingresa el (los) nombre(s)" formControlName="name">
+                        <small *ngIf="candidateForm.get('name').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="firstSurnameInput">APELLIDO PATERNO</h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="firstSurnameInput" [ngClass]="{ 'is-invalid': !candidateForm.get('firstSurname').valid }" placeholder="Ingresa el apellido paterno" formControlName="firstSurname">
+                        <small *ngIf="candidateForm.get('firstSurname').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="secondSurnameInput">APELLIDO MATERNO</h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="secondSurnameInput" [ngClass]="{ 'is-invalid': !candidateForm.get('secondSurname').valid }" placeholder="Ingresa el apellido materno" formControlName="secondSurname">
+                        <small *ngIf="candidateForm.get('secondSurname').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <h6 class="label-info" for="genderInput">SEXO</h6>
+                        <div id="genderInput">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="gender" id="genderInputF" value="FEMENINO">
+                                <label class="custom-control-label" for="genderInputF">Femenino</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="gender" id="genderInputM" value="MASCULINO">
+                                <label class="custom-control-label" for="genderInputM">Masculino</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="birthdateInput">FECHA DE NACIMIENTO</h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="birthdateInput" placeholder="dd/mm/aaaa" [ngClass]="{ 'is-invalid': !candidateForm.get('birthdate').valid }" formControlName="birthdate">
+                        <small *ngIf="candidateForm.get('birthdate').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                        <small *ngIf="candidateForm.get('birthdate').errors?.pattern" class="invalid-feedback">Este atributo debe tener el formato dd/mm/aaaa.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="phonenumberInput">TELÉFONO</h6>
+                        <input type="text" maxlength="10" class="form-control input-border-bottom mb-3" id="phonenumberInput" [ngClass]="{ 'is-invalid': !candidateForm.get('phone_number').valid }" placeholder="Ingresa un teléfono" formControlName="phone_number">
+                        <small *ngIf="candidateForm.get('phone_number').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                        <small *ngIf="candidateForm.get('phone_number').errors?.pattern" class="invalid-feedback">No cumple con el formato requerido (8 o 10 dígitos).</small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <h6 class="label-info" for="emailInput">CORREO ELÉCTRONICO</h6>
+                        <input type="email" class="form-control input-border-bottom" id="emailInput" [ngClass]="{ 'is-invalid': !candidateForm.controls['email'].valid }" placeholder="Ingresa el correo electrónico" formControlName="email">
+                        <small *ngIf="candidateForm.controls['email'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                        <small *ngIf="candidateForm.controls['email'].errors?.pattern" class="invalid-feedback">No cumple con el formato de correo</small>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="addressInput">LOCALIDAD <small>(Edo. y municipio)</small></h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="addressInput" [ngClass]="{ 'is-invalid': !candidateForm.get('address').valid }" placeholder="Ingresa la localidad y el municipio" formControlName="address">
+                        <small *ngIf="candidateForm.get('address').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="selectMaritalStatus">ESTADO CIVIL</h6>
+                        <select class="form-control input-border-bottom mb-3" id="selectMaritalStatus" [ngClass]="{ 'is-invalid': !candidateForm.get('marital_status').valid }" formControlName="marital_status">
+                            <option value="" selected disabled> Selecciona una opción </option>
+                            <option value="SOLTERO" >SOLTERO (A)</option>
+                            <option value="CASADO" >CASADO (A)</option>
+                            <option value="DIVORCIADO" >DIVORCIADO (A)</option>
+                            <option value="UNIÓN LIBRE" >UNIÓN LIBRE</option>
+                            <option value="VIUDO" >VIUDO (A)</option>
+                        </select>
+                        <small *ngIf="candidateForm.get('marital_status').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="schoolarshipInput">FORMACIÓN</h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="schoolarshipInput" [ngClass]="{ 'is-invalid': !candidateForm.get('scholarship').valid }" placeholder="Describe la formación académica" formControlName="scholarship">
+                        <small *ngIf="candidateForm.get('scholarship').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <h6 class="label-info" for="gradeInput">TÍTULO</h6>
+                        <div id="gradeInput">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="certification" id="gradeInputY" value="true">
+                                <label class="custom-control-label" for="gradeInputY">Sí</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input class="form-check-input" type="radio" formControlName="certification" id="gradeInputN" value="false">
+                                <label class="custom-control-label" for="gradeInputN">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="EnglishInput">INGLÉS</h6>
+                        <select class="form-control input-border-bottom" [ngClass]="{ 'is-invalid': !candidateForm.get('english_level').valid }" formControlName="english_level">
+                            <option [value]="''" disabled selected> Selecciona un nivel</option>
+                            <option value="Nulo">Nulo</option>
+                            <option value="Básico">Básico</option>
+                            <option value="Intermedio">Intermedio</option>
+                            <option value="Avanzado">Avanzado</option>
+                        </select>
+                        <small *ngIf="candidateForm.get('english_level').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-12">
+                        <h6 class="label-info" for="schoolarshipInput">CURSOS Y CERTIFICACIONES</h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="schoolarshipInput" [ngClass]="{ 'is-invalid': !candidateForm.get('courses').valid }" placeholder="Ingresa los cursos y/o certificaciones del candidato" formControlName="courses">
+                        <small *ngIf="candidateForm.get('courses').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="salaryInput">PRETENSIÓN SALARIAL <small>(Mín - Máx)</small></h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="salaryInput" [ngClass]="{ 'is-invalid': !candidateForm.get('economic_claims').valid }" placeholder="Ingresa la pretensión salarial" formControlName="economic_claims">
+                        <small *ngIf="candidateForm.get('economic_claims').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="sourceInput">FUENTE</h6>
+                        <select class="form-control input-border-bottom" [ngClass]="{ 'is-invalid': !candidateForm.get('source').valid }" formControlName="source">
+                            <option [value]="''" disabled selected> Selecciona un nivel</option>
+                            <option value="Bolsa">Bolsa de trabajo</option>
+                            <option value="Bumeran">Bumeran</option>
+                            <option value="Indeed">Indeed</option>
+                            <option value="LinkedIn">LinkedIn</option>
+                            <option value="OCC">OCC</option>
+                            <option value="Referencia">Referencia</option>
+                            <option value="Otra">Otra</option>
+                        </select>
+                        <small *ngIf="candidateForm.get('source').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+        <span>{{ errorMessage }}</span>
+    </div>
+    <div class="modal-footer d-flex justify-content-end">
+        <button type="submit" class="btn btn-green">Guardar</button>
+    </div>
+</form>

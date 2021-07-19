@@ -1,0 +1,126 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Listado de áreas <small>( {{ total }} )</small></h6>
+                <div class="card-body">
+                    <div class="d-flex justify-content-end mb-2">
+                        <a href="" class="btn btn-dark" data-toggle="modal" data-target="#NewAreaModal" (click)="getUsers()"><i class="fas fa-plus-circle"></i> AGREGAR</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">NOMBRE</th>
+                                    <th scope="col">RESPONSABLE</th>
+                                    <th scope="col">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let area of areas; let i = index">
+                                    <td scope="row">{{ i + 1 + ((currentPage-1) * 10) }}</td>
+                                    <td>{{ area.name }}</td>
+                                    <td>{{ ( area.responsible?.p_information.name | firstname ) || noData}} {{ area.responsible?.p_information.firstSurname }}</td>
+                                    <td class="d-flex align-items-center">
+                                        <a class="text-mexicanPink btn-action" data-toggle="modal" (click)="requestArea( area._id )" href=""><i class="fas fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <app-pagination *ngIf="totalPages > 1" (selectedPage)="getAreas( $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal New Area -->
+<div class="modal fade" id="NewAreaModal" tabindex="-1" role="dialog" aria-labelledby="NewAreaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Nueva Área</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form [formGroup]="areaForm" (ngSubmit)="saveArea()" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="nameInputArea">NOMBRE DEL ÁREA</label>
+                                <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom" id="nameInputArea" [ngClass]="{ 'is-invalid': !areaForm.controls['name'].valid }" placeholder="Ingresa el nombre del área" formControlName="name">
+                                <small *ngIf="areaForm.controls['name'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="areaForm.controls['name'].errors?.minlength" class="invalid-feedback">Este atributo de tener al menos 3 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="responsibleSelectArea">RESPONSABLE DE ÁREA</label>
+                                <select class="form-control input-border-bottom" id="responsibleSelectArea" [ngClass]="{ 'is-invalid': !areaForm.get('responsible').valid }" formControlName="responsible">
+                                    <option [value]="''" disabled selected> Selecciona un usuario </option>
+                                    <option *ngFor="let employee of employees" [value]="employee._id">{{ employee.p_information.name | firstname | titlecase }} {{ employee.p_information.firstSurname | titlecase }} - {{ employee.w_information.area.name }}</option>
+                                </select>
+                                <small *ngIf="areaForm.controls['responsible'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-green">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal New Area -->
+
+<!-- Modal Update Area -->
+<div class="modal fade" id="UpdateAreaModal" tabindex="-1" role="dialog" aria-labelledby="UpdateAreaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Editar Área</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form [formGroup]="editForm" (ngSubmit)="updateArea()" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="nameInputArea">NOMBRE DEL ÁREA</label>
+                                <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom" id="nameInputArea" [ngClass]="{ 'is-invalid': !editForm.controls['name'].valid }" placeholder="Ingresa el nombre del área" formControlName="name">
+                                <small *ngIf="editForm.controls['name'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="editForm.controls['name'].errors?.minlength" class="invalid-feedback">Este atributo de tener al menos 3 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="responsibleSelectArea">RESPONSABLE DE ÁREA</label>
+                                <select class="form-control input-border-bottom" id="responsibleSelectArea" [ngClass]="{ 'is-invalid': !editForm.get('responsible').valid }" formControlName="responsible">
+                                    <option [value]="''" disabled selected> Selecciona un usuario </option>
+                                    <option *ngFor="let employee of employees" [value]="employee._id">{{ employee.p_information.name | firstname | titlecase }} {{ employee.p_information.firstSurname | titlecase }} - {{ employee.w_information.area.name }}</option>
+                                </select>
+                                <small *ngIf="editForm.controls['responsible'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-green">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Update Area -->

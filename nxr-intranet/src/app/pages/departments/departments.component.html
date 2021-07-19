@@ -1,0 +1,145 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Listado de departamentos <small>( {{ total }} )</small></h6>
+                <div class="card-body">
+                    <div class="d-flex justify-content-end mb-2">
+                        <a href="" class="btn btn-dark" data-toggle="modal" data-target="#NewDepartmentModal" (click)="getData()"><i class="fas fa-plus-circle"></i> AGREGAR</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">NOMBRE</th>
+                                    <th scope="col">RESPONSABLE</th>
+                                    <th scope="col">AREA</th>
+                                    <th scope="col">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let department of departments; let i = index">
+                                    <td scope="row">{{ i + 1 + ((currentPage-1) * 10) }}</td>
+                                    <td>{{ department.name }}</td>
+                                    <td>{{ ( department.responsible?.p_information.name | firstname ) || noData}} {{ department.responsible?.p_information.firstSurname }}</td>
+                                    <td>{{ department.area.name }}</td>
+                                    <td class="d-flex align-items-center">
+                                        <a class="text-mexicanPink btn-action" data-toggle="modal" (click)="requestDepartment( department._id )" href=""><i class="fas fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <app-pagination *ngIf="totalPages > 1" (selectedPage)="getDepartments( $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal New Department -->
+<div class="modal fade" id="NewDepartmentModal" tabindex="-1" role="dialog" aria-labelledby="NewDepartmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Nuevo Departamento</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form [formGroup]="DepartmentForm" (ngSubmit)="saveDepartment()" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="nameInputDepartment">NOMBRE</label>
+                                <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom" id="nameInputDepartment" [ngClass]="{ 'is-invalid': !DepartmentForm.controls['name'].valid }" placeholder="Ingresa el nombre del área" formControlName="name">
+                                <small *ngIf="DepartmentForm.controls['name'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="DepartmentForm.controls['name'].errors?.minlength" class="invalid-feedback">Este atributo de tener al menos 3 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="responsibleSelectDepartment">RESPONSABLE</label>
+                                <select class="form-control input-border-bottom" id="responsibleSelectDepartment" [ngClass]="{ 'is-invalid': !DepartmentForm.get('responsible').valid }" formControlName="responsible">
+                                    <option [value]="''" disabled selected> Selecciona un responsable </option>
+                                    <option *ngFor="let employee of employees" [value]="employee._id">{{ employee.p_information.name | firstname | titlecase }} {{ employee.p_information.firstSurname | titlecase }} - {{ employee.w_information.area.name }}</option>
+                                </select>
+                                <small *ngIf="DepartmentForm.controls['responsible'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="areaSelectDepartment">ÁREA</label>
+                                <select class="form-control input-border-bottom" id="areaSelectDepartment" [ngClass]="{ 'is-invalid': !DepartmentForm.get('area').valid }" formControlName="area">
+                                    <option [value]="''" disabled selected> Selecciona un usuario </option>
+                                    <option *ngFor="let area of areas" [value]="area._id">{{ area.name }}</option>
+                                </select>
+                                <small *ngIf="DepartmentForm.controls['area'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-green">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal New Department -->
+
+<!-- Modal Edit Department -->
+<div class="modal fade" id="UpdateDepartmentModal" tabindex="-1" role="dialog" aria-labelledby="UpdateDepartmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Editar Departamento</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form [formGroup]="editForm" (ngSubmit)="updateDepartment()" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="nameInputDepartment">NOMBRE</label>
+                                <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom" id="nameInputDepartment" [ngClass]="{ 'is-invalid': !editForm.controls['name'].valid }" placeholder="Ingresa el nombre del área" formControlName="name">
+                                <small *ngIf="editForm.controls['name'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="editForm.controls['name'].errors?.minlength" class="invalid-feedback">Este atributo de tener al menos 3 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="responsibleSelectDepartment">RESPONSABLE</label>
+                                <select class="form-control input-border-bottom" id="responsibleSelectDepartment" [ngClass]="{ 'is-invalid': !editForm.get('responsible').valid }" formControlName="responsible">
+                                    <option [value]="''" selected> Selecciona un responsable </option>
+                                    <option *ngFor="let employee of employees" [value]="employee._id">{{ employee.p_information.name | firstname | titlecase }} {{ employee.p_information.firstSurname | titlecase }} - {{ employee.w_information.area.name }}</option>
+                                </select>
+                                <small *ngIf="editForm.controls['responsible'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="areaSelectDepartment">ÁREA</label>
+                                <select class="form-control input-border-bottom" id="areaSelectDepartment" [ngClass]="{ 'is-invalid': !editForm.get('area').valid }" formControlName="area">
+                                    <option [value]="''" disabled selected> Selecciona un área </option>
+                                    <option *ngFor="let area of areas" [value]="area._id">{{ area.name }}</option>
+                                </select>
+                                <small *ngIf="editForm.controls['area'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-green">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Edit Department -->

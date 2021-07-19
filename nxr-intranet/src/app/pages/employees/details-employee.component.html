@@ -1,0 +1,245 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card">
+                <div class="card-userheader">
+                </div>
+                <div class="card-body">
+                    <div class="user user-profile">
+                        <a>
+                            <img class="avatar avatar-big" [src]="userInfo?.img | image" alt="...">
+                            <h5 class="username">{{ userpInfo?.name | firstname | titlecase }} {{ userpInfo?.firstSurname | titlecase }}</h5>
+                        </a>
+                        <p class="user-position mb-0">
+                            {{ userwInfo?.position.name }} <span class="area-user">( {{ userwInfo?.area.name }} )</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col">
+                            <div class="d-flex align-items-center">
+                                <h5 class="header">Información básica</h5>
+                            </div>
+                            <hr class="title-separator">
+                            <div class="container-profile-info">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">NOMBRE</h6>
+                                        <p class="data-info">{{ userpInfo?.name | titlecase }} {{ userpInfo?.firstSurname | titlecase }} {{ userpInfo?.secondSurname | titlecase}}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">FECHA DE NACIMIENTO</h6>
+                                        <p class="data-info">{{ (userpInfo?.birthdate | date:'dd/MM/yy' ) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">LUGAR DE NACIMIENTO</h6>
+                                        <p class="data-info">{{ (userpInfo?.birthplace) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">NACIONALIDAD</h6>
+                                        <p class="data-info">{{ (userpInfo?.nationality | titlecase) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">GÉNERO</h6>
+                                        <p class="data-info">{{ (userpInfo?.gender | titlecase) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">ESTADO CIVIL</h6>
+                                        <p class="data-info">{{ (userpInfo?.marital_status | titlecase) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">NSS</h6>
+                                        <p class="data-info">{{ (userpInfo?.ssn) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">CURP</h6>
+                                        <p class="data-info">{{ (userpInfo?.curp) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">RFC</h6>
+                                        <p class="data-info">{{ (userpInfo?.rfc) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">TELÉFONO</h6>
+                                        <p class="data-info">{{ (userpInfo?.phone_number) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">DOMICILIO</h6>
+                                        <p class="data-info">{{ (userpInfo?.address) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">CONTACTO DE EMERGENCIA</h6>
+                                        <p class="data-info">{{ (userpInfo?.emergency_contact?.name | titlecase) || noData }} - {{ (userpInfo?.emergency_contact?.phone_number) || noData }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="d-flex align-items-center">
+                                <h5 class="header">Información laboral</h5>
+                            </div>
+                            <hr class="title-separator">
+                            <div class="container-profile-info">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">ID NEIXAR</h6>
+                                        <p class="data-info">{{ (userInfo?.id_neixar) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">ID SAF</h6>
+                                        <p class="data-info">{{ (userInfo?.id_saf) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">EMAIL</h6>
+                                        <p class="data-info">{{ (userInfo?.email) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">JEFE INMEDIATO</h6>
+                                        <p class="data-info">{{ (userwInfo?.immediate_boss?.p_information?.name | firstname) || noData }} {{ (userwInfo?.immediate_boss?.p_information?.firstSurname) }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">ESTATUS</h6>
+                                        <p class="data-info">{{ (userwInfo?.status) }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">CENTRO DE COSTO</h6>
+                                        <p class="data-info">{{ (userwInfo?.cost_center) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">FECHA DE INGRESO</h6>
+                                        <p class="data-info">{{ (userwInfo?.admission_date | date:'dd/MM/yy' ) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">TIPO DE CONTRATO</h6>
+                                        <p class="data-info">{{ (userwInfo?.contract_type) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">TERMINACIÓN DE CONTRATO</h6>
+                                        <p class="data-info">{{ (userwInfo?.contract_termination_date | date:'dd/MM/yy' ) || notApplicable }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">ESQUEMA DE CONTRATACIÓN</h6>
+                                        <p class="data-info">{{ (userwInfo?.recruitment_scheme) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">PERIODICIDAD DE NÓMINA</h6>
+                                        <p class="data-info">{{ (userwInfo?.payroll_periodicity) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">RENOVACIÓN DE CONTRATO</h6>
+                                        <p class="data-info">{{ (userwInfo?.contract_renewal) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">ANTIGÜEDAD <small>(DÍAS)</small></h6>
+                                        <p class="data-info">{{ (timeofservice.days) }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">ANTIGÜEDAD <small>(MESES)</small></h6>
+                                        <p class="data-info">{{ (timeofservice.months) }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">ANTIGÜEDAD <small>(AÑOS)</small></h6>
+                                        <p class="data-info">{{ (timeofservice.years) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="userwInfo?.status == 'BAJA'" class="row">
+                        <div class="col">
+                            <div class="d-flex align-items-center">
+                                <h5 class="header">Información de baja</h5>
+                            </div>
+                            <hr class="title-separator">
+                            <div class="container-profile-info">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">FECHA DE BAJA</h6>
+                                        <p class="data-info">{{ (userwInfo?.leaving_date | date:'dd/MM/yy' ) || notApplicable }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">CAUSAL BAJA</h6>
+                                        <p class="data-info">{{ (userwInfo?.leaving_cause) || notApplicable }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">ESPECÍFICO BAJA</h6>
+                                        <p class="data-info">{{ (userwInfo?.leaving_description) || notApplicable }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">TOTAL FINIQUITO</h6>
+                                        <p class="data-info">{{ (userfInfo?.total_settlement | currency:'MXN':'symbol-narrow':'.2-2') || notApplicable }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="d-flex align-items-center">
+                                <h5 class="header">Información financiera</h5>
+                            </div>
+                            <hr class="title-separator">
+                            <div class="container-profile-info">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">IMPORTE DIARIO SAF</h6>
+                                        <p class="data-info">{{ (userfInfo?.daily_salary_saf | currency:'MXN':'symbol-narrow':'.2-2') || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">IMPORTE MENSUAL SAF</h6>
+                                        <p class="data-info">{{ (userfInfo?.monthly_salary_saf | currency:'MXN':'symbol-narrow':'.2-2') || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">IMPORTE SDI SAF</h6>
+                                        <p class="data-info">{{ (userfInfo?.amount_sdi_saf | currency:'MXN':'symbol-narrow':'.2-2') || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">PAGADORA ACTUAL</h6>
+                                        <p class="data-info">{{ (userfInfo?.current_payer) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">NÚMERO DE CRÉDITO INFONAVIT</h6>
+                                        <p class="data-info">{{ (userfInfo?.infonavit_num_credit) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">DESCUENTO INFONAVIT <small>(QUINCENAL)</small></h6>
+                                        <p class="data-info">{{ (userfInfo?.amount_descount_infonavit | currency:'MXN':'symbol-narrow':'.2-2') || notApplicable }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">NÚMERO DE CRÉDITO FONACOT</h6>
+                                        <p class="data-info">{{ (userfInfo?.fonacot_num_credit) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">DESCUENTO FONACOT <small>(QUINCENAL)</small></h6>
+                                        <p class="data-info">{{ (userfInfo?.amount_descount_fonacot | currency:'MXN':'symbol-narrow':'.2-2') || notApplicable }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">BANCO</h6>
+                                        <p class="data-info">{{ (userfInfo?.bank) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">CUENTA BANCARIA</h6>
+                                        <p class="data-info">{{ (userfInfo?.bank_account) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">CLABE INTERBANCARIA</h6>
+                                        <p class="data-info">{{ (userfInfo?.interbank_clabe) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">ÚLTIMO SUELDO BRUTO <small>(MENSUAL)</small></h6>
+                                        <p class="data-info">{{ (userfInfo?.last_gross_salary | currency:'MXN':'symbol-narrow':'.2-2') || noData }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

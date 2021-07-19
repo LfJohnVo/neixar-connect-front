@@ -1,0 +1,180 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Listado de indicadores <small *ngIf="chosenType == 'SGI'">( {{chosenType}} )</small><small *ngIf="chosenType == 'PROCESOS'">( {{chosenProcess}} )</small></h6>
+                <div class="card-body">
+                    <div class="d-flex justify-content-end mb-2">
+                        <div class="form-group m-0 mr-3">
+                            <select class="form-control input-border-bottom m-0" (change)="changeType($event.target.value)">
+                              <option>SGI</option>
+                              <option>PROCESOS</option>
+                            </select>
+                        </div>
+                        <div *ngIf="chosenType == 'PROCESOS' " class="form-group m-0 mr-3">
+                            <select class="form-control input-border-bottom m-0" (change)="changeProcess($event.target.value)">
+                              <option *ngFor="let process of processes">{{ process._id }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group m-0 mr-3">
+                            <select class="form-control input-border-bottom m-0" (change)="changeYear($event.target.value)">
+                                    <option *ngFor="let year of years">{{year._id}}</option> 
+                                </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th *ngIf="chosenType == 'SGI'" scope="col">ESTÁNDAR</th>
+                                    <th scope="col">INDICADOR</th>
+                                    <th scope="col">RESPONSABLE</th>
+                                    <th scope="col">META</th>
+                                    <th scope="col" *ngFor="let sm of shortMonths">{{ sm }}</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let ind of indicators; let i = index">
+                                    <td *ngIf="chosenType == 'SGI'" style="vertical-align:middle">{{ ind.objective.standard}}</td>
+                                    <td style="vertical-align:middle" class="text-justify">{{ ind.indicator }}</td>
+                                    <td style="vertical-align:middle">{{ ind.user.p_information.name }} {{ ind.user.p_information.firstSurname }} {{ ind.user.p_information.secondSurname }}</td>
+                                    <td style="vertical-align:middle" class="text-justify">{{ ind.goal }}</td>
+                                    <td style="vertical-align:middle" *ngFor="let month of ind.evaluation.evaluations">
+                                        <h6 *ngIf="(month.month <= currentMonth && month.progress != null && month.validated && currentMonth > 1 && currentEval) || (month.month <= 12 && month.progress != null && month.validated && currentMonth == 1 && currentEval) || (month.progress != null && month.validated && !currentEval)"><span class="text-white badge" [ngClass]="{'badge-danger': month.color==='red', 'badge-warning': month.color==='yellow', 'badge-success': month.color==='green'}">{{ month.progress }}%</span></h6>
+                                        <span *ngIf="(month.month < currentMonth && month.progress != null && !month.validated && currentMonth > 1 && currentEval) || (month.month <= 12 && month.progress != null && !month.validated && currentMonth == 1 && currentEval) || (month.progress != null && !month.validated && !currentEval)"
+                                            data-toggle="tooltip" data-placement="top" title="Sin Registro">S/R</span>
+                                        <span *ngIf="(month.month < currentMonth && month.progress == null && currentMonth > 1 && currentEval) || (month.month <= 12 && month.progress == null && currentMonth == 1 && currentEval) || (month.progress == null && !currentEval)" data-toggle="tooltip"
+                                            data-placement="top" title="No Aplica">N/A</span>
+                                        <span *ngIf="month.month > currentMonth -1 && currentMonth > 1 && currentEval">-</span>
+                                    </td>
+                                    <td style="vertical-align:middle">
+                                        <a class="text-mexicanPink btn-action" data-toggle="modal" data-target="#DetailsIndicatorModal" (click)="requestEvaluation(ind._id)">
+                                            <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="Ver detalles del indicador"></i>
+                                        </a>
+                                    </td>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Info Indicator -->
+<div class="modal fade" id="DetailsIndicatorModal" tabindex="-1" role="dialog" aria-labelledby="DetailsIndicatorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Detalle de indicador</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div *ngIf="indicator?.type === 'PROCESOS'" class="col-md-3">
+                            <h6 class="label-info text-green">PROCESO</h6>
+                            <p class="data-info text-justify">{{ indicator?.objective.process }}</p>
+                        </div>
+                        <div *ngIf="indicator?.type === 'SGI'" class="col-md-3">
+                            <h6 class="label-info text-green">ESTÁNDAR</h6>
+                            <p class="data-info text-justify">{{ indicator?.objective.standard }}</p>
+                        </div>
+                        <div class="col-md-9">
+                            <h6 class="label-info text-green">OBJETIVO</h6>
+                            <p class="data-info text-justify">{{ indicator?.objective.objective }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="label-info text-green">INDICADOR</h6>
+                            <p class="data-info text-justify">{{ indicator?.indicator }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="label-info text-green">AÑO DE EVALUACIÓN</h6>
+                            <p class="data-info text-justify">{{ indicator?.year }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="label-info text-green">FRECUENCIA</h6>
+                            <p class="data-info">{{ indicator?.frecuency }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="label-info text-green">META</h6>
+                            <p class="data-info">{{ indicator?.goal }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="label-info text-green">FÓRMULA DE CÁLCULO</h6>
+                            <p class="data-info">{{ indicator?.formula }}</p>
+                        </div>
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4 text-center">
+                            <h6 class="label-info text-green">SEMÁFORO VERDE</h6>
+                            <h3><span class="badge badge-success">{{ colors?.green.min }}% - {{colors?.green.max}}%</span></h3>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h6 class="label-info text-green">SEMÁFORO AMARILLO</h6>
+                            <h3><span class="badge badge-warning text-white">{{ colors?.yellow.min }}% - {{colors?.yellow.max}}%</span></h3>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h6 class="label-info text-green">SEMÁFORO ROJO</h6>
+                            <h3><span class="badge badge-danger">{{ colors?.red.min }}% - {{colors?.red.max}}%</span></h3>
+                        </div>
+                        <div class="col-md-12 mt-1">
+                            <h6 class="label-info text-green mt-1">REGISTRO ANUAL DE CUMPLIMIENTO</h6>
+                            <div class="table-responsive ">
+                                <table class="table table-borderless table-striped">
+                                    <thead class="card-thead">
+                                        <tr>
+                                            <th scope="col">MES</th>
+                                            <th scope="col">PROGRESO</th>
+                                            <th scope="col">EVIDENCIA</th>
+                                            <th scope="col">PLAN DE ACCIÓN</th>
+                                            <th scope="col">FECHA COMPROMISO</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let month of evaluation">
+                                            <td>{{ months[month.month - 1] }}</td>
+                                            <td>
+                                                <h6 *ngIf="(month.month <= currentMonth && month.progress != null && month.registered && currentMonth > 1 && currentEval) || (month.month <= 12 && month.progress != null && month.registered && currentMonth == 1 && currentEval) || (month.progress != null && month.registered && !currentEval)"><span class="text-white badge" [ngClass]="{'badge-danger': month.color==='red', 'badge-warning': month.color==='yellow', 'badge-success': month.color==='green'}">{{ month.progress }}%</span></h6>
+                                                <span *ngIf="(month.month < currentMonth && month.progress != null && !month.registered && currentMonth > 1 && currentEval) || (month.month <= 12 && month.progress != null && !month.registered && currentMonth == 1 && currentEval) || (month.progress != null && !month.registered && !currentEval)">Sin Registro</span>
+                                                <span *ngIf="(month.month < currentMonth && month.progress == null && !month.registered && currentMonth > 1 && currentEval) || (month.month <= 12 && month.progress == null && !month.registered && currentMonth == 1 && currentEval) || (month.progress == null && !month.validated && !currentEval)"
+                                                    data-toggle="tooltip" data-placement="top" title="No Aplica">N/A</span>
+                                                <span *ngIf="month.month > currentMonth - 1 && currentMonth > 1 && currentEval">-</span>
+                                            </td>
+                                            <td>
+                                                <span *ngIf="(month.month <= currentMonth && month.progress != null && currentMonth > 1 && currentEval) || (month.month <= 12 && month.progress != null && currentMonth == 1 && currentEval) || (month.progress != null && !currentEval)">{{ month.evidence }}</span>
+                                                <span *ngIf="(month.month < currentMonth && month.progress != null && !month.registered && currentMonth > 1 && currentEval) || (month.month <= 12 && month.progress != null && !month.registered && currentMonth == 1 && currentEval) || (month.progress != null && !month.registered && !currentEval) ">Sin Registro</span>
+                                                <span *ngIf="(month.month < currentMonth && month.progress == null && currentMonth > 1 && currentEval) || (month.month <= 12 && month.progress == null && currentMonth == 1 && currentEval) || (month.progress == null && !currentEval)" data-toggle="tooltip"
+                                                    data-placement="top" title="No Aplica">N/A</span>
+                                                <span *ngIf="month.month > currentMonth - 1 && currentMonth > 1 && currentEval">-</span>
+                                            </td>
+                                            <td>
+                                                <span *ngIf="(month.month <= currentMonth && month.registered && currentMonth > 1 && currentEval) || (month.month <= 12 && month.registered && currentMonth == 1 && currentEval) || (month.registered && !currentEval)">{{ month.action }}</span>
+                                                <span *ngIf="(month.month < currentMonth && month.progress == null && currentMonth > 1 && currentEval) || (month.month <= 12 && month.progress == null && currentMonth == 1 && currentEval) || (month.progress == null && !currentEval)" data-toggle="tooltip"
+                                                    data-placement="top" title="No Aplica">N/A</span>
+                                                <span *ngIf="(month.month < currentMonth && month.progress == 0 && currentMonth > 1 && currentEval) || (month.month <= 12 && month.progress == 0 && currentMonth == 1 && currentEval) || (month.progress == 0 && !currentEval)">Sin Registro</span>
+                                                <span *ngIf="(month.month > currentMonth - 1 && currentMonth > 1 && currentEval ) || month.color==='green'">-</span>
+                                            </td>
+                                            <td>
+                                                <span *ngIf="(month.month <= currentMonth && month.progress != null && currentMonth > 1 && currentEval) || (month.month <= 12 && month.progress != null && currentMonth == 1 && currentEval) || (month.progress != null && !currentEval)">{{ ( month.commitmentDate | date: 'dd/MM/yyyy' ) }}</span>
+                                                <span *ngIf="(month.month < currentMonth && month.progress == null && currentMonth > 1 && currentEval) || (month.month <= 12 && month.progress == null && currentMonth == 1 && currentEval) || (month.progress == null && !currentEval)" data-toggle="tooltip"
+                                                    data-placement="top" title="No Aplica">N/A</span>
+                                                <span *ngIf="(month.month < currentMonth && month.progress == 0 && currentMonth > 1 && currentEval) || (month.month <= 12 && month.progress == 0 && currentMonth == 1 && currentEval) || (month.progress == 0 && !currentEval)">Sin Registro</span>
+                                                <span *ngIf="(month.month > currentMonth - 1 && currentMonth > 1 && currentEval) || month.color==='green'">-</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Info Objectives -->

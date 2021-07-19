@@ -1,0 +1,15 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Vacantes Asignadas</h6>
+                <div class="card-body">
+                    <app-vacancies-list [vacancies]="vacancies" [type]="'recruitment'" [currentPage]="currentPageReq"></app-vacancies-list>
+                    <app-pagination *ngIf="totalPagesReq > 1" (selectedPage)="recruitmentsByRecruiter( $event )" [totalPages]="totalPagesReq" [pages]="pagesReq"></app-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

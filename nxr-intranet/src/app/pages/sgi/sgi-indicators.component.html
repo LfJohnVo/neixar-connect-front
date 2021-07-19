@@ -1,0 +1,514 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Listado de indicadores <small>( {{chosenType}} )</small></h6>
+                <div class="card-body">
+                    <div class="d-flex justify-content-end mb-2">
+                        <div class="form-group m-0 mr-3">
+                            <select class="form-control input-border-bottom m-0" (change)="changeType($event.target.value)">
+                                <option>PROCESOS</option>
+                                <option>SGI</option>
+                            </select>
+                        </div>
+                        <div class="form-group m-0 mr-3">
+                            <select class="form-control input-border-bottom m-0" (change)="changeYear($event.target.value)">
+                                <option *ngFor="let year of years">{{year._id}}</option>
+                            </select>
+                        </div>
+                        <a *ngIf="!isCEO" href="" class="btn btn-dark" data-toggle="modal" data-target="#NewIndicatorModal" (click)="resetForm()"><i class="fas fa-plus-circle"></i> AGREGAR</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">PROCESO</th>
+                                    <th scope="col">INDICADOR</th>
+                                    <th scope="col">RESPONSABLE</th>
+                                    <th scope="col">FRECUENCIA</th>
+                                    <th scope="col">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let ind of indicators; let i = index">
+                                    <td scope="row">{{ i + 1 + ((currentPage-1) * 10) }}</td>
+                                    <td>{{ ind.objective.process || ind.objective.standard}}</td>
+                                    <td>{{ ind.indicator }}</td>
+                                    <td>{{ ind.responsable?.p_information.name }} {{ ind.responsable?.p_information.firstSurname }} {{ ind.responsable?.p_information.secondSurname }}</td>
+                                    <td>{{ ind.frecuency }}</td>
+                                    <td class="d-flex align-items-center">
+                                        <a class="text-mexicanPink btn-action" data-toggle="modal" data-target="#DetailsIndicatorModal" (click)="getIndicator(ind._id)"><i class="fas fa-info-circle"></i></a>
+                                        <a *ngIf="!isCEO" class="text-mexicanPink btn-action" data-toggle="modal" data-target="#EditIndicatorModal" (click)="requestData(ind._id)"><i class="fas fa-edit"></i></a>
+                                        <a class="text-mexicanPink btn-action" [routerLink]="[ind._id, chosenYear]"><i class="far fa-calendar-alt"  data-toggle="tooltip" data-placement="top" title="Ver Registro Anual de Cumplimiento"></i></a>
+                                        <a *ngIf="!isCEO" class="text-mexicanPink btn-action" data-toggle="modal" data-target="#DeleteIndicatorModal" (click)="getIndicator(ind._id)" href=""><i class="fas fa-times"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <app-pagination *ngIf="totalPages > 1" (selectedPage)="getIndicatorsType( $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal New Indicator -->
+<div class="modal fade" id="NewIndicatorModal" tabindex="-1" role="dialog" aria-labelledby="NewIndicatorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Nuevo Indicador</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form [formGroup]="indicatorForm" (ngSubmit)="saveIndicator()" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="typeObjective">TIPO DE OBJETIVO</label>
+                                <div id="typeObjective">
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" formControlName="type" id="typeObjectiveS" value="SGI" (click)="checkObjectivesType('SGI')">
+                                        <label class="custom-control-label" for="typeObjectiveS">SGI</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" formControlName="type" id="typeObjectiveP" value="PROCESOS" (click)="checkObjectivesType('PROCESOS')">
+                                        <label class="custom-control-label" for="typeObjectiveP">Procesos</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="indicatorForm.get('type').value == 'PROCESOS'" class="form-group col-md-6" formGroupName="objective">
+                                <label class="modal-label text-green" for="processInputObjective">PROCESO</label>
+                                <input type="text" class="form-control input-border-bottom" id="processInputObjective" [ngClass]="{ 'is-invalid': !indicatorForm.get('objective.process').valid }" placeholder="Ingresa el nombre del proceso" formControlName="process">
+                                <small *ngIf="indicatorForm.get('objective.process').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="indicatorForm.get('objective.process').errors?.minlength" class="invalid-feedback">Este atributo de tener al menos 7 caracteres.</small>
+                            </div>
+                            <div *ngIf="indicatorForm.get('type').value == 'SGI'" class="form-group col-md-6" formGroupName="objective">
+                                <label class="modal-label text-green" for="standardInputObjective">ESTÁNDAR</label>
+                                <input type="text" class="form-control input-border-bottom" id="standardInputObjective" [ngClass]="{ 'is-invalid': !indicatorForm.get('objective.standard').valid }" placeholder="Ingresa el estándar" formControlName="standard">
+                                <small *ngIf="indicatorForm.get('objective.standard').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="indicatorForm.get('objective.standard').errors?.minlength" class="invalid-feedback">Este atributo de tener al menos 5 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-12" formGroupName="objective">
+                                <label class="modal-label text-green" for="InputObjective">OBJETIVO</label>
+                                <input type="text" class="form-control input-border-bottom" id="InputObjective" [ngClass]="{ 'is-invalid': !indicatorForm.get('objective.objective').valid }" placeholder="Ingresa el nombre del objetivo" formControlName="objective">
+                                <small *ngIf="indicatorForm.get('objective.objective').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="indicatorForm.get('objective.objective').errors?.minlength" class="invalid-feedback">Este atributo de tener al menos 10 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label class="modal-label text-green" for="InputIndicator">INDICADOR</label>
+                                <input type="text" class="form-control input-border-bottom" id="InputIndicator" [ngClass]="{ 'is-invalid': !indicatorForm.controls['indicator'].valid }" placeholder="Ingresa el nombre del indicador" formControlName="indicator">
+                                <small *ngIf="indicatorForm.controls['indicator'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="indicatorForm.controls['indicator'].errors?.minlength" class="invalid-feedback">Este atributo de tener al menos 10 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="InputYear">AÑO DE EVALUACIÓN</label>
+                                <input type="text" maxlength="4" class="form-control input-border-bottom" id="InputYear" [ngClass]="{ 'is-invalid': !indicatorForm.controls['year'].valid }" placeholder="Ingresa el año de evaluación" formControlName="year">
+                                <small *ngIf="indicatorForm.controls['year'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="indicatorForm.controls['year'].errors?.pattern" class="invalid-feedback">No cumple con el formato requerido (aaaa).</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="responsibleSelect">RESPONSABLE</label>
+                                <select class="form-control input-border-bottom" id="responsibleSelect" [ngClass]="{ 'is-invalid': !indicatorForm.controls['responsable'].valid }" formControlName="responsable">
+                                    <option [value]="''" disabled selected> Selecciona un responsable </option>
+                                    <option *ngFor="let employee of employees" [value]="employee._id">{{ employee.p_information.name | titlecase }} {{ employee.p_information.firstSurname | titlecase }} {{ employee.p_information.secondSurname | titlecase }} - {{ employee.w_information.area.name }}</option>
+                                </select>
+                                <small *ngIf="indicatorForm.controls['responsable'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="frecuencySelect">FRECUENCIA</label>
+                                <select class="form-control input-border-bottom" id="bonusRateSelectEmployee" [ngClass]="{ 'is-invalid': !indicatorForm.controls['frecuency'].valid }" formControlName="frecuency">
+                                    <option value="''" disabled selected> Selecciona una opción </option>
+                                    <option value="Mensual">Mensual</option>
+                                    <option value="Bimestral">Bimestral</option>
+                                    <option value="Trimestral">Trimestral</option>
+                                    <option value="Semestral">Semestral</option>
+                                    <option value="Anual">Anual</option>
+                                </select>
+                                <small *ngIf="indicatorForm.controls['frecuency'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="InputFormula">FÓRMULA DE CÁLCULO</label>
+                                <input type="text" class="form-control input-border-bottom" id="InputFormula" [ngClass]="{ 'is-invalid': !indicatorForm.controls['formula'].valid }" placeholder="Ingresa la fórmula de cálculo" formControlName="formula">
+                                <small *ngIf="indicatorForm.controls['formula'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="InputGoal">META</label>
+                                <input type="text" class="form-control input-border-bottom" id="InputGoal" [ngClass]="{ 'is-invalid': !indicatorForm.controls['goal'].valid }" placeholder="Ingresa la meta establecida" formControlName="goal">
+                                <small *ngIf="indicatorForm.controls['goal'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="monthsSelect">MES(ES) DE EVALUACIÓN <small>(presiona ctrl para seleccionar más de uno)</small></label>
+                                <select class="form-control" multiple size="12" id="monthsSelect" [ngClass]="{ 'is-invalid': !indicatorForm.controls['months'].valid }" formControlName="months">
+                                    <option value="1">Enero</option>
+                                    <option value="2">Febrero</option>
+                                    <option value="3">Marzo</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Mayo</option>
+                                    <option value="6">Junio</option>
+                                    <option value="7">Julio</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Septiembre</option>
+                                    <option value="10">Octubre</option>
+                                    <option value="11">Noviembre</option>
+                                    <option value="12">Diciembre</option>
+                                </select>
+                                <small *ngIf="indicatorForm.controls['months'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6" formGroupName="green">
+                                <label class="modal-label text-green" for="greenInput">SEMÁFORO VERDE</label>
+                                <div class="input-group mb-3">
+                                    <input type="number" min="0" class="form-control input-border-bottom mb-3" id="greenInput" [ngClass]="{ 'is-invalid': !indicatorForm.get('green.min').valid }" placeholder="Rango inferior" formControlName="min" aria-label="min" aria-describedby="basic-addon1">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text input-addon" id="basic-addon1">%</span>
+                                    </div>
+                                    <input type="number" min="0" class="form-control input-border-bottom mb-3" [ngClass]="{ 'is-invalid': !indicatorForm.get('green.max').valid }" placeholder="Rango superior" formControlName="max" aria-label="max" aria-describedby="basic-addon2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text input-addon" id="basic-addon1">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6" formGroupName="yellow">
+                                <label class="modal-label text-green" for="yellowInput">SEMÁFORO AMARILLO</label>
+                                <div class="input-group mb-3">
+                                    <input type="number" min="0" class="form-control input-border-bottom mb-3" id="yellowInput" [ngClass]="{ 'is-invalid': !indicatorForm.get('yellow.min').valid }" placeholder="Rango inferior" formControlName="min" aria-label="min" aria-describedby="basic-addon1">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text input-addon" id="basic-addon1">%</span>
+                                    </div>
+                                    <input type="number" min="0" class="form-control input-border-bottom mb-3" [ngClass]="{ 'is-invalid': !indicatorForm.get('yellow.max').valid }" placeholder="Rango superior" formControlName="max" aria-label="max" aria-describedby="basic-addon2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text input-addon" id="basic-addon1">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6" formGroupName="red">
+                                <label class="modal-label text-green" for="redInput">SEMÁFORO ROJO</label>
+                                <div class="input-group mb-3">
+                                    <input type="number" min="0" class="form-control input-border-bottom mb-3" id="redInput" [ngClass]="{ 'is-invalid': !indicatorForm.get('red.min').valid }" placeholder="Rango inferior" formControlName="min" aria-label="min" aria-describedby="basic-addon1">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text input-addon" id="basic-addon1">%</span>
+                                    </div>
+                                    <input type="number" min="0" class="form-control input-border-bottom mb-3" [ngClass]="{ 'is-invalid': !indicatorForm.get('red.max').valid }" placeholder="Rango superior" formControlName="max" aria-label="max" aria-describedby="basic-addon2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text input-addon" id="basic-addon1">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink " *ngIf="errorMessage ">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between ">
+                            <button type="button " class="btn btn-secondary " data-dismiss="modal ">Cancelar</button>
+                            <button type="submit " class="btn btn-green ">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal New Indicator -->
+
+<!-- Modal Info Indicator -->
+<div class="modal fade" id="DetailsIndicatorModal" tabindex="-1" role="dialog" aria-labelledby="DetailsIndicatorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Detalle de indicador</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="label-info text-green">TIPO DE INDICADOR</label>
+                            <h3><span class="badge badge-blue">{{ indicator?.type }}</span></h3>
+                        </div>
+                        <div class="col-md-9">
+                            <h6 class="label-info text-green">OBJETIVO</h6>
+                            <p class="data-info text-justify">{{ indicator?.objective.objective }}</p>
+                        </div>
+                        <div *ngIf="indicator?.type === 'PROCESOS'" class="col-md-4">
+                            <h6 class="label-info text-green">PROCESO</h6>
+                            <p class="data-info text-justify">{{ indicator?.objective.process }}</p>
+                        </div>
+                        <div *ngIf="indicator?.type === 'SGI'" class="col-md-4">
+                            <h6 class="label-info text-green">ESTÁNDAR</h6>
+                            <p class="data-info text-justify">{{ indicator?.objective.standard }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="label-info text-green">AÑO DE EVALUACIÓN</h6>
+                            <p class="data-info text-justify">{{ indicator?.year }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="label-info text-green">RESPONSABLE</h6>
+                            <p class="data-info">{{ indicator?.responsable.p_information.name | titlecase }} {{ indicator?.responsable.p_information.firstSurname | titlecase }} {{ indicator?.responsable.p_information.secondSurname | titlecase}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="label-info text-green">FRECUENCIA</h6>
+                            <p class="data-info">{{ indicator?.frecuency }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="label-info text-green">META</h6>
+                            <p class="data-info">{{ indicator?.goal }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="label-info text-green">FÓRMULA DE CÁLCULO</h6>
+                            <p class="data-info">{{ indicator?.formula }}</p>
+                        </div>
+                        <div class="col-md-12 text-center" *ngIf="indicator?.months.length > 0">
+                            <h6 class="label-info text-green">MES(ES) DE EVALUACIÓN</h6>
+                            <span class="data-info">{{ indicator?.months }}</span>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <label class="modal-label text-green">SEMÁFORO VERDE</label>
+                            <h3><span class="badge badge-success">{{ colors?.green.min }}% - {{colors?.green.max}}%</span></h3>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <label class="modal-label text-green">SEMÁFORO AMARILLO</label>
+                            <h3><span class="badge badge-warning text-white">{{ colors?.yellow.min }}% - {{colors?.yellow.max}}%</span></h3>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <label class="modal-label text-green">SEMÁFORO ROJO</label>
+                            <h3><span class="badge badge-danger">{{ colors?.red.min }}% - {{colors?.red.max}}%</span></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Info Objectives -->
+
+<!-- Modal Edit Indicator -->
+<div class="modal fade" id="EditIndicatorModal" tabindex="-1" role="dialog" aria-labelledby="EditIndicatorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Editar indicador</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form [formGroup]="indicatorForm" (ngSubmit)="editIndicator()" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="typeObjective">TIPO DE OBJETIVO</label>
+                                <div id="typeObjective">
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" formControlName="type" id="typeObjectiveS" value="SGI" (click)="checkObjectivesType('SGI')">
+                                        <label class="custom-control-label" for="typeObjectiveS">SGI</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" formControlName="type" id="typeObjectiveP" value="PROCESOS" (click)="checkObjectivesType('PROCESOS')">
+                                        <label class="custom-control-label" for="typeObjectiveP">Procesos</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="indicatorForm.get('type').value == 'PROCESOS'" class="form-group col-md-6" formGroupName="objective">
+                                <label class="modal-label text-green" for="processInputObjective">PROCESO</label>
+                                <input type="text" class="form-control input-border-bottom" id="processInputObjective" [ngClass]="{ 'is-invalid': !indicatorForm.get('objective.process').valid }" placeholder="Ingresa el nombre del proceso" formControlName="process">
+                                <small *ngIf="indicatorForm.get('objective.process').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="indicatorForm.get('objective.process').errors?.minlength" class="invalid-feedback">Este atributo de tener al menos 7 caracteres.</small>
+                            </div>
+                            <div *ngIf="indicatorForm.get('type').value == 'SGI'" class="form-group col-md-6" formGroupName="objective">
+                                <label class="modal-label text-green" for="standardInputObjective">ESTÁNDAR</label>
+                                <input type="text" class="form-control input-border-bottom" id="standardInputObjective" [ngClass]="{ 'is-invalid': !indicatorForm.get('objective.standard').valid }" placeholder="Ingresa el estándar" formControlName="standard">
+                                <small *ngIf="indicatorForm.get('objective.standard').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="indicatorForm.get('objective.standard').errors?.minlength" class="invalid-feedback">Este atributo de tener al menos 5 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-12" formGroupName="objective">
+                                <label class="modal-label text-green" for="InputObjective">OBJETIVO</label>
+                                <input type="text" class="form-control input-border-bottom" id="InputObjective" [ngClass]="{ 'is-invalid': !indicatorForm.get('objective.objective').valid }" placeholder="Ingresa el nombre del área" formControlName="objective">
+                                <small *ngIf="indicatorForm.get('objective.objective').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="indicatorForm.get('objective.objective').errors?.minlength" class="invalid-feedback">Este atributo de tener al menos 10 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label class="modal-label text-green" for="InputIndicator">INDICADOR</label>
+                                <input type="text" class="form-control input-border-bottom" id="InputIndicator" [ngClass]="{ 'is-invalid': !indicatorForm.controls['indicator'].valid }" placeholder="Ingresa el nombre del área" formControlName="indicator">
+                                <small *ngIf="indicatorForm.controls['indicator'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="indicatorForm.controls['indicator'].errors?.minlength" class="invalid-feedback">Este atributo de tener al menos 10 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="InputYear">AÑO DE EVALUACIÓN</label>
+                                <input type="text" maxlength="4" class="form-control input-border-bottom" id="InputYear" [ngClass]="{ 'is-invalid': !indicatorForm.controls['year'].valid }" placeholder="Ingresa el año de evaluación" formControlName="year">
+                                <small *ngIf="indicatorForm.controls['year'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="indicatorForm.controls['year'].errors?.pattern" class="invalid-feedback">No cumple con el formato requerido (aaaa).</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="responsibleSelect">RESPONSABLE</label>
+                                <select class="form-control input-border-bottom" id="responsibleSelect" [ngClass]="{ 'is-invalid': !indicatorForm.controls['responsable'].valid }" formControlName="responsable">
+                                            <option [value]="''" disabled selected> Selecciona un responsable </option>
+                                            <option *ngFor="let employee of employees" [value]="employee._id">{{ employee.p_information.name | titlecase }} {{ employee.p_information.firstSurname | titlecase }} {{ employee.p_information.secondSurname | titlecase }} - {{ employee.w_information.area.name }}</option>
+                                        </select>
+                                <small *ngIf="indicatorForm.controls['responsable'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="frecuencySelect">FRECUENCIA</label>
+                                <select class="form-control input-border-bottom" id="bonusRateSelectEmployee" [ngClass]="{ 'is-invalid': !indicatorForm.controls['frecuency'].valid }" formControlName="frecuency">
+                                                    <option value="''" disabled selected> Selecciona una opción </option>
+                                                    <option value="Mensual">Mensual</option>
+                                                    <option value="Bimestral">Bimestral</option>
+                                                    <option value="Trimestral">Trimestral</option>
+                                                    <option value="Semestral">Semestral</option>
+                                                    <option value="Anual">Anual</option>
+                                                </select>
+                                <small *ngIf="indicatorForm.controls['frecuency'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="InputFormula">FÓRMULA DE CÁLCULO</label>
+                                <input type="text" class="form-control input-border-bottom" id="InputFormula" [ngClass]="{ 'is-invalid': !indicatorForm.controls['formula'].valid }" placeholder="Ingresa la fórmula de cálculo" formControlName="formula">
+                                <small *ngIf="indicatorForm.controls['formula'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="InputGoal">META</label>
+                                <input type="text" class="form-control input-border-bottom" id="InputGoal" [ngClass]="{ 'is-invalid': !indicatorForm.controls['goal'].valid }" placeholder="Ingresa la meta establecida" formControlName="goal">
+                                <small *ngIf="indicatorForm.controls['goal'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="monthsSelect">MES(ES) DE EVALUACIÓN <small>(presiona ctrl para seleccionar más de uno)</small></label>
+                                <select class="form-control" multiple size="12" id="monthsSelect" [ngClass]="{ 'is-invalid': !indicatorForm.controls['months'].valid }" formControlName="months">
+                                    <option value="1">Enero</option>
+                                    <option value="2">Febrero</option>
+                                    <option value="3">Marzo</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Mayo</option>
+                                    <option value="6">Junio</option>
+                                    <option value="7">Julio</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Septiembre</option>
+                                    <option value="10">Octubre</option>
+                                    <option value="11">Noviembre</option>
+                                    <option value="12">Diciembre</option>
+                                </select>
+                                <small *ngIf="indicatorForm.controls['months'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6" formGroupName="green">
+                                <label class="modal-label text-green" for="greenInput">SEMÁFORO VERDE</label>
+                                <div class="input-group mb-3">
+                                    <input type="number" min="0" class="form-control input-border-bottom mb-3" id="greenInput" [ngClass]="{ 'is-invalid': !indicatorForm.get('green.min').valid }" placeholder="Rango inferior" formControlName="min" aria-label="min" aria-describedby="basic-addon1">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text input-addon" id="basic-addon1">%</span>
+                                    </div>
+                                    <input type="number" min="0" class="form-control input-border-bottom mb-3" [ngClass]="{ 'is-invalid': !indicatorForm.get('green.max').valid }" placeholder="Rango superior" formControlName="max" aria-label="max" aria-describedby="basic-addon2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text input-addon" id="basic-addon1">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6" formGroupName="yellow">
+                                <label class="modal-label text-green" for="yellowInput">SEMÁFORO AMARILLO</label>
+                                <div class="input-group mb-3">
+                                    <input type="number" min="0" class="form-control input-border-bottom mb-3" id="yellowInput" [ngClass]="{ 'is-invalid': !indicatorForm.get('yellow.min').valid }" placeholder="Rango inferior" formControlName="min" aria-label="min" aria-describedby="basic-addon1">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text input-addon" id="basic-addon1">%</span>
+                                    </div>
+                                    <input type="number" min="0" class="form-control input-border-bottom mb-3" [ngClass]="{ 'is-invalid': !indicatorForm.get('yellow.max').valid }" placeholder="Rango superior" formControlName="max" aria-label="max" aria-describedby="basic-addon2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text input-addon" id="basic-addon1">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6" formGroupName="red">
+                                <label class="modal-label text-green" for="redInput">SEMÁFORO ROJO</label>
+                                <div class="input-group mb-3">
+                                    <input type="number" min="0" class="form-control input-border-bottom mb-3" id="redInput" [ngClass]="{ 'is-invalid': !indicatorForm.get('red.min').valid }" placeholder="Rango inferior" formControlName="min" aria-label="min" aria-describedby="basic-addon1">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text input-addon" id="basic-addon1">%</span>
+                                    </div>
+                                    <input type="number" min="0" class="form-control input-border-bottom mb-3" [ngClass]="{ 'is-invalid': !indicatorForm.get('red.max').valid }" placeholder="Rango superior" formControlName="max" aria-label="max" aria-describedby="basic-addon2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text input-addon" id="basic-addon1">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink " *ngIf="errorMessage ">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between ">
+                            <button type="button " class="btn btn-secondary " data-dismiss="modal ">Cancelar</button>
+                            <button type="submit " class="btn btn-green ">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Edit Objectives -->
+
+<!-- Modal Delete User -->
+<div class="modal fade" id="DeleteIndicatorModal" tabindex="-1" role="dialog" aria-labelledby="DeleteIndicatorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-danger">
+                <h6 class="modal-title"><i class="fas fa-exclamation-triangle"></i> Confirmación</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-msg">¿Está seguro que desea eliminar el indicador <strong>"{{ indicator?.indicator }}"</strong>.</p>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-link btn-delete" (click)="confirmDeletion( indicator._id )">Confirmar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Delete User -->
+
+<!-- Modal Calendar -->
+<div class="modal fade" id="CalendarIndicatorModal" tabindex="-1" role="dialog" aria-labelledby="CalendarIndicatorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Calendario de evaluaciones</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th scope="col">MES</th>
+                                    <th scope="col">PROGRESO</th>
+                                    <th scope="col">EVIDENCIA</th>
+                                    <th scope="col">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let month of evaluation">
+                                    <td>{{ months[month.month - 1] }}</td>
+                                    <td>{{ month.progress }}%</td>
+                                    <td>{{ month.evidence || 'Sin Registro' }}</td>
+                                    <td class="d-flex align-items-center">
+                                        <span *ngIf="month.validated" class="badge badge-date badge-pill">Validado</span>
+                                        <span *ngIf="!month.validated" class="badge badge-blue badge-pill">Por validar</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Calendar -->

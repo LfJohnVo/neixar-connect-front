@@ -1,0 +1,58 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Candidatos <small>(Nuevos y en proceso)</small></h6>
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-end mb-2">
+                        <a class="btn btn-dark" data-toggle="modal" data-target="#NewCandidateModal" (click)="newCandidate()"><i class="fas fa-plus-circle"></i> Nuevo Candidato</a>
+                    </div>
+                    <app-candidates-list [candidates]="candidates" [currentPage]="currentPage" (getCandidate)="getCandidate( $event )"></app-candidates-list>
+                    <app-pagination *ngIf="totalPages > 1" (selectedPage)="getCandidates( $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal New Employee -->
+<div class="modal fade" id="NewCandidateModal" tabindex="-1" role="dialog" aria-labelledby="NewCandidateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Nuevo Candidato</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <app-candidate-form #newCandidateForm (dataForm)="saveCandidate( $event )"></app-candidate-form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal New Employee -->
+
+<!-- Modal Edit Candidate -->
+<div class="modal fade" id="editCandidateModal" tabindex="-1" role="dialog" aria-labelledby="editCandidateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Editar Candidato</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <app-candidate-form #editCandidateForm (dataForm)="editCandidate( $event )"></app-candidate-form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Edit Candidate -->

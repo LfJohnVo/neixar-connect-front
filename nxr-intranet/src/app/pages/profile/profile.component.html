@@ -1,0 +1,177 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card nxr_card">
+                <h6 class="card-header">Resumen</h6>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <a>
+                                <img class="avatar avatar-big mx-auto d-block" [src]="userInfo?.img | image" alt="...">
+                            </a>
+                        </div>
+                        <div class="col-md-3 text-center align-self-center">
+                            <h5 class="username mb-0">{{ userpInfo?.name | titlecase }} {{ userpInfo?.firstSurname | titlecase }} {{ userpInfo?.secondSurname | titlecase }}</h5>
+                            <p class="user-position mb-0">{{ userwInfo?.position.name }}</p>
+                            <p class="area-user">{{ userInfo?.email }}</p>
+                            <p class="user-position">Ingresaste el {{ userwInfo?.admission_date | date:'dd/MM/yy' }}</p>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <h6 class="label-info text-center">DEPARTAMENTO</h6>
+                                    <h5 class="d-flex justify-content-center"><span class="badge badge-green">{{ userwInfo?.area.name }}</span></h5>
+                                </div>
+                                <div class="col">
+                                    <h6 class="label-info text-center">NXR ID</h6>
+                                    <h5 class="d-flex justify-content-center"><span class="badge badge-green">{{ userInfo?.id_saf }}</span></h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="button-container d-flex justify-content-center">
+                                        <button *ngIf="_employeeService.timeofservice.years > 0" class="btn btn-time" disabled>
+                                            <h5>{{ _employeeService.timeofservice.years }}</h5>
+                                            <p *ngIf="_employeeService.timeofservice.years > 1" class="text-time">AÑOS</p>
+                                            <p *ngIf="_employeeService.timeofservice.years == 1" class="text-time">AÑO</p>
+                                        </button>
+                                        <button *ngIf="_employeeService.timeofservice.months > 0" class="btn btn-time" disabled>
+                                            <h5>{{ _employeeService.timeofservice.months }}</h5>
+                                            <p *ngIf="_employeeService.timeofservice.months > 1" class="text-time">MESES</p>
+                                            <p *ngIf="_employeeService.timeofservice.months == 1" class="text-time">MES</p>
+                                        </button>
+                                        <button *ngIf="_employeeService.timeofservice.days > 0" class="btn btn-time" disabled>
+                                            <h5>{{ _employeeService.timeofservice.days }}</h5>
+                                            <p *ngIf="_employeeService.timeofservice.days > 1" class="text-time">DÍAS</p>
+                                            <p *ngIf="_employeeService.timeofservice.days == 1" class="text-time">DÍA</p>
+                                        </button>
+                                    </div>
+                                    <hr>
+                                    <div class="button-container mr-auto ml-auto">
+                                        <h3 *ngIf="_employeeService.timeofservice.years > 0 || _employeeService.timeofservice.months > 0 ||  _employeeService.timeofservice.days > 0" class="text-mexicanPink text-center">¡PERTENECIENDO A LA FAMILIA NEIXAR!</h3>
+                                        <h3 *ngIf="_employeeService.timeofservice.years == 0 &&  _employeeService.timeofservice.months == 0 &&  _employeeService.timeofservice.days == 0" class="text-mexicanPink text-center">¡A PARTIR DE HOY TE UNES A LA FAMILIA NEIXAR!</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br><br>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="boton-linea-ext">
+                                <span class="linea1"></span>
+                                <span class="linea2"></span>
+                                <span class="linea3"></span>
+                                <span class="linea4"></span>
+                                <a [routerLink]="['datos']">Mis Datos</a>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="boton-linea-ext">
+                                <span class="linea1"></span>
+                                <span class="linea2"></span>
+                                <span class="linea3"></span>
+                                <span class="linea4"></span>
+                                <a [routerLink]="['cv']">Curriculum</a>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="boton-linea-ext">
+                                <span class="linea1"></span>
+                                <span class="linea2"></span>
+                                <span class="linea3"></span>
+                                <span class="linea4"></span>
+                                <a data-toggle="modal" data-target="#passModal">Cambiar contraseña</a>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="boton-linea-ext">
+                                <span class="linea1"></span>
+                                <span class="linea2"></span>
+                                <span class="linea3"></span>
+                                <span class="linea4"></span>
+                                <a [routerLink]="['evaluaciones']">Evaluaciones</a>
+                            </div>
+                        </div>
+                        <div *ngIf="hasIndicators" class="col-md-4">
+                            <div class="boton-linea-ext">
+                                <span class="linea1"></span>
+                                <span class="linea2"></span>
+                                <span class="linea3"></span>
+                                <span class="linea4"></span>
+                                <a [routerLink]="['indicadores']">Indicadores</a>
+                            </div>
+                        </div>
+
+                        <div *ngIf="searchCVPermission" class="col-md-4">
+                            <div class="boton-linea-ext">
+                                <span class="linea1"></span>
+                                <span class="linea2"></span>
+                                <span class="linea3"></span>
+                                <span class="linea4"></span>
+                                <a [routerLink]="['buscar-cv']">Buscar Curriculum</a>
+                            </div>
+                        </div>
+                        
+                        <!-- <div *ngIf="isLeader" class="col-md-4"> // NECESARIO PARA MÓDULO RECLUTAMIENTO
+                            <div class="boton-linea-ext">
+                                <span class="linea1"></span>
+                                <span class="linea2"></span>
+                                <span class="linea3"></span>
+                                <span class="linea4"></span>
+                                <a [routerLink]="['contrataciones']">Contrataciones</a>
+                            </div>
+                        </div> -->
+                        <!-- <div class="col-md-4"> // NECESARIO PARA MÓDULO RECLUTAMIENTO
+                            <div class="boton-linea-ext">
+                                <span class="linea1"></span>
+                                <span class="linea2"></span>
+                                <span class="linea3"></span>
+                                <span class="linea4"></span>
+                                <a [routerLink]="['entrevistas']">Entrevistas</a>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Password -->
+<div class="modal fade" id="passModal" tabindex="-1" role="dialog" aria-labelledby="passModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Cambio de contraseña</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form [formGroup]="editPass" (ngSubmit)="savePassword()" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label class="modal-label text-green" for="nameInputDepartment">NUEVA CONTRASEÑA</label>
+                                <input type="text" class="form-control input-border-bottom" id="nameInputDepartment" [ngClass]="{ 'is-invalid': !editPass.controls['pass'].valid }" placeholder="Ingresa tu nueva contraseña" formControlName="pass">
+                                <small *ngIf="editPass.controls['pass'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="editPass.controls['pass'].errors?.minlength" class="invalid-feedback">La contraseña de tener al menos 8 caracteres.</small>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-green">Guardar Contraseña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Password -->

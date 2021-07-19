@@ -1,0 +1,20 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <a class="navbar-brand col-6 col-md-2" [routerLink]="['/inicio']">
+        <img src="./assets/img/navbar.png" class="img-fluid">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+            <li *ngFor="let menu of _header.menu" routerLinkActive="active" data-toggle="collapse" data-target="#navbarSupportedContent">
+                <a class="nav-link" [routerLink]="[ menu.url ]">{{ menu.title }}</a>
+            </li>
+            <form class="form-inline my-2 my-lg-0">
+                <a class="btn btn-outline-success my-2 my-sm-0 pointer" (click)="_employeeService.logout()">Cerrar Sesión</a>
+            </form>
+
+        </ul>
+    </div>
+</nav>

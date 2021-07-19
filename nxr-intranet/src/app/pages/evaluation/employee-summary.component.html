@@ -1,0 +1,154 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card nxr_card">
+                <h6 class="card-header">Evaluación de Desempeño</h6>
+                <div class="card-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12" *ngIf="_employeeService.pa === 'false'">
+                                <div class="card nxr_card">
+                                    <div class="card-body">
+                                        <div class="container-fluid">
+                                            <h5 class="text-mexicanPink text-center">Te recordamos que para llevar a cabo el registro de avance de tus objetivos <strong>primero debes aceptar las políticas de evaluación</strong>.</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card nxr_card">
+                                    <h6 class="card-header">Panel de control</h6>
+                                    <div class="card-body">
+                                        <div class="container">
+                                            <div class="row row-panel">
+                                                <div class="col-md-12 btn-col">
+                                                    <button [routerLink]="['objetivos']" class="btn btn-dark btn-block">Mis Objetivos SMART</button>
+                                                </div>
+                                                <div class="col-md-12 btn-col">
+                                                    <button [routerLink]="['desempeño']" class="btn btn-dark btn-block">Registrar Avance</button>
+                                                </div>
+                                                <div *ngIf="isBoss" class="col-md-12 btn-col">
+                                                    <button [routerLink]="['equipo']" class="btn btn-dark btn-block">Evaluar Equipo</button>
+                                                </div>
+                                                <div class="col-md-12 btn-col">
+                                                    <!-- <button class="btn btn-dark btn-block" >Políticas de evaluación</button> -->
+                                                    <a class="btn btn-dark btn-block" data-toggle="modal" data-target="#policyModal" href="">Políticas de evaluación</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="card nxr_card">
+                                    <h6 class="card-header">Avance Actual</h6>
+                                    <div class="card-body">
+                                        <div class="container-fluid">
+                                            <div id="chart"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card nxr_card">
+                                    <div class="card-header">
+                                        <h6 class="m-0">Detalles</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h6 class="label-info text-center">JEFE DIRECTO</h6>
+                                                <h4 class="d-flex justify-content-center"><span class="badge badge-green">{{ (boss?.p_information?.name | firstname | titlecase) || 'Sin Asignar' }} {{ (boss?.p_information?.firstSurname | titlecase) || '' }}</span></h4>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <h6 class="label-info text-center">EVALUACIÓN ACTUAL</h6>
+                                                <h4 class="d-flex justify-content-center"><span class="badge badge-green">{{ period }}</span></h4>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <h6 class="label-info text-center">PRÓXIMAS FECHAS DE EVALUACIÓN</h6>
+                                                <h4 class="d-flex justify-content-center"><span class="badge badge-green">{{ nextEval }}</span></h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Evaluation Policies -->
+<div class="modal fade" id="policyModal" tabindex="-1" role="dialog" aria-labelledby="policyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Políticas para Evaluación de Desempeño</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <h5 class="label-info text-center">Acepta las políticas y comienza tu evaluación.</h5>
+                    <h5 class="text-green">Objetivo de la Evaluación de Desempeño</h5>
+                    <ul class="p-0 mb-0" style="font-size: 1.1rem;">
+                        <li class="text-justify pb-2">Identificar a los Colaboradores de alto desempeño para planear su desarrollo y crecimiento dentro de la Organización.</li>
+                    </ul>
+                    <h5 class="text-green">Alcance</h5>
+                    <ul class="p-0 mb-0" style="font-size: 1.1rem;">
+                        <li class="text-justify pb-2">Aplica para todo el personal que labora en Neixar tanto en oficinas centrales como en las instalaciones de los diferentes servicios que se ofrecen a los clientes.</li>
+                    </ul>
+                    <h5 class="text-green">Definición de Objetivos</h5>
+                    <ul class="p-0 mb-0" style="font-size: 1.1rem;">
+                        <li class="text-justify pb-0">Es responsabilidad de los líderes de las áreas coordinar y asegurar que se registren a inicio de año los objetivos anuales SMART en la plataforma de todos sus colaboradores a cargo.</li>
+                        <li class="text-justify pb-2">La carga de objetivos en la Intranet del año vigente se debe realizar en las 2 últimas semanas del mes de enero.</li>
+                    </ul>
+                    <h5 class="text-green">Evaluación de Desempeño</h5>
+                    <ul class="p-0 mb-0" style="font-size: 1.1rem;">
+                        <li class="text-justify pb-0 mb-0">La evaluación de desempeño es anual, dividida en dos periodos:</li>
+                        <ul>
+                            <li class="text-justify pb-0"><strong>Primer semestre:</strong> Las dos últimas semanas del mes de Julio. Presentar avances de objetivos.</li>
+                            <li class="text-justify pb-0"><strong>Segundo semestre:</strong> Las dos primeras semanas del mes de enero del año siguiente. Presentar el cierre de cumplimiento de objetivos.</li>
+                        </ul>
+                        <li class="text-justify pb-0 mb-0">La Evaluación de Desempeño debe acordarse Face To Face con el colaborador para evitar inconformidades con los resultados y tener a la mano las evidencias que sustenten su avance o cumplimiento. </li>
+                        <li class="text-justify pb-0 mb-0">El registro de los avances de objetivos por parte del colaborador y validación por parte del jefe inmediato debe realizarse de forma profesional, objetiva, honesta y confiable.</li>
+                        <li class="text-justify pb-0 mb-0">Los colaboradores que ingresaron hasta el 15 de enero del año, serán sujetos a la Evaluación de Desempeño completa del primer y segundo semestre.</li>
+                        <li class="text-justify pb-0 mb-0">Los colaboradores que hayan cumplido al menos 3 meses de antigüedad serán sujetos a Evaluación de Desempeño del semestre aplicable conforme al tiempo de permanencia.</li>
+                        <li class="text-justify pb-2 mb-0">Posterior a estos periodos, la plataforma se bloqueará y ya no podrán registrarse avances, quedando fuera del proceso de evaluaciones y responsabilizandose de la penalización correspondiente.</li>
+                    </ul>
+                    <h5 class="text-green">Semáforo de Cumplimiento de Objetivos</h5>
+                    <dl class="p-0 mb-0" style="font-size: 1.1rem;">
+                        <dd class="text-justify pb-0">
+                            <h4 class="d-inline"><span class="badge badge-danger">NO CUMPLIDO</span></h4> (Avance entre 1 y 60%) - SIN BONO
+                        </dd>
+                        <dd class="text-justify pb-0">
+                            <h4 class="d-inline"><span class="text-white badge badge-warning">EN PROCESO</span></h4> (Avance entre 61 y 80% ) - 50% DE BONO
+                        </dd>
+                        <dd class="text-justify pb-0">
+                            <h4 class="d-inline"><span class="badge badge-date">AVANCE SIGNIFICATIVO</span></h4> (Avance entre 81 y 95%) - 80% DE BONO, equivalente a 24 días para personal con 1 año de antigüedad.
+                        </dd>
+                        <dd class="text-justify pb-0">
+                            <h4 class="d-inline"><span class="badge badge-success">CUMPLIDO</span></h4> (Avance entre 96 y 100%) - 100% DE BONO, equivalente a 30 días con 1 año de antigüedad y 12 días con 6 meses de antigüedad.
+                        </dd>
+                        <dd class="text-justify pb-0">
+                            <h4 class="d-inline"><span class="badge badge-secondary">CUMPLIDO Y EXCEDIDO</span></h4> (Avance entre 120 y 150%) - 150% DE BONO, equivalente a 45 días con un año de antigüedad y 24 días con 6 meses de antigüedad.
+                        </dd>
+                        <dd class="text-justify pb-2">
+                            <h4 class="d-inline"><span class="badge badge-secondary">CUMPLIDO Y EXCEDIDO</span></h4> (Avance entre 170 y 200%) - 200% DE BONO, equivalente a 60 días con un año de antigüedad y 30 días con 6 meses de antigüedad.
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div *ngIf="!pa" class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-green" (click)="policyAcceptance()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Evaluation Policies -->

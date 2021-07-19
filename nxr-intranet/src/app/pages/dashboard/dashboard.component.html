@@ -1,0 +1,173 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card nxr_card">
+                <div class="card-userheader small-userheader"></div>
+                <div class="card-body pb-0">
+                    <div class="user">
+                        <a>
+                            <img class="avatar" [src]="userInfo?.img | image" [alt]="userInfo?.p_information.name | firstname | titlecase">
+                            <h5 class="username">{{ user?.p_information.name | firstname | titlecase }} {{ user?.p_information.firstSurname | titlecase }}</h5>
+                        </a>
+                        <p class="user-position">
+                            {{ user?.w_information.position.name }}
+                        </p>
+                    </div>
+                </div>
+                <hr>
+                <div class="button-container d-flex justify-content-center">
+                    <button *ngIf="_employeeService.timeofservice.years > 0" class="btn btn-time" disabled>
+                        <h5>{{ _employeeService.timeofservice.years }}</h5>
+                        <p *ngIf="_employeeService.timeofservice.years > 1" class="text-time">AÑOS</p>
+                        <p *ngIf="_employeeService.timeofservice.years == 1" class="text-time">AÑO</p>
+                    </button>
+                    <button *ngIf="_employeeService.timeofservice.months > 0" class="btn btn-time" disabled>
+                        <h5>{{ _employeeService.timeofservice.months }}</h5>
+                        <p *ngIf="_employeeService.timeofservice.months > 1" class="text-time">MESES</p>
+                        <p *ngIf="_employeeService.timeofservice.months == 1" class="text-time">MES</p>
+                    </button>
+                    <button *ngIf="_employeeService.timeofservice.days > 0" class="btn btn-time" disabled>
+                        <h5>{{ _employeeService.timeofservice.days }}</h5>
+                        <p *ngIf="_employeeService.timeofservice.days > 1" class="text-time">DÍAS</p>
+                        <p *ngIf="_employeeService.timeofservice.days == 1" class="text-time">DÍA</p>
+                    </button>
+                </div>
+            </div>
+            <div class="card nxr_card">
+                <h6 class="card-header">Nuestras Redes</h6>
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row justify-content-md-center">
+                            <h5 class="text-mexicanPink">¡Síguenos y comparte!</h5>
+                        </div>
+                        <div class="row justify-content-md-center">
+                            <a class="social-icon m-auto" target="_blank" href="https://www.linkedin.com/company/neixar"><i class="fab fa-linkedin"></i></a>
+                            <a class="social-icon m-auto" target="_blank" href="https://www.facebook.com/NeixarIt"><i class="fab fa-facebook-square"></i></a>
+                            <a class="social-icon m-auto" target="_blank" href="https://twitter.com/NeixarIt"><i class="fab fa-twitter-square"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div *ngIf="!pc" class="card nxr_card">
+                <h6 class="card-header">Cambio de Contraseña</h6>
+                <div class="card-body">
+                    <div class="row justify-content-md-center">
+                        <h5 class="text-mexicanPink text-center">Para poder registrar el avance de tus objetivos debes cambiar tu contraseña.</h5>
+                    </div>
+                    <div class="row justify-content-md-center">
+                        <div class="col-md-6">
+                            <button data-toggle="modal" data-target="#passModal" class="btn btn-dark btn-block">Cambiar contraseña</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card nxr_card">
+                <h5 class="card-header">Evaluación Semestral de Desempeño 2019</h5>
+                <div class="card-body">
+                    <div class="container">
+                        <div>
+                            <!-- <h5 class="text-mexicanPink text-center">Registra el avance conseguido hasta el momento de tus objetivos <strong>SMART</strong>.</h5>
+                            <h5 class="text-mexicanPink text-center">Recuerda que podrás hacerlo hasta el <strong>31 de julio</strong>.</h5> -->
+                            <!-- <h5 class="text-mexicanPink text-center">Se acerca la evaluacion de tus <strong>objetivos SMART</strong> correspondiente al primer semestre del año.</h5>
+                            <h5 class="text-mexicanPink text-center"><strong>¡PRÓXIMAMENTE recibirás indicaciones!</strong></h5> -->
+                            <!-- <h5 class="text-mexicanPink text-center" style="font-weight: 400;">Inició la primera evaluación de desempeño 2019.</h5>
+                            <h5 class="text-mexicanPink text-center" style="font-weight: 400;">Debes registrar el avance de tus objetivos y evidencias que lo sustentan <strong>a partir del 8 hasta el 19 de julio</strong></h5> -->
+                            <h5 class="text-mexicanPink text-center" style="font-weight: 400;"><strong>¡Felicidades! Equipo Neixar</strong></h5>
+                            <h5 class="text-mexicanPink text-center" style="font-weight: 400;">Cerramos en 99% de participación, con un avance global de nuestros Objetivos Smart del 45.90%</h5>
+                            <h5 class="text-mexicanPink text-center" style="font-weight: 400;">Te invitamos a seguir esforzándote para lograr el 100% </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="card nxr_card">
+                <h6 class="card-header">Objetivos SMART 2019</h6>
+                <div class="card-body">
+                    <div class="container">
+                        <div>
+                            <h5 class="text-mexicanPink text-center">Registra tus <strong>objetivos SMART</strong> para el año 2019.</h5>
+                            <h5 class="text-mexicanPink text-center">La opción para registrar objetivos sigue activa hasta nuevo aviso.</h5>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+
+            <div class="card nxr_card">
+                <h6 class="card-header">Cumpleaños <small>({{ month }})</small></h6>
+                <div class="card-body container-birthday">
+                    <div class="row">
+                        <div class="alert alert-pink mb-0 col-md-12" role="alert" *ngIf="birthdays?.length == 0">
+                            No hay cumpleañeros este mes.
+                        </div>
+                        <div *ngFor="let item of birthdays" class="col-6 col-md-3">
+                            <div style="text-align: center;">
+                                <a><img class="avatar avatar-mini" [src]="item?.img | image" [alt]="item?.p_information.name | firstname | titlecase"></a>
+                                <h6 class="mb-0">{{ item?.p_information.name | firstname }} {{ item?.p_information.firstSurname }}</h6>
+                                <h6><span class="badge badge-date badge-pill">{{ month | titlecase }} {{ item.day }}</span></h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card nxr_card">
+                <h6 class="card-header">Aniversarios <small>({{ month }})</small></h6>
+                <div class="card-body container-birthday">
+                    <div class="row">
+                        <div class="alert alert-pink mb-0 col-md-12" role="alert" *ngIf="anniversaries?.length == 0">
+                            No hay aniversarios este mes.
+                        </div>
+                        <div *ngFor="let item of anniversaries" class="col-6 col-md-3">
+                            <div style="text-align: center;">
+                                <a><img class="avatar avatar-mini" [src]="item?.img | image" [alt]="item?.p_information.name | firstname | titlecase"></a>
+                                <h6 class="mb-0">{{ item?.p_information.name | firstname }} {{ item?.p_information.firstSurname }}</h6>
+                                <h6><span class="badge badge-date badge-pill">{{ item.years}}</span></h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal Password -->
+<div class="modal fade" id="passModal" tabindex="-1" role="dialog" aria-labelledby="passModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Cambio de contraseña</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form [formGroup]="editPass" (ngSubmit)="savePassword()" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label class="modal-label text-green" for="nameInputDepartment">NUEVA CONTRASEÑA</label>
+                                <input type="text" class="form-control input-border-bottom" id="nameInputDepartment" [ngClass]="{ 'is-invalid': !editPass.controls['pass'].valid }" placeholder="Ingresa tu nueva contraseña" formControlName="pass">
+                                <small *ngIf="editPass.controls['pass'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="editPass.controls['pass'].errors?.minlength" class="invalid-feedback">La contraseña de tener al menos 8 caracteres.</small>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-green">Guardar Contraseña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Password -->

@@ -1,0 +1,186 @@
+<div class="row">
+    <div class="col-md-12">
+        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="pills-performanceEval-tab" data-toggle="pill" href="#pills-performanceEval" role="tab" aria-controls="pills-performanceEval" aria-selected="true">Evaluación de Desempeño</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-humanresources-tab" data-toggle="pill" href="#pills-humanresources" role="tab" aria-controls="pills-humanresources" aria-selected="false">Capital Humano</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-performanceEval" role="tabpanel" aria-labelledby="pills-performanceEval-tab">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form [formGroup]="performanceEvalForm" (ngSubmit)="saveConfig('performanceEvaluation')" novalidate="novalidate">
+                            <div class="row" formGroupName="performanceEvaluation">
+                                <div class="col-md-6">
+                                    <h6 class="label-info" for="firstPEstartDateInput">Fecha Inicio <small>(1er. Semestre)</small></h6>
+                                    <input type="text" class="form-control input-border-bottom mb-3" id="firstPEstartDateInput" [ngClass]="{ 'is-invalid': !performanceEvalForm.get('performanceEvaluation.firstPEstartDate').valid }" placeholder="dd/mm hh:mm:ss" formControlName="firstPEstartDate">
+                                    <small *ngIf="performanceEvalForm.get('performanceEvaluation.firstPEstartDate').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="label-info" for="firstPEendDateInput">Fecha Fin <small>(1er. Semestre)</small></h6>
+                                    <input type="text" class="form-control input-border-bottom mb-3" id="firstPEendDateInput" [ngClass]="{ 'is-invalid': !performanceEvalForm.get('performanceEvaluation.firstPEendDate').valid }" placeholder="dd/mm hh:mm:ss" formControlName="firstPEendDate">
+                                    <small *ngIf="performanceEvalForm.get('performanceEvaluation.firstPEendDate').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="label-info" for="secondPEstartDateInput">Fecha Inicio <small>(2do. Semestre)</small></h6>
+                                    <input type="text" class="form-control input-border-bottom mb-3" id="secondPEstartDateInput" [ngClass]="{ 'is-invalid': !performanceEvalForm.get('performanceEvaluation.secondPEstartDate').valid }" placeholder="dd/mm hh:mm:ss" formControlName="secondPEstartDate">
+                                    <small *ngIf="performanceEvalForm.get('performanceEvaluation.secondPEstartDate').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="label-info" for="secondPEendDateInput">Fecha Fin <small>(2do. Semestre)</small></h6>
+                                    <input type="text" class="form-control input-border-bottom mb-3" id="secondPEendDateInput" [ngClass]="{ 'is-invalid': !performanceEvalForm.get('performanceEvaluation.secondPEendDate').valid }" placeholder="dd/mm hh:mm:ss" formControlName="secondPEendDate">
+                                    <small *ngIf="performanceEvalForm.get('performanceEvaluation.secondPEendDate').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="label-info" for="shortSecondPEstartDateInput">Fecha Corta Inicio <small>(2do. Semestre)</small></h6>
+                                    <input type="text" class="form-control input-border-bottom mb-3" id="shortSecondPEstartDateInput" [ngClass]="{ 'is-invalid': !performanceEvalForm.get('performanceEvaluation.shortSecondPEstartDate').valid }" placeholder="dd/mm hh:mm:ss" formControlName="shortSecondPEstartDate">
+                                    <small *ngIf="performanceEvalForm.get('performanceEvaluation.shortSecondPEstartDate').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="label-info" for="shortSecondPEendDateInput">Fecha Corta Fin <small>(2do. Semestre)</small></h6>
+                                    <input type="text" class="form-control input-border-bottom mb-3" id="shortSecondPEendDateInput" [ngClass]="{ 'is-invalid': !performanceEvalForm.get('performanceEvaluation.shortSecondPEendDate').valid }" placeholder="dd/mm hh:mm:ss" formControlName="shortSecondPEendDate">
+                                    <small *ngIf="performanceEvalForm.get('performanceEvaluation.shortSecondPEendDate').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="label-info" for="ROstartDateInput">Fecha Inicio <small>(Registro Objetivos)</small></h6>
+                                    <input type="text" class="form-control input-border-bottom mb-3" id="ROstartDateInput" [ngClass]="{ 'is-invalid': !performanceEvalForm.get('performanceEvaluation.ROstartDate').valid }" placeholder="dd/mm hh:mm:ss" formControlName="ROstartDate">
+                                    <small *ngIf="performanceEvalForm.get('performanceEvaluation.ROstartDate').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="label-info" for="ROendDateInput">Fecha Fin <small>(Registro Objetivos)</small></h6>
+                                    <input type="text" class="form-control input-border-bottom mb-3" id="ROendDateInput" [ngClass]="{ 'is-invalid': !performanceEvalForm.get('performanceEvaluation.ROendDate').valid }" placeholder="dd/mm hh:mm:ss" formControlName="ROendDate">
+                                    <small *ngIf="performanceEvalForm.get('performanceEvaluation.ROendDate').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                </div>
+                            </div>
+                            <div class="modal-footer d-flex justify-content-end">
+                                <button type="submit" class="btn btn-green">Guardar Cambios</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="pills-humanresources" role="tabpanel" aria-labelledby="pills-humanresources-tab">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form [formGroup]="jdValidationForm" (ngSubmit)="saveConfig('jobDescription')" novalidate="novalidate">
+                            <div class="row" formGroupName="jobDescription">
+                                <div class="col m-0 p-0">
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="header">Descripción de puesto</h5>
+                                    </div>
+                                    <hr class="title-separator">
+                                    <div class="container-profile-info">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h6 class="label-info" for="rhValidationInput">Validador</h6>
+                                                <select class="form-control input-border-bottom mb-3" id="rhValidationInput" [ngClass]="{ 'is-invalid': !jdValidationForm.get('jobDescription.rhValidation').valid }" formControlName="rhValidation">
+                                                                    <option [value]="''" disabled selected> Selecciona un colaborador</option>
+                                                                    <option *ngFor="let employee of employees" [value]="employee._id">{{ employee.p_information.name | firstname | titlecase }} {{ employee.p_information.firstSurname | titlecase }} ( {{ employee.w_information.area.name  }} )</option>
+                                                                </select>
+                                                <small *ngIf="jdValidationForm.get('jobDescription.rhValidation').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" formGroupName="requisition">
+                                <div class="col m-0 p-0">
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="header">Requisición de personal</h5>
+                                    </div>
+                                    <hr class="title-separator">
+                                    <div class="container-profile-info">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h6 class="label-info" for="rhValidationInput">Validador Capital Humano</h6>
+                                                <select class="form-control input-border-bottom mb-3" id="rhValidationInput" [ngClass]="{ 'is-invalid': !jdValidationForm.get('requisition.rhValidation').valid }" formControlName="rhValidation">
+                                                            <option [value]="''" disabled selected> Selecciona un colaborador</option>
+                                                            <option *ngFor="let employee of employees" [value]="employee._id">{{ employee.p_information.name | firstname | titlecase }} {{ employee.p_information.firstSurname | titlecase }} ( {{ employee.w_information.area.name }} )</option>
+                                                        </select>
+                                                <small *ngIf="jdValidationForm.get('requisition.rhValidation').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h6 class="label-info" for="doValidationInput">Validador Operaciones</h6>
+                                                <select class="form-control input-border-bottom mb-3" id="doValidationInput" [ngClass]="{ 'is-invalid': !jdValidationForm.get('requisition.doValidation').valid }" formControlName="doValidation">
+                                                            <option [value]="''" disabled selected> Selecciona un colaborador</option>
+                                                            <option *ngFor="let employee of employees" [value]="employee._id">{{ employee.p_information.name | firstname | titlecase }} {{ employee.p_information.firstSurname | titlecase }} ( {{ employee.w_information.area.name }} )</option>
+                                                        </select>
+                                                <small *ngIf="jdValidationForm.get('requisition.doValidation').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h6 class="label-info" for="dfValidationInput">Validador Admon y Finanzas</h6>
+                                                <select class="form-control input-border-bottom mb-3" id="dfValidationInput" [ngClass]="{ 'is-invalid': !jdValidationForm.get('requisition.dfValidation').valid }" formControlName="dfValidation">
+                                                            <option [value]="''" disabled selected> Selecciona un colaborador</option>
+                                                            <option *ngFor="let employee of employees" [value]="employee._id">{{ employee.p_information.name | firstname | titlecase }} {{ employee.p_information.firstSurname | titlecase }} ( {{ employee.w_information.area.name }} )</option>
+                                                        </select>
+                                                <small *ngIf="jdValidationForm.get('requisition.dfValidation').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col p-0">
+                                                <div class="d-flex justify-content-between align-items-center ml-0 pl-0 col-4">
+                                                    <h5 class="header mr-2">Asignadores</h5>
+                                                    <button type="button" class="btn btn-dark" (click)="addAllocator()"><i class="fas fa-plus-circle"></i></button>
+                                                </div>
+                                                <hr class="title-separator">
+                                                <div class="container-profile-info">
+                                                    <div class="row" formArrayName="allocators">
+                                                        <div class="col-md-6" *ngFor="let allocator of jdValidationForm.get('requisition.allocators')['controls']; let allocatorIndex = index" [formGroupName]="allocatorIndex">
+                                                            <div class="d-flex justify-content-start align-items-center">
+                                                                <h6 class="label-info m-0" for="selectAllocator">Asignador {{ allocatorIndex + 1 }}</h6>
+                                                                <button class="text-green btn-action btn-link" [disabled]="jdValidationForm.get('requisition.allocators').controls.length === 1" (click)="deleteAllocator( allocatorIndex )">
+                                                                                     <i class="fas fa-times"></i>
+                                                                        </button>
+                                                            </div>
+                                                            <select class="form-control input-border-bottom mb-3" id="selectAllocator" [ngClass]="{ 'is-invalid': !allocator.get('allocatorId').valid }" formControlName="allocatorId">
+                                                                        <option [value]="''" selected disabled> Selecciona una opción </option>
+                                                                        <option *ngFor="let employee of employees" [value]="employee._id">{{ employee.p_information.name | firstname | titlecase }} {{ employee.p_information.firstSurname | titlecase }} ( {{ employee.w_information.area.name }} )</option>
+                                                                    </select>
+                                                            <small *ngIf="allocator.get('allocatorId').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col p-0">
+                                                <div class="d-flex justify-content-between align-items-center ml-0 pl-0 col-4">
+                                                    <h5 class="header mr-2">Reclutadores</h5>
+                                                    <button type="button" class="btn btn-dark" (click)="addRecruiter()"><i class="fas fa-plus-circle"></i></button>
+                                                </div>
+                                                <hr class="title-separator">
+                                                <div class="container-profile-info">
+                                                    <div class="row" formArrayName="recruiters">
+                                                        <div class="col-md-6" *ngFor="let recruiter of jdValidationForm.get('requisition.recruiters')['controls']; let recruiterIndex = index" [formGroupName]="recruiterIndex">
+                                                            <div class="d-flex justify-content-start align-items-center">
+                                                                <h6 class="label-info m-0" for="selectRecruiter">Reclutador {{ recruiterIndex + 1 }}</h6>
+                                                                <button class="text-green btn-action btn-link" [disabled]="jdValidationForm.get('requisition.recruiters').controls.length === 1" (click)="deleteRecruiter( recruiterIndex )">
+                                                                    <i class="fas fa-times"></i>
+                                                                </button>
+                                                            </div>
+                                                            <select class="form-control input-border-bottom mb-3" id="selectRecruiter" [ngClass]="{ 'is-invalid': !recruiter.get('recruiterId').valid }" formControlName="recruiterId">
+                                                                            <option [value]="''" selected disabled> Selecciona una opción </option>
+                                                                            <option *ngFor="let employee of employees" [value]="employee._id">{{ employee.p_information.name | firstname | titlecase }} {{ employee.p_information.firstSurname | titlecase }} ( {{ employee.w_information.area.name }} )</option>
+                                                                        </select>
+                                                            <small *ngIf="recruiter.get('recruiterId').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer d-flex justify-content-end">
+                                <button type="submit" class="btn btn-green">Guardar Cambios</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

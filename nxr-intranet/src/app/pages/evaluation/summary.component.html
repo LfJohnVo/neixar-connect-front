@@ -1,0 +1,130 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card nxr_card">
+                <h6 class="card-header">Panel de control</h6>
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row row-panel">
+                            <div class="col-md-12 btn-col">
+                                <button [routerLink]="['/capital-humano', 'plantilla', 'evaluacion']" class="btn btn-dark btn-block">Objetivos</button>
+                            </div>
+                            <div class="col-md-12 btn-col">
+                                <button [routerLink]="['competencias']" class="btn btn-dark btn-block">Competencias</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card nxr_card">
+                <h6 class="card-header">Histórico <small>(No. Evaluados)</small></h6>
+                <div class="card-body">
+                    <div class="container">
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-striped">
+                                <thead class="card-thead">
+                                    <tr>
+                                        <th scope="col">AÑO</th>
+                                        <th scope="col">PERIODO</th>
+                                        <th scope="col">EVALUADOS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let eval of evalHist">
+                                        <td>{{ eval._id.year }}</td>
+                                        <td>Semestre {{ eval._id.period }}</td>
+                                        <td>{{ eval.count }} colaboradores</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <app-pagination *ngIf="totalPages2 > 1" (selectedPage)="getEvalHistory( $event )" [totalPages]="totalPages2" [pages]="pages2"></app-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card nxr_card">
+                <div class="card-header d-flex justify-content-between">
+                    <h6 class="m-0">Evaluación <small>({{yearSelected}}-{{periodSelected}})</small></h6>
+                    <div class="form-group m-0">
+                        <select class="form-control header-select" (change)="fillChart($event.target.value)">
+                            <option *ngFor="let eval of evalHist2">{{eval._id.year}}-{{eval._id.period}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <app-doughnut-chart [data]="doughnutChartData" [labels]="doughnutChartLabels"></app-doughnut-chart>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Colaboradores Evaluados <small>({{yearSelected}}-{{periodSelected}})</small></h6>
+                <div class="card-body">
+                    <div class="d-flex justify-content-end mb-2">
+                        <button *ngIf="periodSelected==2" type="button" class="btn btn-dark" (click)="getEvals(yearSelected, periodSelected)"><i class="fas fa-file-excel"></i> EXPORTAR A EXCEL</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th scope="col">ID SAF</th>
+                                    <th scope="col">COLABORADOR</th>
+                                    <th scope="col">TOTAL</th>
+                                    <th scope="col">FECHA DE EVALUACIÓN</th>
+                                    <th *ngIf="periodSelected == 2" scope="col">BONO</th>
+                                    <th *ngIf="periodSelected == 2" scope="col">SEMÁFORO DE CUMPLIMIENTO</th>
+                                    <!-- <th scope="col">POLÍTICAS</th>
+                                    <th scope="col">CONTRASEÑA</th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let eval of evaluations">
+                                    <td>{{ eval.user.id_saf }}</td>
+                                    <td>{{ eval.user.p_information.name }} {{ eval.user.p_information.firstSurname }} {{ eval.user.p_information.secondSurname }}</td>
+                                    <td>{{ eval.total }}%</td>
+                                    <td>{{ eval.date | date:'dd/MM/yyyy' }}</td>
+                                    <td *ngIf="periodSelected == 2">{{ eval.amount | currency:'MXN':'symbol-narrow':'.2-2' }}</td>
+                                    <td *ngIf="periodSelected == 2" class="d-flex justify-content-center">
+                                        <h6><span class="text-white badge" [ngClass]="{'badge-danger': eval.color==='red', 'badge-warning': eval.color==='yellow', 'badge-success': eval.color==='green', 'badge-date': eval.color === 'lgreen', 'badge-light': eval.color ==='white'}">{{ eval.trafficLight }}</span></h6>
+                                    </td>
+                                    <!-- <td *ngIf="!eval.user.policiesAccepted" [ngStyle]="{'color':!eval.user.policiesAccepted ? 'red' : '#afc43f' }"><i class="far fa-times-circle"></i></td>
+                                    <td *ngIf="eval.user.policiesAccepted" [ngStyle]="{'color':!eval.user.policiesAccepted ? 'red' : '#afc43f' }"><i class="far fa-check-circle"></i></td>
+                                    <td *ngIf="!eval.user.passChanged" [ngStyle]="{'color':!eval.user.passChanged ? 'red' : '#afc43f' }"><i class="far fa-times-circle"></i></td>
+                                    <td *ngIf="eval.user.passChanged" [ngStyle]="{'color':!eval.user.passChanged ? 'red' : '#afc43f' }"><i class="far fa-check-circle"></i></td> -->
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <app-pagination *ngIf="totalPages > 1" (selectedPage)="getEvals( yearSelected, periodSelected, $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Evaluation Config -->
+<div class="modal fade" id="EvalConfigModal" tabindex="-1" role="dialog" aria-labelledby="NewPositionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Configurar periodo de evaluación</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Evaluation Config -->

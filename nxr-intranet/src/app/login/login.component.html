@@ -1,0 +1,81 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container login-container">
+    <div class="row justify-content-md-center">
+        <div class="jumbotron inner-container col-md-6">
+            <img class="logo-login" src="./assets/img/login.png" alt="Neixar" width="100%">
+            <hr class="white-line">
+
+            <form [formGroup]="loginForm" (ngSubmit)="login()" novalidate="novalidate">
+                <div class="form-group">
+                    <div class="wrap-inputinfo col-md-8">
+                        <input class="form-control inputinfo" type="text" id="user" name="user" formControlName="user" placeholder="Usuario">
+                        <span class="symbol-inputinfo">
+                            <i class="fas fa-user" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <small *ngIf="loginForm.controls['user'].errors?.required" class="input-login-error col-md-8">* Este atributo es obligatorio.</small>
+                    <small *ngIf="loginForm.controls['user'].errors?.pattern" class="input-login-error col-md-8">Ej. nombre@neixar.com o nombre@neixar.com.mx</small>
+                    <div class="wrap-inputinfo col-md-8">
+                        <input class="form-control inputinfo" type="password" id="pass" name="pass" formControlName="pass" placeholder="Contraseña">
+                        <span class="symbol-inputinfo">
+                            <i class="fas fa-lock" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <small *ngIf="loginForm.controls['pass'].errors?.required" class="input-login-error col-md-8">* Este atributo es obligatorio.</small>
+                </div>
+                <div class="text-center text-green" *ngIf="errorMessage">
+                    <span>{{ errorMessage }}</span>
+                </div>
+                <div class="wrap-inputinfo col-md-8">
+                    <button class="btn btn-dark btn-block btn-login" type="submit">Iniciar Sesión</button>
+                </div>
+                <div class="wrap-inputinfo col-md-8 text-center mt-2">
+                    <a data-toggle="modal" data-target="#resetPassModal" href='' (click)="getResetForm()">¿Olvidaste tu contraseña?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Reset Password -->
+<div class="modal fade" id="resetPassModal" tabindex="-1" role="dialog" aria-labelledby="resetPassModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Restablecer Contraseña</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div *ngIf="!emailSent" class="modal-body">
+                <p class="modal-msg text-justify">Ingresa tu dirección de correo electrónico o tu número de empleado y te enviaremos las instrucciones para restablecer tu contraseña.</p>
+                <div class="container-fluid">
+                    <form [formGroup]="resetPassForm" (ngSubmit)="requestReset()" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label class="modal-label text-green" for="emailReset">Correo electrónico o NXR ID</label>
+                                <input type="text" class="form-control input-border-bottom" id="emailReset" [ngClass]="{ 'is-invalid': !resetPassForm.controls['email'].valid }" placeholder="nombre@neixar.com o NXR0000" formControlName="email">
+                                <small *ngIf="resetPassForm.controls['email'].errors?.required" class="invalid-feedback">* Este atributo es obligatorio.</small>
+                                <small *ngIf="resetPassForm.controls['email'].errors?.pattern" class="invalid-feedback">Ej. nombre@neixar.com o nombre@neixar.com.mx o NXR0000</small>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorReset">
+                            <span>{{ errorReset }}</span>
+                        </div>
+                        <div class="wrap-inputinfo col-md-8">
+                            <button class="btn btn-dark btn-block btn-login" type="submit">Restablecer mi contraseña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div *ngIf="emailSent" class="modal-body">
+                <p class="modal-msg text-justify">Te hemos enviado las instrucciones a tu dirección de correo electrónico. Deberás recibirlas en breve.</p>
+                <div class="wrap-inputinfo col-md-8">
+                    <button class="btn btn-dark btn-block btn-login" data-dismiss="modal" type="button">Entendido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Reset Password -->

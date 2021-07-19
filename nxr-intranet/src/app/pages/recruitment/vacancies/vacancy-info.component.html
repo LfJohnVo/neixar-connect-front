@@ -1,0 +1,398 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row justify-content-md-center">
+        <div class="col-md-12 col-lg-10">
+            <app-requisition-details 
+                [requisitionShown]="requisitionShown"
+                (evaluation)="saveComments($event)"
+                (rejectCandidate)="rejectCandidate($event)"
+                (approveCandidate)="approveCandidate($event)"
+                (closeVacancyAction)="closeVacancy($event)"
+                (earlyCloseVacancyAction)="earlyCloseVacancy($event)">
+            </app-requisition-details>
+        </div>
+    </div>
+    <div *ngIf="isRecruiter" class="row justify-content-md-center">
+        <div class="col-md-12 col-lg-10">
+            <div class="card nxr_card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="m-0">Descripción de Puesto <small>{{ jobDescription?.version }}</small></h6>
+                    <a *ngIf="(role === 'petitioner' && jobDescription?.status === 'En revisión') || (role === 'petitioner' && jobDescription?.status === 'Rechazada')" class=" btn btn-edit-profile m-0" [routerLink]="['editar']">
+                        <i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar DP"></i>
+                    </a>
+                    <a *ngIf="role === 'hr' && jobDescription?.status === 'En revisión' && toValidate" class=" btn btn-edit-profile m-0 pl-2 pr-2" href="" data-toggle="modal" data-target="#validateJDModal">
+                        <i class="far fa-check-circle" data-toggle="tooltip" data-placement="top" title="Aprobar/Rechazar DP"></i>
+                    </a>
+                    <a *ngIf="role === 'hr' && jobDescription?.status === 'Vigente'" class=" btn btn-danger m-0 pl-2 pr-2" href="" data-toggle="modal" data-target="#deleteJDModal">
+                        <i class="fas fa-times-circle" data-toggle="tooltip" data-placement="top" title="Dar de Baja DP"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col text-center align-self-center">
+                            <h5 class="username"><strong>{{ position?.name }}</strong></h5>
+                            <p *ngIf="position?.type" class="user-position mb-0">Puesto {{ position?.type }}</p>
+                            <p *ngIf="!position?.type" class="user-position mb-0">Tipo de puesto no asignado</p>
+                            <p class="area-user mb-0">{{ position?.career_key }}</p>
+                            <p class="user-position mb-0">{{ position?.specialty || 'Especialidad no registrada' }}</p>
+                        </div>
+                        <div class="col align-self-center">
+                            <div class="row">
+                                <div class="col">
+                                    <p class="label-info text-center">DEPARTAMENTO</p>
+                                    <h5 class="d-flex justify-content-center"><span class="badge badge-green">{{ position?.department.name }}</span></h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <p class="label-info">CLAVE DE PUESTO</p>
+                                    <p class="data-info">{{ position?.job_key || 'Clave no registrada' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="jobDescription" class="col align-self-center">
+                            <div class="row">
+                                <div class="col">
+                                    <p class="label-info text-center">ESTADO</p>
+                                    <h5 class="d-flex justify-content-center">
+                                        <span *ngIf="jobDescription?.validatedRH && jobDescription?.status === 'Vigente'" class="badge badge-green">Vigente</span>
+                                        <span *ngIf="!jobDescription?.validatedRH && jobDescription?.status === 'Rechazada'" class="badge badge-danger">Rechazada</span>
+                                        <span *ngIf="jobDescription?.status === 'No vigente'" class="badge badge-danger">No Vigente</span>
+                                        <span *ngIf="!jobDescription?.validatedRH && jobDescription?.status === 'En revisión'" class="badge badge-secondary">En revisión</span>
+                                    </h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                        <p *ngIf="jobDescription?.validator && jobDescription?.status === 'Vigente'" class="data-info text-center mb-0">Aprobada por <small><strong>{{ jobDescription?.validator }}</strong></small></p>
+                                        <p *ngIf="jobDescription?.validationDate && jobDescription?.status === 'Vigente'" class="data-info text-center mb-0"> el<small><strong>{{ jobDescription?.validationDate | date: 'dd/MM/yyyy' }}</strong></small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="!jobDescription" class="alert alert-pink mt-4" role="alert">
+                        No existen descripciones para este puesto, por favor registra una descripción.
+                    </div>
+                    <div *ngIf="jobDescription" class="row">
+                        <div class="col-md-12">
+                            <br>
+                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="pills-details-tab" data-toggle="pill" href="#pills-details" role="tab" aria-controls="pills-details" aria-selected="true">Versión</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="pills-id-tab" data-toggle="pill" href="#pills-id" role="tab" aria-controls="pills-id" aria-selected="false">Identificación del Puesto</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="pills-objective-tab" data-toggle="pill" href="#pills-objective" role="tab" aria-controls="pills-objective" aria-selected="false">Razón de ser del Puesto</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="pills-functions-tab" data-toggle="pill" href="#pills-functions" role="tab" aria-controls="pills-functions" aria-selected="false">Descripción de Funciones</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Perfil del Puesto</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="pills-tabContent">
+                                <div class="tab-pane fade show active" id="pills-details" role="tabpanel" aria-labelledby="pills-details-tab">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="container-profile-info">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <p class="label-info">VERSIÓN</p>
+                                                        <p class="data-info">{{ jobDescription?.version }}</p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <p class="label-info">ELABORÓ</p>
+                                                        <p class="data-info">{{ jobDescription?.elaboratedBy.p_information.name }} {{ jobDescription?.elaboratedBy.p_information.firstSurname }} {{ jobDescription?.elaboratedBy.p_information.secondSurname }}</p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <p class="label-info">FECHA DE ELABORACIÓN</p>
+                                                        <p class="data-info">{{ jobDescription?.elaborationDate | date: 'dd/MM/y' }}</p>
+                                                    </div>
+                                                    <div *ngIf="jobDescription?.rejectionComments" class="col-md-12">
+                                                        <p class="label-info">MOTIVOS DE RECHAZO</p>
+                                                        <p class="data-info">{{ jobDescription?.rejectionComments }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="pills-id" role="tabpanel" aria-labelledby="pills-id-tab">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="container-profile-info">
+                                                <div class="row">
+                                                    <div *ngIf="jobDescription?.immediate_boss" class="col-md-6">
+                                                        <p class="label-info">JEFE DIRECTO</p>
+                                                        <p class="data-info p-2">{{ jobDescription?.immediate_boss.name }}</p>
+                                                    </div>
+                                                    <div *ngIf="jobDescription?.subordinates.length > 0" class="col-md-6">
+                                                        <p class="label-info">SUBORDINADOS DIRECTO</p>
+                                                        <div class="table-responsive">
+                                                            <table class="table table-borderless  table-striped">
+                                                                <tbody>
+                                                                    <tr *ngFor="let sub of jobDescription?.subordinates">
+                                                                        <td>{{ sub.position.name }}</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="pills-objective" role="tabpanel" aria-labelledby="pills-objective-tab">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="container-profile-info">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <p class="label-info">MISIÓN DEL PUESTO</p>
+                                                        <p class="data-info text-justify">{{ jobDescription?.mission }}</p>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <p class="label-info">RESPONSABILIDADES CLAVE</p>
+                                                        <div class="table-responsive pt-2">
+                                                            <table class="table table-borderless table-striped">
+                                                                <thead class="card-thead">
+                                                                    <tr>
+                                                                        <th scope="col">#</th>
+                                                                        <th scope="col">RESPONSABILIDAD</th>
+                                                                        <th scope="col">% PONDERACIÓN</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr *ngFor="let res of jobDescription?.responsabilities; let i = index;">
+                                                                        <td scope="row">{{ i + 1 }}</td>
+                                                                        <td class="text-justify">{{ res.responsability }}</td>
+                                                                        <td>{{ res.weighing }} %</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td></td>
+                                                                        <td class="text-right"><strong>TOTAL</strong></td>
+                                                                        <td><strong>100%</strong></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="pills-functions" role="tabpanel" aria-labelledby="pills-functions-tab">
+                                    <div class="table-responsive">
+                                        <table *ngFor="let res of jobDescription?.responsabilities; let i = index;" class="table table-borderless table-striped th-noRounded">
+                                            <thead class="card-thead">
+                                                <tr>
+                                                    <th colspan="2">Responsabilidad Clave {{ i + 1 }}:</th>
+                                                    <th colspan="3">{{ res.responsability }}</th>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">FUNCIÓN</th>
+                                                    <th scope="col">AUTORIDAD</th>
+                                                    <th scope="col">RED DE INTERACCIÓN</th>
+                                                    <th scope="col">KPI</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td scope="row">1</td>
+                                                    <td class="text-justify">{{ res.functionsDescription[0].function }}</td>
+                                                    <td class="text-justify">{{ res.functionsDescription[0].authority }}</td>
+                                                    <td class="text-justify">{{ res.functionsDescription[0].interaction }}</td>
+                                                    <td [attr.rowspan]="res.functionsDescription.length" class="text-justify">{{ res.kpi }}</td>
+                                                </tr>
+                                                <ng-container *ngFor="let function of res.functionsDescription; let i = index;">
+                                                    <tr *ngIf=" i != 0 ">
+                                                        <td>{{ i + 1 }}</td>
+                                                        <td class="text-justify">{{ function.function }}</td>
+                                                        <td class="text-justify">{{ function.authority }}</td>
+                                                        <td class="text-justify">{{ function.interaction }}</td>
+                                                    </tr>
+                                                </ng-container>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="d-flex align-items-center">
+                                                <h5 class="header">Nivel de Estudios</h5>
+                                            </div>
+                                            <hr class="title-separator">
+                                            <div class="container-profile-info">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <p class="label-info">DESEABLE</p>
+                                                        <p class="data-info">{{ jobDescription?.desirableEducation }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="label-info">MÍNIMA REQUERIDA</p>
+                                                        <p class="data-info">{{ jobDescription?.minimumEducation }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="label-info">INGLÉS DESEABLE</p>
+                                                        <p class="data-info">{{ jobDescription?.desirableEnglish }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="label-info">INGLÉS MÍNIMO</p>
+                                                        <p class="data-info">{{ jobDescription?.minimumEnglish }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="d-flex align-items-center">
+                                                <h5 class="header">Experiencia</h5>
+                                            </div>
+                                            <hr class="title-separator">
+                                            <div class="container-profile-info">
+                                                <div class="table-responsive">
+                                                    <table class="table table-borderless table-striped">
+                                                        <thead class="card-thead">
+                                                            <tr>
+                                                                <th scope="col">Mínima requerida</th>
+                                                                <th scope="col">Tiempo</th>
+                                                                <th scope="col">Deseable</th>
+                                                                <th scope="col">Tiempo</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr *ngFor="let exp of jobDescription?.experience">
+                                                                <td>{{ exp.minimumRequire }}</td>
+                                                                <td>{{ exp.timeRequire }}</td>
+                                                                <td>{{ exp.desirable }}</td>
+                                                                <td>{{ exp.timeDesirable }}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-md-center">
+                                        <div class="col-md-12">
+                                            <div class="d-flex align-items-center">
+                                                <h5 class="header">Herramientas y Software</h5>
+                                            </div>
+                                            <hr class="title-separator">
+                                            <div class="table-responsive">
+                                                <table class="table table-borderless table-striped">
+                                                    <thead class="card-thead">
+                                                        <tr>
+                                                            <th scope="col">Mínimo requerido</th>
+                                                            <th scope="col">Nivel de Conocimiento</th>
+                                                            <th scope="col">Deseable</th>
+                                                            <th scope="col">Nivel de Conocimiento</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr *ngFor="let item of jobDescription?.softwareAndTools">
+                                                            <td>{{ item.minimumKnowledge }}</td>
+                                                            <td>{{ item.levelOfKnowledge }}</td>
+                                                            <td>{{ item.desirableKnowledge }}</td>
+                                                            <td>{{ item.levelDesirable }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="d-flex align-items-center">
+                                                <h5 class="header">Competencias</h5>
+                                            </div>
+                                            <hr class="title-separator">
+                                            <div class="container-profile-info">
+                                                <div class="table-responsive">
+                                                    <table class="table table-borderless table-striped">
+                                                        <thead class="card-thead">
+                                                            <tr>
+                                                                <th scope="col">Tipo</th>
+                                                                <th scope="col">Competencias</th>
+                                                                <th scope="col">Nivel</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td [attr.rowspan]="jobDescription?.organizationalCompetencies.length">Organizacionales</td>
+                                                                <td>{{ jobDescription?.organizationalCompetencies[0].competition.competency }}</td>
+                                                                <td>{{ jobDescription?.organizationalCompetencies[0].level }}</td>
+                                                            </tr>
+                                                            <ng-container *ngFor="let orgC of jobDescription?.organizationalCompetencies; let i= index;">
+                                                                <tr *ngIf=" i != 0 ">
+                                                                    <td>{{ orgC.competition.competency }}</td>
+                                                                    <td>{{ orgC.level }}</td>
+                                                                </tr>
+                                                            </ng-container>
+                                                            <tr></tr>
+                                                            <tr>
+                                                                <td [attr.rowspan]="jobDescription?.specificCompetencies.length">Específicas</td>
+                                                                <td>{{ jobDescription?.specificCompetencies[0].competition.competency }}</td>
+                                                                <td>{{ jobDescription?.specificCompetencies[0].level }}</td>
+                                                            </tr>
+                                                            <ng-container *ngFor="let speC of jobDescription?.specificCompetencies; let i= index;">
+                                                                <tr *ngIf=" i != 0 ">
+                                                                    <td>{{ speC.competition.competency }}</td>
+                                                                    <td>{{ speC.level }}</td>
+                                                                </tr>
+                                                            </ng-container>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Assign Candidate -->
+<div class="modal fade" id="AssignCandidateModal" tabindex="-1" role="dialog" aria-labelledby="AssignCandidateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Postular Candidato</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="modal-label text-green" for="candidateSelect">CANDIDATO</label>
+                            <select class="form-control input-border-bottom" id="candidateSelect" [formControl]="candidateSelect">
+                                <option [value]="''" selected disabled> Selecciona un candidato </option>
+                                <option *ngFor="let candidate of candidates" [value]="candidate._id">{{ candidate.name | titlecase }} {{ candidate.firstSurname | titlecase }} {{ candidate.secondSurname | titlecase }} </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-green" (click)="assignCandidate( )">Postular</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Assign Candidate -->

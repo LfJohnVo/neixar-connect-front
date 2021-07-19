@@ -1,0 +1,80 @@
+<div class="container-fluid container-page">
+  <div class="row">
+      <div class="col">
+          <div class="card nxr_card" *ngIf="cvData">
+              <div class="card-header d-flex justify-content-between">
+                <h6 class="m-0">{{ cvData.name }}</h6>         
+              </div>
+              <!-- <canvas id="foto_colaborador" style="display: none;"></canvas> -->
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <p class="title text-green">{{ cvData.position }}</p>
+                  <button type="button" class="btn btn-dark" (click)="exportToPDF()"><i class="fas fa-file-pdf"></i> EXPORTAR A PDF</button>
+                </div>
+                <p class="text-primary"><small><b>Actualizado el {{ cvData.last_modification | date: 'dd/MM/yyyy'}}</b></small></p>
+                <div id="html-2-pdfwrapper" class="container">
+                  <p class="title">RESUMEN</p>
+                  <p class="info justify">{{ cvData.overview }}</p>
+              
+                  <p class="title">EDUCACIÓN</p>
+                  <p class="info">
+                    <span class="career">{{ cvData.education.career }} <small *ngIf="cvData.education.certified" style="font-weight: normal;">(Ced. {{ cvData.education.professional_license }})</small></span>
+                    <span class="school">{{ cvData.education.school }}</span>
+                  </p>
+                  
+                  <p class="title" *ngIf="cvData.certifications.length > 0">CERTIFICACIONES</p>
+                  <div class="info">
+                    <ul>
+                        <li *ngFor="let cert of cvData.certifications" >{{ cert.name }} <small><b>({{ (cert.active) ? 'Vigente' : 'No Vigente' }})</b></small></li>                  
+                    </ul>
+                  </div>
+
+                  <p class="title" *ngIf="cvData.courses.length > 0">CURSOS</p>
+                  <div class="info">
+                    <ul>
+                        <li *ngFor="let course of cvData.courses" >{{ course.name }} <small *ngIf="course.studies_proof != 'Ninguno'"><b>({{ course.studies_proof }})</b></small></li>
+                    </ul>
+                  </div>
+          
+                  <p class="title" *ngIf="cvData.technical_abilities.length > 0">OTROS CONOCIMIENTOS</p>
+                  <div class="info">
+                    <ul>
+                        <li *ngFor="let ability of cvData.technical_abilities" >{{ ability.ability }}</li>
+                    </ul>
+                  </div>
+                  <p class="title">HABILIDADES</p>
+                  <div class="info">
+                    <ul>
+                        <li *ngFor="let ability of cvData.soft_skills" >{{ ability.ability }}</li>
+                    </ul>
+                  </div>
+
+                  <p class="title" *ngIf="cvData.languages.length > 0 ">IDIOMAS</p>
+                  <div class="info">
+                      <ul>
+                        <li *ngFor="let lang of cvData.languages" >{{ lang.name }} <small><b>({{ lang.level }})</b></small></li>
+                      </ul>
+                  </div>
+
+                  <p class="title">EXPERIENCIA <span style="color:rgb(175,196,63)">PROFESIONAL</span></p>
+                  <!-- <div class="job"></div> -->
+                  <div class="job" *ngFor="let job of cvData.working_experience">                      
+                      <p class="jobName" [ngStyle]="{'background-image': backTitle}">{{ job.job_name }}</p>
+                      <p class="jobPosition">{{ job.job_position }}</p>
+                      <p class="jobPeriod"><small>{{ job.period }}</small></p>
+                      
+                          <p class="acts">ACTIVIDADES</p>
+                          <ul style="margin-top: 0;">
+                              <li *ngFor="let act of job.activities">{{ act.activity }}</li>
+                          </ul>
+                      
+                  </div>
+
+                </div>
+                    
+              </div>
+              
+          </div>
+      </div>
+  </div>
+</div>

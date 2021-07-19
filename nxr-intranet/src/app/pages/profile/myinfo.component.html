@@ -1,0 +1,302 @@
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card">
+                <div class="card-userheader">
+                    <a class=" btn btn-edit-profile" (click)="setData( )" href='' data-toggle="modal" data-target="#EditProfileModal">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="user user-profile">
+                        <a>
+                            <img class="avatar avatar-big" [src]="userInfo?.img | image" alt="...">
+                            <h5 class="username">{{ userpInfo?.name | firstname | titlecase }} {{ userpInfo?.firstSurname | titlecase }}</h5>
+                        </a>
+                        <p class="user-position mb-0">
+                            {{ userwInfo?.position.name }} <span class="area-user">( {{ userwInfo?.area.name }} )</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col">
+                            <div class="d-flex align-items-center">
+                                <h5 class="header">Información laboral</h5>
+                            </div>
+                            <hr class="title-separator">
+                            <div class="container-profile-info">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">NXR ID</h6>
+                                        <p class="data-info">{{ (userInfo?.id_saf) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">EMAIL</h6>
+                                        <p class="data-info">{{ (userInfo?.email) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">FECHA DE INGRESO</h6>
+                                        <p class="data-info">{{ (userwInfo?.admission_date | date:'dd/MM/yy' ) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">TERMINACIÓN DE CONTRATO</h6>
+                                        <p class="data-info">{{ (userwInfo?.contract_termination_date | date:'dd/MM/yy' ) || notApplicable }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="d-flex align-items-center">
+                                <h5 class="header">Información básica</h5>
+                            </div>
+                            <hr class="title-separator">
+                            <div class="container-profile-info">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">NOMBRE</h6>
+                                        <p class="data-info">{{ userpInfo?.name | titlecase }} {{ userpInfo?.firstSurname | titlecase }} {{ userpInfo?.secondSurname | titlecase}}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">FECHA DE NACIMIENTO</h6>
+                                        <p class="data-info">{{ (userpInfo?.birthdate | date:'dd/MM/yy' ) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">LUGAR DE NACIMIENTO</h6>
+                                        <p class="data-info">{{ (userpInfo?.birthplace) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">NACIONALIDAD</h6>
+                                        <p class="data-info">{{ (userpInfo?.nationality | titlecase) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">GÉNERO</h6>
+                                        <p class="data-info">{{ (userpInfo?.gender | titlecase) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">ESTADO CIVIL</h6>
+                                        <p class="data-info">{{ (userpInfo?.marital_status | titlecase) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">NSS</h6>
+                                        <p class="data-info">{{ (userpInfo?.ssn) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">CURP</h6>
+                                        <p class="data-info">{{ (userpInfo?.curp) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">RFC</h6>
+                                        <p class="data-info">{{ (userpInfo?.rfc) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">TELÉFONO</h6>
+                                        <p class="data-info">{{ (userpInfo?.phone_number) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">DOMICILIO</h6>
+                                        <p class="data-info">{{ (userpInfo?.address) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">CONTACTO DE EMERGENCIA</h6>
+                                        <p class="data-info">{{ (userpInfo?.emergency_contact?.name | titlecase) || noData }} - {{ (userpInfo?.emergency_contact?.phone_number) || noData }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="d-flex align-items-center">
+                                <h5 class="header">Información financiera</h5>
+                            </div>
+                            <hr class="title-separator">
+                            <div class="container-profile-info">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">BANCO</h6>
+                                        <p class="data-info">{{ (userfInfo?.bank) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">CUENTA BANCARIA</h6>
+                                        <p class="data-info">{{ (userfInfo?.bank_account) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">CLABE INTERBANCARIA</h6>
+                                        <p class="data-info">{{ (userfInfo?.interbank_clabe) || noData }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">CRÉDITO INFONAVIT</h6>
+                                        <p class="data-info">{{ (userfInfo?.infonavit_num_credit) || notApplicable }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="label-info">CRÉDITO FONACOT</h6>
+                                        <p class="data-info">{{ (userfInfo?.fonacot_num_credit) || notApplicable }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Profile -->
+<div class="modal fade" id="EditProfileModal" tabindex="-1" role="dialog" aria-labelledby="EditProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Editar Perfil</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form [formGroup]="userForm" (ngSubmit)="editUser()" novalidate="novalidate">
+                        <!-- <form novalidate="novalidate"> -->
+                        <div class="row" formGroupName="p_information">
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="nameInputUser">NOMBRE(S)</label>
+                                <input onkeyup="this.value = this.value.toUpperCase();" type="text" class="form-control input-border-bottom" id="nameInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.name').valid }" placeholder="Ingresa tu(s) nombre(s)" disabled formControlName="name">
+                                <small *ngIf="userForm.get('p_information.name').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="userForm.get('p_information.name').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 3 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="firstSurnameInputUser">APELLIDO PATERNO</label>
+                                <input onkeyup="this.value = this.value.toUpperCase();" type="text" class="form-control input-border-bottom" id="firstSurnameInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.firstSurname').valid }" placeholder="Ingresa tu apellido paterno"
+                                    disabled formControlName="firstSurname">
+                                <small *ngIf="userForm.get('p_information.firstSurname').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="userForm.get('p_information.firstSurname').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 3 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="secondSurnameInputUser">APELLIDO MATERNO</label>
+                                <input onkeyup="this.value = this.value.toUpperCase();" type="text" class="form-control input-border-bottom" id="secondSurnameInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.secondSurname').valid }" placeholder="Ingresa tu apellido materno"
+                                    disabled formControlName="secondSurname">
+                                <small *ngIf="userForm.get('p_information.secondSurname').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="userForm.get('p_information.secondSurname').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 3 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="genderInputUser">GÉNERO</label>
+                                <div id="genderInputUser">
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" formControlName="gender" id="genderInputUserF" value="FEMENINO">
+                                        <label class="custom-control-label" for="genderInputUserF">Femenino</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" formControlName="gender" id="genderInputUserM" value="MASCULINO">
+                                        <label class="custom-control-label" for="genderInputUserM">Masculino</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="birthdateInputUser">FECHA DE NACIMIENTO</label>
+                                <input type="text" class="form-control input-border-bottom" id="birthdateInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.birthdate').valid }" placeholder="dd/mm/aaaa" formControlName="birthdate">
+                                <small *ngIf="userForm.get('p_information.birthdate').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="userForm.get('p_information.birthdate').errors?.pattern" class="invalid-feedback">Este atributo debe tener el formato dd/mm/aaaa.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="birthplaceInputUser">LUGAR  DE NACIMIENTO</label>
+                                <input onkeyup="this.value = this.value.toUpperCase();" type="text" class="form-control input-border-bottom" id="birthplaceInputUser" placeholder="Ingresa tu lugar de nacimiento" [ngClass]="{ 'is-invalid': !userForm.get('p_information.birthplace').valid }"
+                                    formControlName="birthplace">
+                                <small *ngIf="userForm.get('p_information.birthplace').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="userForm.get('p_information.birthplace').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 3 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="nacionalityInputUser">NACIONALIDAD</label>
+                                <input onkeyup="this.value = this.value.toUpperCase();" type="text" class="form-control input-border-bottom" id="birthplaceInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.nationality').valid }" placeholder="Ingresa tu nacionalidad"
+                                    formControlName="nationality">
+                                <small *ngIf="userForm.get('p_information.nationality').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="userForm.get('p_information.nationality').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 3 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="selectUser">ESTADO CIVIL</label>
+                                <select class="form-control input-border-bottom" id="selectUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.marital_status').valid }" formControlName="marital_status">
+                                  <option value="" selected disabled> Selecciona una opción </option>
+                                  <option value="SOLTERO" >SOLTERO (A)</option>
+                                  <option value="CASADO" >CASADO (A)</option>
+                                  <option value="DIVORCIADO" >DIVORCIADO (A)</option>
+                                  <option value="UNIÓN LIBRE" >UNIÓN LIBRE</option>
+                                  <option value="VIUDO" >VIUDO (A)</option>
+                              </select>
+                                <small *ngIf="userForm.get('p_information.marital_status').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="ssnInputUser">NSS</label>
+                                <input type="text" maxlength="11" class="form-control input-border-bottom" id="ssnInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.ssn').valid }" placeholder="Ingresa tu NSS" formControlName="ssn">
+                                <small *ngIf="userForm.get('p_information.ssn').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="userForm.get('p_information.ssn').errors?.pattern" class="invalid-feedback">Este atributo debe tener 11 caracteres numéricos.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="curpInputUser">CURP</label>
+                                <input onkeyup="this.value = this.value.toUpperCase();" type="text" maxlength="18" class="form-control input-border-bottom" id="curpInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.curp').valid }" placeholder="Ingresa tu CURP" formControlName="curp">
+                                <small *ngIf="userForm.get('p_information.curp').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="userForm.get('p_information.curp').errors?.pattern" class="invalid-feedback">No cumple con el formato requerido.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="rfcInputUser">RFC</label>
+                                <input onkeyup="this.value = this.value.toUpperCase();" type="text" maxlength="13" class="form-control input-border-bottom" id="rfcInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.rfc').valid }" placeholder="Ingresa tu RFC" formControlName="rfc">
+                                <small *ngIf="userForm.get('p_information.rfc').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="userForm.get('p_information.rfc').errors?.pattern" class="invalid-feedback">No cumple con el formato requerido.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="addressInputUser">TELÉFONO</label>
+                                <input type="text" maxlength="10" class="form-control input-border-bottom" id="phonenumberInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.phone_number').valid }" placeholder="Ingresa tu teléfono" formControlName="phone_number">
+                                <small *ngIf="userForm.get('p_information.phone_number').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="userForm.get('p_information.phone_number').errors?.pattern" class="invalid-feedback">Este atributo debe tener mínimo 8 dígitos y máximo 10</small>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label class="modal-label text-green" for="addressInputUser">DOMICILIO</label>
+                                <input onkeyup="this.value = this.value.toUpperCase();" type="text" class="form-control input-border-bottom" id="addressInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.address').valid }" placeholder="Ingresa tu dirección" formControlName="address">
+                                <small *ngIf="userForm.get('p_information.address').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="userForm.get('p_information.address').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 10 caracteres.</small>
+                            </div>
+                            <div class="form-group col-md-12" formGroupName="emergency_contact">
+                                <label class="modal-label text-green" for="emergencyContactInputUser">CONTACTO DE EMERGENCIA</label>
+                                <div id="emergencyContactInputUser" class="row">
+                                    <div class="col">
+                                        <input onkeyup="this.value = this.value.toUpperCase();" type="text" class="form-control input-border-bottom" id="emerContNameInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.emergency_contact.name').valid }" placeholder="Ingresa el nombre"
+                                            formControlName="name">
+                                        <small *ngIf="userForm.get('p_information.emergency_contact.name').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                        <small *ngIf="userForm.get('p_information.emergency_contact.name').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 10 caracteres.</small>
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" maxlength="10" class="form-control input-border-bottom" id="emerContPhoneInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.emergency_contact.phone_number').valid }" placeholder="Ingresa el teléfono" formControlName="phone_number">
+                                        <small *ngIf="userForm.get('p_information.emergency_contact.phone_number').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                        <small *ngIf="userForm.get('p_information.emergency_contact.phone_number').errors?.pattern" class="invalid-feedback">Este atributo debe tener mínimo 8 dígitos y máximo 10</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="form-group col-md-12">
+                              <label class="modal-label text-green" for="allergyInputUser">ENFERMEDADES/ALERGIAS</label>
+                              <div id="allergyInputUser" class="row">
+                                  <div class="col">
+                                      <input type="text" class="form-control input-border-bottom" id="allergyNameInputUser" placeholder="Ingresa el padecimiento" formControlName="allergyName">
+                                      <small *ngIf="userForm.controls['allergyName'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                  </div>
+                                  <div class="col">
+                                      <input type="text" class="form-control input-border-bottom" id="allergyTreatmentInputUser" placeholder="Ingresa el tratamiento" formControlName="allergyTreatment">
+                                      <small *ngIf="userForm.controls['allergyTreatment'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                  </div>
+                              </div>
+                          </div> -->
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-green">Guardar Cambios</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Edit Profile -->

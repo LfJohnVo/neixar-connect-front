@@ -1,0 +1,72 @@
+<form [formGroup]="competencyForm" (ngSubmit)="sendDataForm()" novalidate="novalidate">
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label class="modal-label text-green" for="competencyInput">COMPETENCIA</label>
+            <input type="text" class="form-control input-border-bottom" id="competencyInput" [ngClass]="{ 'is-invalid': !competencyForm.controls['competency'].valid }" placeholder="Ingresa la competencia" formControlName="competency">
+            <small *ngIf="competencyForm.controls['competency'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+        </div>
+        <div class="form-group col-md-4">
+            <label class="modal-label text-green" for="typeSelectCompetency">TIPO</label>
+            <select class="form-control input-border-bottom" id="typeSelectCompetency" [ngClass]="{ 'is-invalid': !competencyForm.get('type').valid }" formControlName="type">
+                              <option [value]="''" disabled selected> Selecciona un tipo</option>
+                              <option value="Organizacionales">Organizacionales</option>
+                              <option value="Específicas">Específicas</option>
+                          </select>
+            <small *ngIf="competencyForm.controls['type'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+        </div>
+        <div class="form-group col-md-4">
+            <label class="modal-label text-green" for="typeSelectCompetency">NIVEL DE PUESTO <small>(presiona ctrl para seleccionar más de uno)</small></label>
+            <select class="form-control input-border-bottom" multiple size="3" id="typeSelectCompetency" [ngClass]="{ 'is-invalid': !competencyForm.controls['typePosition'].valid }" formControlName="typePosition">
+                              <option value="Estratégico">Estratégico</option>
+                              <option value="Táctico">Táctico</option>
+                              <option value="Operativo">Operativo</option>
+                          </select>
+            <small *ngIf="competencyForm.controls['typePosition'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+        </div>
+        <div class="form-group col-md-12">
+            <label class="modal-label text-green" for="descriptionInput">DESCRIPCIÓN</label>
+            <input type="text" class="form-control input-border-bottom" id="descriptionInput" [ngClass]="{ 'is-invalid': !competencyForm.controls['description'].valid }" placeholder="Describe la competencia" formControlName="description">
+            <small *ngIf="competencyForm.controls['description'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+        </div>
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <label class="modal-label text-green" for="positionSelect">PREGUNTAS <small>(Evaluación 360°)</small> </label>
+                <button type="button" class="btn btn-dark" (click)="newQuestion( )"><i class="fas fa-plus-circle"></i> Nueva Pregunta</button>
+            </div>
+            <div formArrayName="questions">
+                <div class="container-profile-info" *ngFor="let question of competencyForm.get('questions')['controls']; let questionIndex = index" [formGroupName]="questionIndex">
+                    <div class="d-flex justify-content-start align-items-center">
+                        <h6 class="text-green m-0">Pregunta {{ questionIndex + 1 }}</h6><button class="text-green btn-action btn-link" [disabled]="competencyForm.get('questions').controls.length === 1" (click)="deleteQuestion( questionIndex )"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-9">
+                            <h6 class="label-info" for="respInput">Pregunta</h6>
+                            <input type="text" class="form-control input-border-bottom mb-3" placeholder="Ingresa la pregunta a mostrar" [ngClass]="{ 'is-invalid': !question.controls.question.valid }" formControlName="question" name="question">
+                            <small *ngIf="question.get('question').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="label-info" for="respInput">Nivel</h6>
+                            <!-- <input type="text" class="form-control input-border-bottom mb-3" placeholder="Describe la autoridad" [ngClass]="{ 'is-invalid': !question.controls.level.valid }" formControlName="level" name="level"> -->
+
+                            <select class="form-control input-border-bottom" [ngClass]="{ 'is-invalid': !question.controls.level.valid }" formControlName="level" name="level">
+                                <option [value]="''" disabled selected> Selecciona un nivel</option>
+                                <option value="Básico">Básico</option>
+                                <option value="Medio">Medio</option>
+                                <option value="Avanzado">Avanzado</option>
+                                <option value="Experto">Experto</option>
+                            </select>
+                            <small *ngIf="question.get('level').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+        <span>{{ errorMessage }}</span>
+    </div>
+    <div class="modal-footer d-flex justify-content-between">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-green">Guardar</button>
+    </div>
+</form>

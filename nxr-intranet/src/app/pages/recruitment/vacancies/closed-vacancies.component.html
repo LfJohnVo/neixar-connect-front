@@ -1,0 +1,13 @@
+<div class="container-fluid container-page">
+  <div class="row">
+      <div class="col-md-12">
+          <div class="card nxr_card ">
+              <h6 class="card-header">Vacantes Cerradas <small>({{total}})</small></h6>
+              <div class="card-body">
+                  <app-vacancies-list [vacancies]="vacancies" [type]="'assignments'" [currentPage]="closedPageReq"></app-vacancies-list>
+                  <app-pagination *ngIf="totalPagesReq > 1" (selectedPage)="getClosedRecruitments( $event )" [totalPages]="totalPagesReq" [pages]="pagesReq"></app-pagination>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>

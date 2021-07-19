@@ -1,0 +1,379 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header">{{ title }}</h6>
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <input *ngIf="route=='activos' || route=='evaluacion'" class="form-control m-2 input-border-bottom col-md-8" placeholder="Buscar colaborador" #box (keyup)="onKey(box.value)">
+                        <a *ngIf="route=='activos'" href="" class="btn btn-dark" data-toggle="modal" data-target="#NewEmployeeModal" (click)="getData()"><i class="fas fa-plus-circle"></i> AGREGAR</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">NOMBRE</th>
+                                    <th scope="col">ID SAF</th>
+                                    <th scope="col">DEPARTAMENTO</th>
+                                    <th scope="col">POSICIÓN</th>
+                                    <th scope="col">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let employee of employees; let i = index">
+                                    <td scope="row">{{ i + 1 + ((currentPage-1) * 10) }}</td>
+                                    <td>{{ employee.p_information.name }} {{ employee.p_information.firstSurname }} {{ employee.p_information.secondSurname }}</td>
+                                    <td>{{ employee.id_saf }}</td>
+                                    <td>{{ employee.w_information.area.name }}</td>
+                                    <td>{{ employee.w_information.position.name }}</td>
+                                    <td class="d-flex align-items-center">
+                                        <a *ngIf="route=='activos'" class="text-mexicanPink btn-action" [routerLink]="['historia', employee._id]"><i class="fas fa-arrow-alt-circle-up"></i></a>
+                                        <a *ngIf="route!='evaluacion'" class="text-mexicanPink btn-action" [routerLink]="['detalle', employee._id]"><i class="fas fa-info-circle"></i></a>
+                                        <a *ngIf="route=='activos'" class="text-mexicanPink btn-action" [routerLink]="['editar', employee._id]"><i class="fas fa-edit"></i></a>
+                                        <a *ngIf="route=='evaluacion'" class="text-mexicanPink btn-action" [routerLink]="['objetivos', employee._id]"><i class="fas fa-list-ul"></i></a>
+                                        <a *ngIf="route=='activos'" class="text-mexicanPink btn-action" data-toggle="modal" data-target="#DeleteEmployeeModal" (click)="requestEmployee( employee )" href=""><i class="fas fa-times"></i></a>
+                                        <a *ngIf="route=='activos'" class="text-mexicanPink btn-action" data-toggle="modal" data-target="#UpdateEmployeeModal" (click)="requestEmployee( employee )" href=""><i class="fas fa-file-image"></i></a>
+                                        <a *ngIf="route=='activos' && _employeeService.user.role === 'Admin' " class="text-mexicanPink btn-action" data-toggle="modal" data-target="#passModal" (click)="requestEmployee(employee)" href=""><i class="fas fa-unlock-alt"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <app-pagination *ngIf="totalPages > 1 && ( (route=='activos' || route=='evaluacion') && !isSearching )" (selectedPage)="getUsersByStatus( 'ACTIVO', $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination>
+                    <app-pagination *ngIf="totalPages > 1 && ( route=='activos' && isSearching )" (selectedPage)="searchEmployees( $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination>
+                    <app-pagination *ngIf="totalPages > 1 && route=='bajas' " (selectedPage)="getUsersByStatus( 'BAJA', $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination>
+                    <app-pagination *ngIf="totalPages > 1 && route=='determinado' " (selectedPage)="getEmployeesByContract( 'DETERMINADO', $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination>
+                    <app-pagination *ngIf="totalPages > 1 && route=='mujeres' " (selectedPage)="getEmployeesByGender( 'FEMENINO', $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination>
+                    <app-pagination *ngIf="totalPages > 1 && route=='hombres' " (selectedPage)="getEmployeesByGender( 'MASCULINO', $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal New Employee -->
+<div class="modal fade" id="NewEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="NewEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Nuevo Ingreso</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form [formGroup]="employeeForm" (ngSubmit)="saveEmployee()" novalidate="novalidate">
+                        <!-- <form novalidate="novalidate"> -->
+                        <div class="row">
+                            <div class="row w-100 ml-0" formGroupName="p_information">
+                                <div class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="nameInputUser">NOMBRE(S)</label>
+                                    <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom" id="nameInputEmployee" [ngClass]="{ 'is-invalid': !employeeForm.get('p_information.name').valid }" placeholder="Ingresa el(los) nombre(s)" formControlName="name">
+                                    <small *ngIf="employeeForm.get('p_information.name').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                    <small *ngIf="employeeForm.get('p_information.name').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 3 caracteres.</small>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="firstSurnameInputEmployee">APELLIDO PATERNO</label>
+                                    <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom" id="firstSurnameInputEmployee" [ngClass]="{ 'is-invalid': !employeeForm.get('p_information.firstSurname').valid }" placeholder="Ingresa el apellido paterno"
+                                        formControlName="firstSurname">
+                                    <small *ngIf="employeeForm.get('p_information.firstSurname').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                    <small *ngIf="employeeForm.get('p_information.firstSurname').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 3 caracteres.</small>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="secondSurnameInputEmployee">APELLIDO MATERNO</label>
+                                    <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom" id="secondSurnameInputEmployee" [ngClass]="{ 'is-invalid': !employeeForm.get('p_information.secondSurname').valid }" placeholder="Ingresa tu apellido materno"
+                                        formControlName="secondSurname">
+                                    <small *ngIf="employeeForm.get('p_information.secondSurname').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                    <small *ngIf="employeeForm.get('p_information.secondSurname').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 3 caracteres.</small>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="genderInputEmployee">GÉNERO</label>
+                                    <div id="genderInputEmployee">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input class="form-check-input" type="radio" formControlName="gender" id="genderInputEmployeeF" value="FEMENINO">
+                                            <label class="custom-control-label" for="genderInputEmployeeF">Femenino</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input class="form-check-input" type="radio" formControlName="gender" id="genderInputEmployeeM" value="MASCULINO">
+                                            <label class="custom-control-label" for="genderInputEmployeeM">Masculino</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="emailInputEmployee">CORREO ELÉCTRONICO</label>
+                                <input type="email" class="form-control input-border-bottom" id="emailInputEmployee" [ngClass]="{ 'is-invalid': !employeeForm.controls['email'].valid }" placeholder="Ingresa el correo electrónico" formControlName="email">
+                                <small *ngIf="employeeForm.controls['email'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="employeeForm.controls['email'].errors?.pattern" class="invalid-feedback">Ej. nombre@neixar.com o nombre@neixar.com.mx</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="idSAFInputEmployee">ID SAF</label>
+                                <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom" id="idSAFInputEmployee" [ngClass]="{ 'is-invalid': !employeeForm.controls['id_saf'].valid }" placeholder="Ingresa el ID SAF" formControlName="id_saf">
+                                <small *ngIf="employeeForm.controls['id_saf'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="employeeForm.controls['id_saf'].errors?.pattern" class="invalid-feedback">Ej. NXR0000</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="idNeixarInputEmployee">ID NEIXAR</label>
+                                <input type="number" min="1" max="9999" class="form-control input-border-bottom" id="idNeixarInputEmployee" [ngClass]="{ 'is-invalid': !employeeForm.controls['id_neixar'].valid }" placeholder="Ingresa el ID NEIXAR" formControlName="id_neixar">
+                                <small *ngIf="employeeForm.controls['id_neixar'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="rolInputEmployee">Rol</label>
+                                <div id="rolInputEmployee">
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" formControlName="role" id="roleInputEmployeeUser" value="User">
+                                        <label class="custom-control-label" for="roleInputEmployeeUser">Usuario</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" formControlName="role" id="roleInputEmployeeAdmin" value="Admin">
+                                        <label class="custom-control-label" for="roleInputEmployeeAdmin">Administrador</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="passwordInputEmployee">CONTRASEÑA</label>
+                                <input type="text" class="form-control input-border-bottom" id="passwordInputEmployee" [ngClass]="{ 'is-invalid': !employeeForm.controls['pass'].valid }" placeholder="Ingresa la contraseña" formControlName="pass">
+                                <small *ngIf="employeeForm.controls['pass'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="employeeForm.controls['pass'].errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 8 caracteres.</small>
+                                <small *ngIf="employeeForm.controls['pass'].errors?.maxlength" class="invalid-feedback">Este atributo debe tener máximo 20 caracteres.</small>
+                            </div>
+                            <div class="row w-100 ml-0" formGroupName="w_information">
+                                <div class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="admissionDateInputEmployee">FECHA DE INGRESO</label>
+                                    <input type="text" class="form-control input-border-bottom" id="admissionDateInputEmployee" [ngClass]="{ 'is-invalid': !employeeForm.get('w_information.admission_date').valid }" placeholder="dd/mm/aaaa" formControlName="admission_date">
+                                    <small *ngIf="employeeForm.get('w_information.admission_date').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                    <small *ngIf="employeeForm.get('w_information.admission_date').errors?.pattern" class="invalid-feedback">Este atributo debe tener el formato dd/mm/aaaa.</small>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="costCenterInputEmployee">CENTRO DE COSTO</label>
+                                    <input type="text" class="form-control input-border-bottom" id="costCenterInputEmployee" [ngClass]="{ 'is-invalid': !employeeForm.get('w_information.cost_center').valid }" placeholder="Ingresa el centro de costo" formControlName="cost_center">
+                                    <small *ngIf="employeeForm.get('w_information.cost_center').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="departmentSelectEmployee">DEPARTAMENTO</label>
+                                    <select (change)="fillDropDowns($event.target.value)" class="form-control input-border-bottom" id="departmentSelectEmployee" [ngClass]="{ 'is-invalid': !employeeForm.get('w_information.area').valid }" formControlName="area">
+                                        <option [value]="''" disabled selected> Selecciona un departamento </option>
+                                        <option *ngFor="let department of departments" [value]="department._id">{{ department.name }}</option>
+                                    </select>
+                                    <small *ngIf="employeeForm.get('w_information.area').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="positionSelectEmployee">PUESTO</label>
+                                    <select class="form-control input-border-bottom" id="positionSelectEmployee" [ngClass]="{ 'is-invalid': !employeeForm.get('w_information.position').valid }" formControlName="position">
+                                        <option [value]="''" disabled selected> Selecciona un puesto </option>
+                                        <option *ngFor="let position of positions" [value]="position._id">{{ position.name }}</option>
+                                    </select>
+                                    <small *ngIf="employeeForm.get('w_information.position').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="bossSelectEmployee">JEFE INMEDIATO</label>
+                                    <select class="form-control input-border-bottom" id="bossSelectEmployee" [ngClass]="{ 'is-invalid': !employeeForm.get('w_information.immediate_boss').valid }" formControlName="immediate_boss">
+                                        <option [value]="" disabled selected> Selecciona un colaborador </option>
+                                        <option *ngFor="let employee of employeesList" [value]="employee._id">{{ employee.p_information.name | firstname | titlecase }} {{ employee.p_information.firstSurname | titlecase }} - {{ employee.w_information.area.name }}</option>
+                                    </select>
+                                    <small *ngIf="employeeForm.get('w_information.immediate_boss').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="payrollInputEmployee">PERIODICIDAD DE PAGO</label>
+                                    <div id="payrollInputEmployee">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input class="form-check-input" type="radio" formControlName="payroll_periodicity" id="payrollInputEmployeeQ" value="QUINCENAL">
+                                            <label class="custom-control-label" for="payrollInputEmployeeQ">Quincenal</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input class="form-check-input" type="radio" formControlName="payroll_periodicity" id="payrollInputEmployeeM" value="MENSUAL">
+                                            <label class="custom-control-label" for="payrollInputEmployeeM">Mensual</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="recruitmentInputEmployee">ESQUEMA DE CONTRATACIÓN</label>
+                                    <div id="recruitmentInputEmployee">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input class="form-check-input" type="radio" formControlName="recruitment_scheme" id="recruitmentInputEmployeeM" value="MIXTO">
+                                            <label class="custom-control-label" for="recruitmentInputEmployeeM">Mixto</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input class="form-check-input" type="radio" formControlName="recruitment_scheme" id="recruitmentInputEmployeeI" value="SOLO IAS">
+                                            <label class="custom-control-label" for="recruitmentInputEmployeeI">Solo IAS</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="contractInputEmployee">TIPO DE CONTRATO</label>
+                                    <div id="contractInputEmployee">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input class="form-check-input" type="radio" formControlName="contract_type" id="contractInputEmployeeD" value="DETERMINADO" (click)="checkContractType('DETERMINADO')">
+                                            <label class="custom-control-label" for="contractInputEmployeeD">Determinado</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input class="form-check-input" type="radio" formControlName="contract_type" id="contractInputEmployeeI" value="INDETERMINADO" (click)="checkContractType('INDETERMINADO')">
+                                            <label class="custom-control-label" for="contractInputEmployeeI">Indeterminado</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="employeeForm.get('w_information.contract_type').value == 'DETERMINADO'" class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="terminationDateInputEmployee">FECHA TERMINO DE CONTRATO</label>
+                                    <input type="text" class="form-control input-border-bottom" id="terminationDateInputEmployee" [ngClass]="{ 'is-invalid': !employeeForm.get('w_information.contract_termination_date').valid }" placeholder="dd/mm/aaaa" formControlName="contract_termination_date">
+                                    <small *ngIf="employeeForm.get('w_information.contract_termination_date').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                    <small *ngIf="employeeForm.get('w_information.contract_termination_date').errors?.pattern" class="invalid-feedback">Este atributo debe tener el formato dd/mm/aaaa.</small>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="hasBonusInputEmployee">BONO</label>
+                                    <div id="hasBonusInputEmployee">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input class="form-check-input" type="radio" formControlName="hasPerformanceBonus" id="bonusYes" value="true" (click)="checkBonus(true)">
+                                            <label class="custom-control-label" for="bonusYes">Sí</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input class="form-check-input" type="radio" formControlName="hasPerformanceBonus" id="bonusNo" value="false" (click)="checkBonus(false)">
+                                            <label class="custom-control-label" for="bonusNo">No</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="employeeForm.get('w_information.hasPerformanceBonus').value == 'true'" class="form-group col-md-6">
+                                    <label class="modal-label text-green" for="bonusRateSelectEmployee">PROPORCIÓN DEL BONO</label>
+                                    <select class="form-control input-border-bottom" id="bonusRateSelectEmployee" [ngClass]="{ 'is-invalid': !employeeForm.get('w_information.bonusRate').valid }" formControlName="bonusRate">
+                                            <option value="''" disabled selected> Selecciona una opción </option>
+                                            <option value="0.5">1 quincena</option>
+                                            <option value="1">1 mes</option>
+                                            <option value="1.5">3 quincenas</option>
+                                            <option value="2">2 meses</option>
+                                            <option value="2.5">5 quincenas</option>
+                                            <option value="3">3 meses</option>
+                                        </select>
+                                    <small *ngIf="employeeForm.get('w_information.bonusRate').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-green">Guardar Cambios</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal New Employee -->
+
+<!-- Modal Delete User -->
+<div class="modal fade" id="DeleteEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="DeleteEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-danger">
+                <h6 class="modal-title"><i class="fas fa-exclamation-triangle"></i> Confirmación de baja</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-msg">Por favor complete la información de baja de <strong>{{ employee?.p_information.name }} {{ employee?.p_information.firstSurname }} {{ employee?.p_information.secondSurname }}</strong>.</p>
+                <div class="container-fluid">
+                    <form [formGroup]="deleteForm" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="leavingDateInput">FECHA DE BAJA</label>
+                                <input type="text" class="form-control input-border-bottom" id="leavingDateInput" [ngClass]="{ 'is-invalid': !deleteForm.controls['w_information.leaving_date'].valid }" placeholder="dd/mm/aaaa" formControlName="w_information.leaving_date">
+                                <small *ngIf="deleteForm.controls['w_information.leaving_date'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="deleteForm.controls['w_information.leaving_date'].errors?.pattern" class="invalid-feedback">Este atributo debe tener el formato dd/mm/aaaa.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="leavingCauseSelectEmployee">MOTIVO DE BAJA</label>
+                                <select class="form-control input-border-bottom" id="leavingCauseSelectEmployee" [ngClass]="{ 'is-invalid': !deleteForm.controls['w_information.leaving_cause'].valid }" formControlName="w_information.leaving_cause">
+                                        <option value="" selected disabled> Selecciona una opción </option>
+                                        <option value="TERMINACIÓN DE CONTRATO" >Terminación de contrato</option>
+                                        <option value="VOLUNTARIA" >Voluntaria</option>
+                                        <option value="INDUCIDA" >Inducida</option>
+                                    </select>
+                                <small *ngIf="deleteForm.controls['w_information.leaving_cause'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="modal-label text-green" for="leaving_descriptionSelectEmployee">MOTIVO ESPECÍFICO DE BAJA</label>
+                                <select class="form-control input-border-bottom" id="leaving_descriptionSelectEmployee" [ngClass]="{ 'is-invalid': !deleteForm.controls['w_information.leaving_description'].valid }" formControlName="w_information.leaving_description">
+                                        <option value="" selected disabled> Selecciona una opción </option>
+                                        <option value="VOLUNTARIA">Voluntaria</option>
+                                        <option value="OTRO EMPLEO">Otro empleo</option>
+                                        <option value="BAJO DESEMPEÑO Y LIDERAZGO">Bajo desempeño y liderazgo</option>
+                                    </select>
+                                <small *ngIf="deleteForm.controls['w_information.leaving_description'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-link btn-delete" (click)="confirmDeletion( employee._id )">Confirmar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Delete User -->
+
+<!-- Modal Update User -->
+<div class="modal fade" id="UpdateEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="UpdateEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Registro de imagen</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <img *ngIf="!imagenTemp" [src]="employee?.img | image" class="imgUser">
+                <img *ngIf="imagenTemp" [src]="imagenTemp" class="imgUser">
+            </div>
+            <div class="text-center">
+                <label for="file-upload" class="btn btn-green cursor">
+                        <i class="fas fa-file-upload"></i> Seleccionar imagen
+                </label>
+                <input id="file-upload" (change)="seleccionImage($event.target.files[0])" type="file" style='display: none;' />
+            </div>
+            <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                <span>{{ errorMessage }}</span>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button (click)="saveImage()" [disabled]="!upImage" type="button" class="btn btn-green">Guardar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Update User-->
+
+<!-- Modal Password -->
+<div class="modal fade" id="passModal" tabindex="-1" role="dialog" aria-labelledby="passModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-danger">
+                <h6 class="modal-title">Reestablecimiento de contraseña</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-msg">¿Está seguro que desea reestablecer la contraseña a <strong>{{ employee?.p_information.name }} {{ employee?.p_information.firstSurname }} {{ employee?.p_information.secondSurname }}</strong>?</p>
+            </div>
+            <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                <span>{{ errorMessage }}</span>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-link btn-delete" (click)="changePass( employee._id )">Confirmar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Password -->

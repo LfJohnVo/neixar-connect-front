@@ -1,0 +1,45 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Búsqueda de talento</h6>
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <input class="form-control m-2 input-border-bottom col-md-8" placeholder="Buscar certificación, conocimiento, etc" [(ngModel)]="term">
+                        <button type="button" class="btn btn-dark" (click)="search(1)"><i class="fas fa-search"></i> BUSCAR</button>
+                    </div>
+                    <div class="alert alert-pink" role="alert" *ngIf="employees.length == 0 && searched">
+                      No se encontraron coincidencias para tu búsqueda, inténtalo con otra(s) palabra(s).
+                    </div>
+                    <div *ngIf="employees.length > 0" class="table-responsive">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">COLABORADOR</th>
+                                    <th scope="col">POSICIÓN</th>
+                                    <th scope="col">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let employee of employees; let i = index">
+                                    <td scope="row">{{ i + 1 + ((currentPage-1) * 10) }}</td>
+                                    <td>{{ employee.user.p_information.name }} {{ employee.user.p_information.firstSurname }} {{ employee.user.p_information.secondSurname }}</td>
+                                    <td>{{ employee.position }}</td>
+                                    <td class="d-flex align-items-center">
+                                        <a class="text-mexicanPink btn-action" [routerLink]="[employee.user._id]">
+                                          <i class="fas fa-address-card" data-toggle="tooltip" data-placement="top" title="Ver CV"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <app-pagination *ngIf="totalPages > 1" (selectedPage)="search( $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

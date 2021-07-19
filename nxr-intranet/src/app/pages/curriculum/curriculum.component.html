@@ -1,0 +1,468 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header">{{user.p_information.name}} {{ user.p_information.firstSurname }} {{ user.p_information.secondSurname }}</h6>
+                <div class="card-body">
+                    <div class="container-fluid">
+                        <p class="text-green text-right" *ngIf="existingCVdata.last_modification"><small><b>Actualizado el {{ existingCVdata.last_modification | date: 'dd/MM/yyyy'}}</b></small></p>
+                        <form [formGroup]="cvForm" (ngSubmit)="saveCurriculum()" novalidate="novalidate">
+                        
+                            <div class="row">
+                                <div class="col">
+                                    
+                                    <div class="container-profile-info">
+                                        <div class="row">
+                                            
+                                            <div class="col-md-6">
+                                                <p class="label-info" for="nameInput">NOMBRE</p>
+                                                <input type="text" class="form-control input-border-bottom mb-2" id="nameInput" [ngClass]="{ 'is-invalid': !cvForm.get('name').valid }" placeholder="Nombre completo" formControlName="name">
+                                                <small *ngIf="cvForm.get('name').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="cvForm.get('name').errors?.pattern" class="invalid-feedback">No se aceptan caracteres extraños.</small>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <p class="label-info" for="positionInput">PUESTO</p>
+                                                <input type="text" class="form-control input-border-bottom mb-2" id="positionInput" [ngClass]="{ 'is-invalid': !cvForm.get('position').valid }" placeholder="Puesto actual" formControlName="position">
+                                                <small *ngIf="cvForm.get('position').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="cvForm.get('position').errors?.pattern" class="invalid-feedback">No se aceptan caracteres extraños.</small>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <p class="label-info" for="overviewInput">RESUMEN</p>
+                                                <textarea class="form-control input-border-bottom mb-2" id="overviewInput" [ngClass]="{ 'is-invalid': !cvForm.get('overview').valid }" placeholder="Descríbete profesionalmente de forma breve" formControlName="overview"></textarea>
+                                                <small *ngIf="cvForm.get('overview').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="cvForm.get('overview').errors?.pattern" class="invalid-feedback">No se aceptan caracteres extraños.</small>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="header">EDUCACIÓN</h5>
+                                    </div>
+                                    <hr class="title-separator">
+                                    <div class="container-profile-info">
+
+                                        <div class="row" formGroupName="education">
+
+                                            <div class="col-md-6">
+                                                <p class="label-info" for="careerInput">CARRERA</p>
+                                                <input type="text" class="form-control input-border-bottom mb-2" id="careerInput" [ngClass]="{ 'is-invalid': !cvForm.get('education.career').valid }" placeholder="Carrera que estudiada" formControlName="career">
+                                                <small *ngIf="cvForm.get('education.career').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="cvForm.get('education.career').errors?.pattern" class="invalid-feedback">No se aceptan caracteres extraños.</small>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <p class="label-info" for="schoolInput">ESCUELA</p>
+                                                <input type="text" class="form-control input-border-bottom mb-2" id="schoolInput" [ngClass]="{ 'is-invalid': !cvForm.get('education.school').valid }" placeholder="Escuela dónde estudiaste" formControlName="school">
+                                                <small *ngIf="cvForm.get('education.school').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="cvForm.get('education.school').errors?.pattern" class="invalid-feedback">No se aceptan caracteres extraños.</small>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <p class="label-info" for="certified">TITULADO</p>
+                                                <div id="certified">
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="certified" id="certifiedT" value="true" (click)="checkStudies(true)">
+                                                        <label class="custom-control-label" for="certifiedT">Sí</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="certified" id="certifiedF" value="false" (click)="checkStudies(false)">
+                                                        <label class="custom-control-label" for="certifiedF">No</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6" *ngIf="professional_license">
+                                                <p class="label-info" for="licenseInput">CÉDULA PROFESIONAL</p>
+                                                <input type="text" class="form-control input-border-bottom mb-2" id="licenseInput" maxlength="8" [ngClass]="{ 'is-invalid': !cvForm.get('education.professional_license').valid }" placeholder="Ingresa tu cédula profesional" formControlName="professional_license">
+                                                <small *ngIf="cvForm.get('education.professional_license').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="cvForm.get('education.professional_license').errors?.pattern" class="invalid-feedback">Únicamente se aceptan valores numéricos.</small>
+                                            </div>
+
+                                        </div>
+                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="header">CERTIFICACIONES</h5>
+                                        <button type="button" class="btn btn-dark" (click)="addCertification()"><i class="fas fa-plus-circle"></i> Agregar Certificación</button>
+                                    </div>
+                                    <hr class="title-separator">
+                                    <div class="container-profile-info">
+
+                                        <div class="row">
+
+                                            <div class="col-md-12">
+                                                <div formArrayName="certifications">
+                                                    <div class="container-profile-info">
+                                                        <div class="row">
+                                                            <div class="col-md-6" *ngFor="let obj of cvForm.get('certifications')['controls']; let i = index" [formGroupName]="i">
+                                                                <div class="d-flex justify-content-start align-items-center">
+                                                                    <p class="text-green m-0">Certificación {{ i + 1 }}</p>
+                                                                    <button class="text-green btn-action btn-link" (click)="deleteCertification( i )"><i class="fas fa-times"></i></button>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6 col-sm-12">
+                                                                                <p class="label-info" for="certNameInput">NOMBRE</p>
+                                                                                <input type="text" class="form-control input-border-bottom mb-2" placeholder="Nombre de la certificación" [ngClass]="{ 'is-invalid': !obj.controls.name.valid }" formControlName="name" name="name">
+                                                                                <small *ngIf="obj.get('name').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                                                <small *ngIf="obj.get('name').errors?.pattern" class="invalid-feedback">No se aceptan caracteres extraños.</small>
+                                                                            </div>
+                                                                            <div class="col-md-6 col-sm-12">
+                                                                                <p class="label-info" for="docCourse">VIGENTE</p>
+                                                                                <div id="activeCert">
+                                                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                                                        <input class="form-check-input" type="radio" formControlName="active" value="true">
+                                                                                        <label class="custom-control-label" for="activeT">Sí</label>
+                                                                                    </div>
+                                                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                                                        <input class="form-check-input" type="radio" formControlName="active" value="false">
+                                                                                        <label class="custom-control-label" for="activeF">No</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="header">CURSOS</h5>
+                                        <button type="button" class="btn btn-dark" (click)="addCourse()"><i class="fas fa-plus-circle"></i> Agregar Curso</button>
+                                    </div>
+                                    <hr class="title-separator">
+                                    <div class="container-profile-info">
+
+                                        <div class="row">
+
+                                            <div class="col-md-12">
+                                                <div formArrayName="courses">
+                                                    <div class="container-profile-info">
+                                                        <div class="row">
+                                                            <div class="col-md-6" *ngFor="let course of cvForm.get('courses')['controls']; let c = index" [formGroupName]="c">
+                                                                <div class="d-flex justify-content-start align-items-center">
+                                                                    <p class="text-green m-0">Curso {{ c + 1 }}</p>
+                                                                    <button class="text-green btn-action btn-link" (click)="deleteCourse( c )"><i class="fas fa-times"></i></button>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6 col-sm-12">
+                                                                                <p class="label-info" for="courseNameInput">NOMBRE</p>
+                                                                                <input type="text" class="form-control input-border-bottom mb-2" placeholder="Nombre del curso" [ngClass]="{ 'is-invalid': !course.controls.name.valid }" formControlName="name" name="name">
+                                                                                <small *ngIf="course.get('name').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                                                <small *ngIf="course.get('name').errors?.pattern" class="invalid-feedback">No se aceptan caracteres extraños.</small>
+                                                                            </div>
+                                                                            <div class="col-md-6 col-sm-12">
+                                                                                <p class="label-info" for="docCourse">DOCUMENTO</p>
+                                                                                <select class="form-control input-border-bottom" formControlName="studies_proof" name="studies_proof">
+                                                                                    <option [value]="''" disabled selected>Selecciona una opción</option>
+                                                                                    <option value="Ninguno">Ninguno</option>
+                                                                                    <option value="Constancia">Constancia</option>
+                                                                                    <option value="Diploma">Diploma</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-flex justify-content-start">
+                                        <h5 class="header">HABILIDADES BLANDAS</h5>
+                                    </div>
+                                    <hr class="title-separator">
+                                    <div class="container-profile-info">
+
+                                        <div class="row">
+
+                                            <div class="col-md-12">
+                                                <div formArrayName=soft_skills>
+                                                    <div class="container-profile-info">
+                                                        <div class="row">
+                                                            <div class="col-md-6" *ngFor="let ability of cvForm.get('soft_skills')['controls']; let a = index" [formGroupName]="a">
+                                                                
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <p class="label-info" >HABILIDAD {{ a + 1 }}</p>
+                                                                                <select class="form-control input-border-bottom mb-2" [ngClass]="{ 'is-invalid': !ability.controls.ability.valid }" formControlName="ability" name="ability" (change)="selectSoftSkill($event.target.value)">
+                                                                                    <option [value]="''" disabled selected> Selecciona una competencia </option>
+                                                                                    <option *ngFor="let skill of softSkills" [value]="skill" [disabled]="chosenSoftSkills.indexOf(skill) > -1">{{ skill }}</option>
+                                                                                </select>
+                                                                                <small *ngIf="ability.get('ability').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="header">OTROS CONOCIMIENTOS</h5>
+                                        <button type="button" class="btn btn-dark" (click)="addAbility()"><i class="fas fa-plus-circle"></i> Agregar Conocimiento</button>
+                                    </div>
+                                    <hr class="title-separator">
+                                    <div class="container-profile-info">
+
+                                        <div class="row">
+
+                                            <div class="col-md-12">
+                                                <div formArrayName=technical_abilities>
+                                                    <div class="container-profile-info">
+                                                        <div class="row">
+                                                            <div class="col-md-6" *ngFor="let ability of cvForm.get('technical_abilities')['controls']; let a = index" [formGroupName]="a">
+                                                                
+                                                                <div class="d-flex justify-content-start align-items-center">
+                                                                    <p class="label-info">CONOCIMIENTO {{ a + 1 }}</p>
+                                                                    <button class="text-green btn-action btn-link" (click)="deleteAbility( a )"><i class="fas fa-times"></i></button>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <input type="text" class="form-control input-border-bottom mb-2" placeholder="Ej. Javascript, SQL, UNIX, Scripting, etc." [ngClass]="{ 'is-invalid': !ability.controls.ability.valid }" formControlName="ability" name="ability">
+                                                                                <small *ngIf="ability.get('ability').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                                                <small *ngIf="ability.get('ability').errors?.pattern" class="invalid-feedback">No se aceptan caracteres extraños.</small>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="header">IDIOMAS</h5>
+                                        <button type="button" class="btn btn-dark" (click)="addLanguage()"><i class="fas fa-plus-circle"></i> Agregar Idioma</button>
+                                    </div>
+                                    <hr class="title-separator">
+                                    <div class="container-profile-info">
+
+                                        <div class="row">
+
+                                            <div class="col-md-12">
+                                                <div formArrayName="languages">
+                                                    <div class="container-profile-info">
+                                                        <div class="row">
+                                                            <div class="col-md-6" *ngFor="let lang of cvForm.get('languages')['controls']; let l = index" [formGroupName]="l">
+                                                                <div class="d-flex justify-content-start align-items-center">
+                                                                    <p class="text-green m-0">Idioma {{ l + 1 }}</p>
+                                                                    <button class="text-green btn-action btn-link" (click)="deleteLanguage( l )"><i class="fas fa-times"></i></button>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6 col-sm-12">
+                                                                                <p class="label-info" for="langNameInput">IDIOMA</p>
+                                                                                <input type="text" id="langNameInput" class="form-control input-border-bottom mb-2" placeholder="Nombre del idioma" [ngClass]="{ 'is-invalid': !lang.controls.name.valid }" formControlName="name" name="name">
+                                                                                <small *ngIf="lang.get('name').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                                                <small *ngIf="lang.get('name').errors?.pattern" class="invalid-feedback">No se aceptan caracteres extraños.</small>
+                                                                            </div>
+                                                                            <div class="col-md-6 col-sm-12">
+                                                                                <p class="label-info" for="langLevel">NIVEL</p>
+                                                                                <select id="langLevel" class="form-control input-border-bottom" [ngClass]="{ 'is-invalid': !lang.controls.level.valid }" formControlName="level" name="level">
+                                                                                    <option [value]="''" disabled selected>Selecciona un nivel</option>
+                                                                                    <option value="Básico">Básico</option>
+                                                                                    <option value="Intermedio">Intermedio</option>
+                                                                                    <option value="Avanzado">Avanzado</option>
+                                                                                </select>
+                                                                                <small *ngIf="lang.get('level').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="header">EXPERIENCIA PROFESIONAL</h5>
+                                        <button type="button" class="btn btn-dark" (click)="addJob()"><i class="fas fa-plus-circle"></i> Agregar Experiencia</button>
+                                    </div>
+                                    <hr class="title-separator">
+                                    <div class="container-profile-info">
+
+                                        <div class="row">
+
+                                            <div class="col-md-12">
+                                                <div formArrayName="working_experience">
+                                                    <div class="container-profile-info">
+                                                        <div class="row">
+                                                            <div class="col-md-12" *ngFor="let job of cvForm.get('working_experience')['controls']; let j = index" [formGroupName]="j">
+                                                                <div class="d-flex justify-content-start align-items-center">
+                                                                    <p class="text-green m-0">Experiencia {{ j + 1 }}</p>
+                                                                    <button class="text-green btn-action btn-link" [disabled]="cvForm.get('working_experience').controls.length === 1" (click)="deleteJob( j )"><i class="fas fa-times"></i></button>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6 col-sm-12">
+                                                                                <p class="label-info">EMPRESA O PROYECTO</p>
+                                                                                <input type="text" class="form-control input-border-bottom mb-2" placeholder="Nombre de la empresa o proyecto" [ngClass]="{ 'is-invalid': !job.controls.job_name.valid }" formControlName="job_name" name="job_name">
+                                                                                <small *ngIf="job.get('job_name').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                                                <small *ngIf="job.get('job_name').errors?.pattern" class="invalid-feedback">No se aceptan caracteres extraños.</small>
+                                                                            </div>
+                                                                            <div class="col-md-6 col-sm-12">
+                                                                                <p class="label-info">PUESTO</p>
+                                                                                <input type="text" class="form-control input-border-bottom mb-2" placeholder="Puesto desempeñado" [ngClass]="{ 'is-invalid': !job.controls.job_position.valid }" formControlName="job_position" name="job_position">
+                                                                                <small *ngIf="job.get('job_position').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                                                <small *ngIf="job.get('job_position').errors?.pattern" class="invalid-feedback">No se aceptan caracteres extraños.</small>
+                                                                            </div>
+                                                                            <div class="col-md-6 col-sm-12">
+                                                                                <p class="label-info">PERIODO</p>
+                                                                                <input type="text" class="form-control input-border-bottom mb-2" placeholder="Periodo de estadía" [ngClass]="{ 'is-invalid': !job.controls.period.valid }" formControlName="period" name="period">
+                                                                                <small *ngIf="job.get('period').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                                                <small *ngIf="job.get('period').errors?.pattern" class="invalid-feedback">No se aceptan caracteres extraños.</small>
+                                                                            </div>
+                                                                            <div class="col-md-12">
+                                                                                <div class="row">
+                                                                                    <div class="col">
+                                                                                        <div class="d-flex justify-content-between align-items-center">
+                                                                                            <h5 class="header">ACTIVIDADES</h5>
+                                                                                            <button type="button" class="btn btn-dark" (click)="addActivity(job.controls.activities)"><i class="fas fa-plus-circle"></i> Agregar Actividad</button>
+                                                                                        </div>
+                                                                                        <hr class="title-separator">
+                                                                                        <div class="container-profile-info">
+                                                    
+                                                                                            <div class="row">
+                                                    
+                                                                                                <div class="col-md-12">
+                                                                                                    <div formArrayName=activities>
+                                                                                                        <div class="container-profile-info">
+                                                                                                            <div class="row">
+                                                                                                                <div class="col-md-6" *ngFor="let activity of job.get('activities')['controls']; let act = index" [formGroupName]="act">
+                                                                                                                    
+                                                                                                                    <div class="d-flex justify-content-start align-items-center">
+                                                                                                                        <p class="label-info">ACTIVIDAD {{ act + 1 }}</p>
+                                                                                                                        <button class="text-green btn-action btn-link" [disabled]="job.get('activities')['controls'].length === 1" (click)="deleteActivity( job.controls.activities, act )"><i class="fas fa-times"></i></button>
+                                                                                                                    </div>
+                                                                                                                    <div class="row">
+                                                                                                                        <div class="col-md-12">
+                                                                                                                            <div class="row">
+                                                                                                                                <div class="col-md-12">
+                                                                                                                                    <input type="text" class="form-control input-border-bottom mb-2" placeholder="Describe tu actividad" [ngClass]="{ 'is-invalid': !activity.controls.activity.valid }" formControlName="activity" name="activity">
+                                                                                                                                    <small *ngIf="activity.get('activity').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                                                                                                    <small *ngIf="activity.get('activity').errors?.pattern" class="invalid-feedback">No se aceptan caracteres extraños.</small>
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                        
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                    
+                                                                                            </div>
+                                                                            
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                                <span>{{ errorMessage }}</span>
+                            </div>
+                            <div class="modal-footer d-flex justify-content-end">
+                                <button type="submit" class="btn btn-green">Guardar</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

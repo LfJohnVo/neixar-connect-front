@@ -1,0 +1,208 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header" *ngIf="!isIdUrl">Registra tu avance de cumplimiento de objetivos</h6>
+                <h6 class="card-header" *ngIf="isIdUrl">Valida los objetivos de {{ userChoosen?.p_information?.name | firstname }} {{ userChoosen?.p_information?.firstSurname }}</h6>
+                <div class="card-body">
+                    <div class="alert alert-pink" role="alert" *ngIf="evaluated && !isIdUrl && objectives.length > 0">
+                        Evaluación registrada. ¡Tu avance para este semestre fue de {{ total }}%!
+                    </div>
+                    <div class="alert alert-pink" role="alert" *ngIf="evaluated && isIdUrl && objectives.length > 0">
+                        Evaluación registrada. !El avance para este semestre fue de {{ total }}%!
+                    </div>
+                    <div class="alert alert-pink" role="alert" *ngIf="objectives.length == 0 && !isIdUrl">
+                        Tus objetivos no han sido registrados.
+                    </div>
+                    <div class="alert alert-pink" role="alert" *ngIf="objectives.length == 0 && isIdUrl">
+                        Este colaborador no cuenta con objetivos registrados.
+                    </div>
+                    <div class="alert alert-pink" role="alert" *ngIf="!onTime && objectives.length > 0 && !evaluated">
+                        {{ messagePeriod }}
+                    </div>
+                    <div class="table-responsive" *ngIf="objectives.length > 0">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th scope="col" class="align-middle">#</th>
+                                    <th scope="col" class="align-middle">OBJETIVO</th>
+                                    <th scope="col" class="align-middle">CRITERIO DE CUMPLIMIENTO</th>
+                                    <th scope="col" class="align-middle">FECHA DE CUMPLIMIENTO</th>
+                                    <th scope="col" class="align-middle">PESO</th>
+                                    <th scope="col" class="align-middle">AVANCE</th>
+                                    <th scope="col" class="align-middle"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let objective of objectives; let i = index;">
+                                    <td class="align-middle" scope="row">{{ i + 1 }}</td>
+                                    <td class="align-middle text-justify">{{ objective.description }}</td>
+                                    <td class="align-middle text-justify">{{ objective.acceptance_criteria }}</td>
+                                    <td class="align-middle">{{ objective.commitment_date | date:'dd/MM/yyyy' }}</td>
+                                    <td class="align-middle">{{ objective.weighing }} %</td>
+                                    <td class="align-middle">{{ objective.progress || 0 }} %</td>
+                                    <td class="align-middle">
+                                        <a *ngIf="( ( !objective.validated && period == '1' && !objective.registered ) || ( !objective.validated2 && period == '2' && !objective.registered2 ) ) && onTime && !isIdUrl" class="text-mexicanPink btn-action" data-toggle="modal" data-target="#UpdateProgressModal"
+                                            (click)="showObj( objective )" href=""><i class="fas fa-tasks"></i></a>
+                                        <a *ngIf="( ( !objective.validated && period == '1' && objective.registered ) || ( !objective.validated2 && period == '2' && objective.registered2 ) ) && onTime && isIdUrl" class="text-mexicanPink btn-action" data-toggle="modal" data-target="#UpdateProgressModal"
+                                            (click)="showObj( objective )" href=""><i class="fas fa-tasks"></i></a>
+                                        <span *ngIf="( objective.validated && period == '1' ) || ( objective.validated2 && period == '2' )" class="badge badge-date badge-pill">Validado</span>
+                                        <span *ngIf="( ( objective.registered && period == '1' && !objective.validated) || ( objective.registered2 && period == '2' && !objective.validated2 ) ) && !isIdUrl" class="badge badge-blue badge-pill">Registrado</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><strong>TOTAL</strong></td>
+                                    <td><strong>100%</strong></td>
+                                    <td><strong>{{ total }}%</strong></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center text-mexicanPink" *ngIf="errorMessage && isIdUrl">
+                        <span>{{ errorMessage }}</span>
+                    </div>
+                    <div *ngIf="objsValidated" class="d-flex justify-content-end">
+                        <p class="area-user">Objetivos aprobados.</p>
+                    </div>
+                    <div *ngIf="objectives.length > 0 && isIdUrl && hasPermissions && !objsValidated" class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-green" data-toggle="modal" data-target="#DeleteObjsModal">Eliminar Objetivos</button>
+                        <button type="button" class="btn btn-green" data-toggle="modal" data-target="#voboModal">Vo.Bo. Objetivos</button>
+                    </div>
+                    <div *ngIf="!evaluated && saveGrant && onTime" class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-green" (click)="save()">Finalizar Evaluación</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Delete Objectives -->
+<div class="modal fade" id="DeleteObjsModal" tabindex="-1" role="dialog" aria-labelledby="DeleteObjsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-danger">
+                <h6 class="modal-title"><i class="fas fa-exclamation-triangle"></i> Confirmación</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-msg text-justify">¿Está seguro que desea eliminar los objetivos registrados por <strong>{{ userChoosen?.p_information?.name }} {{ userChoosen?.p_information?.firstSurname }} {{ userChoosen?.p_information.secondSurname }}</strong>?</p>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-link btn-delete" (click)="confirmDeletion( )">Confirmar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Delete Objectives -->
+
+<!-- Modal Delete Objectives -->
+<div class="modal fade" id="voboModal" tabindex="-1" role="dialog" aria-labelledby="voboModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Vo.Bo.</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-msg text-justify">Al dar el visto bueno a los objetivos registrados por <strong>{{ userChoosen?.p_information?.name }} {{ userChoosen?.p_information?.firstSurname }} {{ userChoosen?.p_information.secondSurname }}</strong> está de acuerdo en que sean usados
+                    para la evaluación de desempeño del año en curso.</p>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-green" (click)="confirmVoBo( )">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Delete Objectives -->
+
+<!-- Modal Edit Progress -->
+<div class="modal fade" id="UpdateProgressModal" tabindex="-1" role="dialog" aria-labelledby="UpdateProgressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Registra el avance de tu objetivo </h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <p class="label-info text-green mb-0">OBJETIVO</p>
+                    <p class="data-info text-justify">{{ objChoosen?.description }}</p>
+                    <p class="label-info text-green mb-0">RESULTADO ESPERADO</p>
+                    <p class="data-info text-justify">{{ objChoosen?.expected_result }}</p>
+                    <div *ngIf="isIdUrl && period === '2'" class="row">
+                        <div class="col-md-12">
+                            <div class="d-flex align-items-center">
+                                <h6 class="header">Primer Semestre</h6>
+                            </div>
+                            <hr class="separator">
+                        </div>
+                        <div class="col-md-9">
+                            <h6 class="label-info text-green">EVIDENCIA</h6>
+                            <p class="data-info text-justify">{{ objChoosen?.progress_description || 'Evidencia no registrada'}}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h5><span *ngIf="objChoosen?.validated" class="badge badge-date badge-pill">Validado</span></h5>
+                            <h5><span *ngIf="!objChoosen?.validated" class="badge badge-danger badge-pill">No Validado</span></h5>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="d-flex align-items-center">
+                                <h6 class="header">Segundo Semestre</h6>
+                            </div>
+                            <hr class="separator">
+                        </div>
+                        <div class="col-md-9">
+                            <h6 class="label-info text-green">EVIDENCIA</h6>
+                            <p class="data-info text-justify">{{ objChoosen?.progress_description2 || 'Por registrar'}}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h5><span *ngIf="objChoosen?.validated2" class="badge badge-date badge-pill">Validado</span></h5>
+                            <h5><span *ngIf="!objChoosen?.validated2" class="badge badge-danger badge-pill">No Validado</span></h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-fluid">
+                    <form [formGroup]="progressForm" (ngSubmit)="updateObj()" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-4 pl-0">
+                                <label class="label-info text-green" for="nameInputProgress">AVANCE <small>(0-100%)</small></label>
+                                <input type="number" min="0" max="100" class="form-control input-border-bottom" id="nameInputProgress" [ngClass]="{ 'is-invalid': !progressForm.controls['progress'].valid }" formControlName="progress">
+                                <small *ngIf="progressForm.controls['progress'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="progressForm.controls['progress'].errors?.min" class="invalid-feedback">El avance no puede ser menor a {{ percentage }}%.</small>
+                                <small *ngIf="progressForm.controls['progress'].errors?.max" class="invalid-feedback">El avance no puede ser mayor a 100%.</small>
+                            </div>
+                            <div class="form-group col-md-8 pl-0">
+                                <label class="label-info text-green" for="progressDescIputProgress">EVIDENCIA</label>
+                                <input type="text" class="form-control input-border-bottom" id="progressDescIputProgress" [ngClass]="{ 'is-invalid': !progressForm.controls['progress_description'].valid }" placeholder="Describe la evidencia de acreditación" formControlName="progress_description">
+                                <small *ngIf="progressForm.controls['progress_description'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-green" *ngIf="!isIdUrl">Guardar Avance</button>
+                            <button type="submit" class="btn btn-green" *ngIf="isIdUrl">Validar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Edit Progress -->

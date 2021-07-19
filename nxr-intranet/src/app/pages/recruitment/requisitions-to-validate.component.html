@@ -1,0 +1,41 @@
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col-md-9">
+            <app-requisition-details [requisitionShown]="requisitionShown" (rejection)="requisitionRejection( $event )" (validation)="requisitionValidation( )"></app-requisition-details>
+        </div>
+
+        <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card nxr_card ">
+                        <h6 class="card-header">Requisiciones</h6>
+                        <div class="card-body">
+                            <div *ngIf="requisitionsToValidate.length === 0" class="alert alert-pink mt-4" role="alert">
+                                Sin requisiciones
+                            </div>
+                            <div *ngIf="requisitionsToValidate.length > 0" class="table-responsive">
+                                <table class="table table-borderless table-striped">
+                                    <thead class="card-thead">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Vacantes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let requisition of requisitionsToValidate; let requisitionIndex = index;" class="pointer" (click)="getPersonnelRequisition( requisition._id )">
+                                            <td>{{ requisitionIndex + 1 }}</td>
+                                            <td>{{ requisition.position.positionName }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <app-pagination *ngIf="totalPagesReq > 1" (selectedPage)="getRequisitionsByPetitioner( $event )" [totalPages]="totalPagesReq" [pages]="pagesReq"></app-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

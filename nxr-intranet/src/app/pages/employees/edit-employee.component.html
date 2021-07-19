@@ -1,0 +1,371 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header">{{ userInfo?.p_information?.name | firstname }} {{ userInfo?.p_information?.firstSurname }}</h6>
+                <div class="card-body">
+                    <div class="container-fluid">
+                        <form [formGroup]="userForm" (ngSubmit)="editUser()" novalidate="novalidate">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="header">Información básica</h5>
+                                    </div>
+                                    <hr class="title-separator">
+                                    <div class="container-profile-info">
+                                        <div class="row" formGroupName="p_information">
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="nameInputUser">NOMBRE(S)</h6>
+                                                <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom mb-3" id="nameInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.name').valid }" placeholder="Ingresa el(los) nombre(s)" formControlName="name">
+                                                <small *ngIf="userForm.get('p_information.name').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="userForm.get('p_information.name').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 3 caracteres.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="firstSurnameInputUser">APELLIDO PATERNO</h6>
+                                                <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom mb-3" id="firstSurnameInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.firstSurname').valid }" placeholder="Ingresa tu apellido paterno"
+                                                    formControlName="firstSurname">
+                                                <small *ngIf="userForm.get('p_information.firstSurname').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="userForm.get('p_information.firstSurname').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 3 caracteres.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="secondSurnameInputUser">APELLIDO MATERNO</h6>
+                                                <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom mb-3" id="secondSurnameInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.secondSurname').valid }" placeholder="Ingresa tu apellido materno"
+                                                    formControlName="secondSurname">
+                                                <small *ngIf="userForm.get('p_information.secondSurname').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="userForm.get('p_information.secondSurname').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 3 caracteres.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="birthdateInputUser">FECHA DE NACIMIENTO</h6>
+                                                <input type="text" class="form-control input-border-bottom mb-3" id="birthdateInputUser" placeholder="dd/mm/aaaa" [ngClass]="{ 'is-invalid': !userForm.get('p_information.birthdate').valid }" formControlName="birthdate">
+                                                <small *ngIf="userForm.get('p_information.birthdate').errors?.pattern" class="invalid-feedback">Este atributo debe tener el formato dd/mm/aaaa.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="birthplaceInputUser">LUGAR DE NACIMIENTO</h6>
+                                                <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom mb-3" id="birthplaceInputUser" placeholder="Ingresa tu lugar de nacimiento" [ngClass]="{ 'is-invalid': !userForm.get('p_information.birthplace').valid }"
+                                                    formControlName="birthplace">
+                                                <small *ngIf="userForm.get('p_information.birthplace').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 3 caracteres.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="nacionalityInputUser">NACIONALIDAD</h6>
+                                                <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom mb-3" id="birthplaceInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.nationality').valid }" placeholder="Ingresa tu nacionalidad"
+                                                    formControlName="nationality">
+                                                <small *ngIf="userForm.get('p_information.nationality').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 3 caracteres.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="genderInputUser">GÉNERO</h6>
+                                                <div id="genderInputUser">
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="gender" id="genderInputUserF" value="FEMENINO">
+                                                        <label class="custom-control-label" for="genderInputUserF">Femenino</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="gender" id="genderInputUserM" value="MASCULINO">
+                                                        <label class="custom-control-label" for="genderInputUserM">Masculino</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="selectUser">ESTADO CIVIL</h6>
+                                                <select class="form-control input-border-bottom mb-3" id="selectUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.marital_status').valid }" formControlName="marital_status">
+                                                    <option value="" selected disabled> Selecciona una opción </option>
+                                                    <option value="SOLTERO" >SOLTERO (A)</option>
+                                                    <option value="CASADO" >CASADO (A)</option>
+                                                    <option value="DIVORCIADO" >DIVORCIADO (A)</option>
+                                                    <option value="UNIÓN LIBRE" >UNIÓN LIBRE</option>
+                                                    <option value="VIUDO" >VIUDO (A)</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="ssnInputUser">NSS</h6>
+                                                <input type="text" maxlength="11" class="form-control input-border-bottom mb-3" id="ssnInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.ssn').valid }" placeholder="Ingresa tu NSS" formControlName="ssn">
+                                                <small *ngIf="userForm.get('p_information.ssn').errors?.pattern" class="invalid-feedback">Este atributo debe tener 11 caracteres numéricos.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="curpInputUser">CURP</h6>
+                                                <input type="text" maxlength="18" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom mb-3" id="curpInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.curp').valid }" placeholder="Ingresa tu CURP" formControlName="curp">
+                                                <small *ngIf="userForm.get('p_information.curp').errors?.pattern" class="invalid-feedback">No cumple con el formato requerido.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="rfcInputUser">RFC</h6>
+                                                <input type="text" maxlength="13" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom mb-3" id="rfcInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.rfc').valid }" placeholder="Ingresa tu RFC" formControlName="rfc">
+                                                <small *ngIf="userForm.get('p_information.rfc').errors?.pattern" class="invalid-feedback">No cumple con el formato requerido.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="addressInputUser">TELÉFONO</h6>
+                                                <input type="text" maxlength="10" class="form-control input-border-bottom mb-3" id="phonenumberInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.phone_number').valid }" placeholder="Ingresa tu teléfono" formControlName="phone_number">
+                                                <small *ngIf="userForm.get('p_information.phone_number').errors?.pattern" class="invalid-feedback">No cumple con el formato requerido (8 o 10 dígitos).</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="addressInputUser">DOMICILIO</h6>
+                                                <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom mb-3" id="addressInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.address').valid }" placeholder="Ingresa tu dirección" formControlName="address">
+                                                <small *ngIf="userForm.get('p_information.address').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 10 caracteres.</small>
+                                            </div>
+                                            <div class="col-md-8" formGroupName="emergency_contact">
+                                                <h6 class="label-info" for="emergencyContactInputUser">CONTACTO DE EMERGENCIA</h6>
+                                                <div id="emergencyContactInputUser" class="row">
+                                                    <div class="col">
+                                                        <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom mb-3" id="emerContNameInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.emergency_contact.name').valid }" placeholder="Ingresa el nombre del contacto"
+                                                            formControlName="name">
+                                                        <small *ngIf="userForm.get('p_information.emergency_contact.name').errors?.minlength" class="invalid-feedback">Este atributo debe tener mínimo 10 caracteres.</small>
+                                                    </div>
+                                                    <div class="col">
+                                                        <input type="text" maxlength="10" class="form-control input-border-bottom mb-3" id="emerContPhoneInputUser" [ngClass]="{ 'is-invalid': !userForm.get('p_information.emergency_contact.phone_number').valid }" placeholder="Ingresa el teléfono del contacto"
+                                                            formControlName="phone_number">
+                                                        <small *ngIf="userForm.get('p_information.emergency_contact.phone_number').errors?.pattern" class="invalid-feedback">No cumple con el formato requerido.</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="header">Información laboral</h5>
+                                    </div>
+                                    <hr class="title-separator">
+                                    <div class="container-profile-info">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="idNeixarInputEmployee">ID NEIXAR</h6>
+                                                <input type="number" min="1" max="9999" class="form-control input-border-bottom mb-3" id="idNeixarInputEmployee" [ngClass]="{ 'is-invalid': !userForm.controls['id_neixar'].valid }" placeholder="Ingresa el ID NEIXAR" formControlName="id_neixar">
+                                                <small *ngIf="userForm.controls['id_neixar'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="idSAFInputEmployee">ID SAF</h6>
+                                                <input type="text" onkeyup="this.value = this.value.toUpperCase();" class="form-control input-border-bottom mb-3" id="idSAFInputEmployee" [ngClass]="{ 'is-invalid': !userForm.controls['id_saf'].valid }" placeholder="Ingresa el ID SAF" formControlName="id_saf">
+                                                <small *ngIf="userForm.controls['id_saf'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="userForm.controls['id_saf'].errors?.pattern" class="invalid-feedback">Ej. NXR0000</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="emailInputEmployee">EMAIL</h6>
+                                                <input type="email" class="form-control input-border-bottom mb-3" id="emailInputEmployee" [ngClass]="{ 'is-invalid': !userForm.controls['email'].valid }" placeholder="Ingresa el correo electrónico" formControlName="email">
+                                                <small *ngIf="userForm.controls['email'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="userForm.controls['email'].errors?.pattern" class="invalid-feedback">Ej. nombre@neixar.com o nombre@neixar.com.mx</small>
+                                            </div>
+                                        </div>
+                                        <div class="row" formGroupName="w_information">
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="departmentSelectEmployee">DEPARTAMENTO</h6>
+                                                <select (change)="fillDropDowns($event.target.value)" class="form-control input-border-bottom mb-3" id="departmentSelectEmployee" [ngClass]="{ 'is-invalid': !userForm.get('w_information.area').valid }" formControlName="area">
+                                                    <option [value]="''" disabled selected> Selecciona un departamento </option>
+                                                    <option *ngFor="let department of departments" [value]="department._id">{{ department.name }}</option>
+                                                </select>
+                                                <small *ngIf="userForm.get('w_information.area').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="costCenterInputEmployee">CENTRO DE COSTO</h6>
+                                                <input type="text" class="form-control input-border-bottom mb-3" id="costCenterInputEmployee" [ngClass]="{ 'is-invalid': !userForm.get('w_information.cost_center').valid }" placeholder="Ingresa el centro de costo" formControlName="cost_center">
+                                                <small *ngIf="userForm.get('w_information.cost_center').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="positionSelectEmployee">PUESTO</h6>
+                                                <select class="form-control input-border-bottom mb-3" id="positionSelectEmployee" [ngClass]="{ 'is-invalid': !userForm.get('w_information.position').valid }" formControlName="position">
+                                                    <option [value]="''" disabled selected> Selecciona un puesto </option>
+                                                    <option *ngFor="let position of positions" [value]="position._id">{{ position.name }}</option>
+                                                </select>
+                                                <small *ngIf="userForm.get('w_information.position').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="bossSelectEmployee">JEFE INMEDIATO</h6>
+                                                <select class="form-control input-border-bottom mb-3" id="bossSelectEmployee" [ngClass]="{ 'is-invalid': !userForm.get('w_information.immediate_boss').valid }" formControlName="immediate_boss">
+                                                    <option [value]="" disabled selected> Selecciona un colaborador </option>
+                                                    <option *ngFor="let employee of employees" [value]="employee._id">{{ employee.p_information.name | firstname | titlecase }} {{ employee.p_information.firstSurname | titlecase }} - {{ employee.w_information.area.name }}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="admissionDateInputEmployee">FECHA DE INGRESO</h6>
+                                                <input type="text" class="form-control input-border-bottom mb-3" id="admissionDateInputEmployee" [ngClass]="{ 'is-invalid': !userForm.get('w_information.admission_date').valid }" placeholder="dd/mm/aaaa" formControlName="admission_date">
+                                                <small *ngIf="userForm.get('w_information.admission_date').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="userForm.get('w_information.admission_date').errors?.pattern" class="invalid-feedback">Este atributo debe tener el formato dd/mm/aaaa.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="contractInputEmployee">TIPO DE CONTRATO</h6>
+                                                <div id="contractInputEmployee">
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="contract_type" id="contractInputEmployeeD" value="DETERMINADO" (click)="checkContractType('DETERMINADO')">
+                                                        <label class="custom-control-label" for="contractInputEmployeeD">Determinado</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="contract_type" id="contractInputEmployeeI" value="INDETERMINADO" (click)="checkContractType('INDETERMINADO')">
+                                                        <label class="custom-control-label" for="contractInputEmployeeI">Indeterminado</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="terminationDateInputEmployee">FECHA TERMINO DE CONTRATO</h6>
+                                                <input type="text" class="form-control input-border-bottom mb-3" id="terminationDateInputEmployee" [ngClass]="{ 'is-invalid': !userForm.get('w_information.contract_termination_date').valid }" placeholder="dd/mm/aaaa" formControlName="contract_termination_date">
+                                                <small *ngIf="userForm.get('w_information.contract_termination_date').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="userForm.get('w_information.contract_termination_date').errors?.pattern" class="invalid-feedback">Este atributo debe tener el formato dd/mm/aaaa.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="recruitmentInputEmployee">ESQUEMA DE CONTRATACIÓN</h6>
+                                                <div id="recruitmentInputEmployee">
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="recruitment_scheme" id="recruitmentInputEmployeeM" value="MIXTO">
+                                                        <label class="custom-control-label" for="recruitmentInputEmployeeM">Mixto</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="recruitment_scheme" id="recruitmentInputEmployeeI" value="SOLO IAS">
+                                                        <label class="custom-control-label" for="recruitmentInputEmployeeI">Solo IAS</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="payrollInputEmployee">PERIODICIDAD DE NÓMINA</h6>
+                                                <div id="payrollInputEmployee">
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="payroll_periodicity" id="payrollInputEmployeeQ" value="QUINCENAL">
+                                                        <label class="custom-control-label" for="payrollInputEmployeeQ">Quincenal</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="payroll_periodicity" id="payrollInputEmployeeM" value="MENSUAL">
+                                                        <label class="custom-control-label" for="payrollInputEmployeeM">Mensual</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="renewalEmployee">RENOVACIÓN DE CONTRATO</h6>
+                                                <div id="renewalEmployee">
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="contract_renewal" id="renewalEmployeeS" value="S">
+                                                        <label class="custom-control-label" for="renewalEmployeeS">Sí</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="contract_renewal" id="renewalEmployeeN" value="N">
+                                                        <label class="custom-control-label" for="renewalEmployeeN">No</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="hasBonusInputEmployee">BONO</h6>
+                                                <div id="hasBonusInputEmployee">
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="hasPerformanceBonus" id="hasPerformanceBonusY" value="true" (click)="checkBonus(true)">
+                                                        <label class="custom-control-label" for="hasPerformanceBonusY">Sí</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="hasPerformanceBonus" id="hasPerformanceBonusN" value="false" (click)="checkBonus(false)">
+                                                        <label class="custom-control-label" for="hasPerformanceBonusN">No</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="bonusRateSelectEmployee">PROPORCIÓN DEL BONO</h6>
+                                                <select class="form-control input-border-bottom mb-3" id="bonusRateSelectEmployee" [ngClass]="{ 'is-invalid': !userForm.get('w_information.bonusRate').valid }" formControlName="bonusRate">
+                                                    <option value="" disabled selected> Selecciona una opción </option>
+                                                    <option value="0.5">1 quincena</option>
+                                                    <option value="1">1 mes</option>
+                                                    <option value="1.5">3 quincenas</option>
+                                                    <option value="2">2 meses</option>
+                                                    <option value="2.5">5 quincenas</option>
+                                                    <option value="3">3 meses</option>
+                                                </select>
+                                                <small *ngIf="userForm.get('w_information.bonusRate').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="header">Información financiera</h5>
+                                    </div>
+                                    <hr class="title-separator">
+                                    <div class="container-profile-info">
+                                        <div class="row" formGroupName="f_information">
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="dailySalarySAFInputEmployee">IMPORTE DIARIO SAF</h6>
+                                                <input type="number" min="0" class="form-control input-border-bottom mb-3" id="dailySalarySAFInputEmployee" [ngClass]="{ 'is-invalid': !userForm.get('f_information.daily_salary_saf').valid }" placeholder="Ingresa el salario diario SAF" formControlName="daily_salary_saf">
+                                                <small *ngIf="userForm.get('f_information.daily_salary_saf').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="userForm.get('f_information.daily_salary_saf').errors?.min" class="invalid-feedback">Este atributo no puede ser igual a 0.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="monthlySalarySAFInputEmployee">IMPORTE MENSUAL SAF</h6>
+                                                <input type="number" min="0" class="form-control input-border-bottom mb-3" id="monthlySalarySAFInputEmployee" [ngClass]="{ 'is-invalid': !userForm.get('f_information.monthly_salary_saf').valid }" placeholder="Ingresa el salario mensual SAF" formControlName="monthly_salary_saf">
+                                                <small *ngIf="userForm.get('f_information.monthly_salary_saf').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="userForm.get('f_information.monthly_salary_saf').errors?.min" class="invalid-feedback">Este atributo no puede ser igual a 0.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="amountsdiSAFInputEmployee">IMPORTE SDI SAF</h6>
+                                                <input type="number" min="0" class="form-control input-border-bottom mb-3" id="amountsdiSAFInputEmployee" [ngClass]="{ 'is-invalid': !userForm.get('f_information.amount_sdi_saf').valid }" placeholder="Ingresa el importe SDI SAF" formControlName="amount_sdi_saf">
+                                                <small *ngIf="userForm.get('f_information.amount_sdi_saf').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="userForm.get('f_information.amount_sdi_saf').errors?.min" class="invalid-feedback">Este atributo no puede ser igual a 0.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="currentPayerEmployee">PAGADORA ACTUAL</h6>
+                                                <div id="currentPayerEmployee">
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="current_payer" id="payerEmployeeCol" value="NXR-COLMENARES">
+                                                        <label class="custom-control-label" for="payerEmployeeCol">NXR-COLMENARES</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input class="form-check-input" type="radio" formControlName="current_payer" id="payerEmployeeSeg" value="SEG. PRIVADA SAF - COLMENARES">
+                                                        <label class="custom-control-label" for="payerEmployeeSeg">SEG. PRIVADA SAF - COLMENARES</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="infonavitInputEmployee">NÚMERO DE CRÉDITO INFONAVIT</h6>
+                                                <input type="text" class="form-control input-border-bottom mb-3" id="infonavitInputEmployee" [ngClass]="{ 'is-invalid': !userForm.get('f_information.infonavit_num_credit').valid }" placeholder="Ingresa el número de crédito" formControlName="infonavit_num_credit">
+                                                <small *ngIf="userForm.get('f_information.infonavit_num_credit').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="descountInfonavitInputEmployee">DESCUENTO INFONAVIT <small>(QUINCENAL)</small></h6>
+                                                <input type="number" min="0" class="form-control input-border-bottom mb-3" id="descountInfonavitInputEmployee" [ngClass]="{ 'is-invalid': !userForm.get('f_information.amount_descount_infonavit').valid }" placeholder="Ingresa el importe a descontar" formControlName="amount_descount_infonavit">
+                                                <small *ngIf="userForm.get('f_information.amount_descount_infonavit').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="userForm.get('f_information.amount_descount_infonavit').errors?.min" class="invalid-feedback">Este atributo no puede ser igual a 0.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info">NÚMERO DE CRÉDITO FONACOT</h6>
+                                                <input type="text" class="form-control input-border-bottom mb-3" id="fonacotInputEmployee" [ngClass]="{ 'is-invalid': !userForm.get('f_information.fonacot_num_credit').valid }" placeholder="Ingresa el número de crédito" formControlName="fonacot_num_credit">
+                                                <small *ngIf="userForm.get('f_information.fonacot_num_credit').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="descountFonacotInputEmployee">DESCUENTO FONACOT <small>(QUINCENAL)</small></h6>
+                                                <input type="number" min="0" class="form-control input-border-bottom mb-3" id="descountFonacotInputEmployee" [ngClass]="{ 'is-invalid': !userForm.get('f_information.amount_descount_fonacot').valid }" placeholder="Ingresa el importe a descontar" formControlName="amount_descount_fonacot">
+                                                <small *ngIf="userForm.get('f_information.amount_descount_fonacot').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="userForm.get('f_information.amount_descount_fonacot').errors?.min" class="invalid-feedback">Este atributo no puede ser igual a 0.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="bankInputEmployee">BANCO</h6>
+                                                <input type="text" class="form-control input-border-bottom mb-3" id="bankInputEmployee" [ngClass]="{ 'is-invalid': !userForm.get('f_information.bank').valid }" placeholder="Ingresa el nombre del banco" formControlName="bank">
+                                                <small *ngIf="userForm.get('f_information.bank').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="bankAccountInputEmployee">CUENTA BANCARIA</h6>
+                                                <input type="text" class="form-control input-border-bottom mb-3" id="bankAccountInputEmployee" [ngClass]="{ 'is-invalid': !userForm.get('f_information.bank_account').valid }" placeholder="Ingresa la cuenta bancaria" formControlName="bank_account">
+                                                <small *ngIf="userForm.get('f_information.bank_account').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="interbankClabeInputEmployee">CLABE INTERBANCARIA</h6>
+                                                <input type="text" class="form-control input-border-bottom mb-3" id="interbankClabeInputEmployee" [ngClass]="{ 'is-invalid': !userForm.get('f_information.interbank_clabe').valid }" placeholder="Ingresa la clabe interbancaria" formControlName="interbank_clabe">
+                                                <small *ngIf="userForm.get('f_information.interbank_clabe').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="label-info" for="lastGrossSalaryInputEmployee">ÚLTIMO SUELDO BRUTO <small>(MENSUAL)</small></h6>
+                                                <input type="number" min="0" class="form-control input-border-bottom mb-3" id="lastGrossSalaryInputEmployee" [ngClass]="{ 'is-invalid': !userForm.get('f_information.last_gross_salary').valid }" placeholder="Ingresa el último sueldo bruto" formControlName="last_gross_salary">
+                                                <small *ngIf="userForm.get('f_information.last_gross_salary').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="userForm.get('f_information.last_gross_salary').errors?.min" class="invalid-feedback">Este atributo no puede ser igual a 0.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                                <span>{{ errorMessage }}</span>
+                            </div>
+                            <div class="modal-footer d-flex justify-content-end">
+                                <button type="submit" class="btn btn-green">Guardar Cambios</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,108 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-10">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Descripciones de Puesto <small>(Solicitudes)</small></h6>
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-end mb-2">
+                        <a href="" class="btn btn-dark btn-sm" [routerLink]="['nueva_descripcion']"><i class="fas fa-plus-circle"></i> NUEVA DESCRIPCIÓN</a>
+                    </div>
+                    <div *ngIf="myJobDescriptions.length <= 0" class="alert alert-pink mt-4" role="alert">
+                        No has registrado niguna descripción de puesto.
+                    </div>
+                    <div *ngIf="myJobDescriptions.length > 0" class="table-responsive">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Puesto</th>
+                                    <th scope="col">Versión</th>
+                                    <th scope="col">Fecha elaboración</th>
+                                    <th scope="col">Estado</th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let jobDesc of myJobDescriptions; let i = index;">
+                                    <td>{{ i + 1 + ((currentPageJD-1) * 4) }}</td>
+                                    <td>{{ jobDesc.name }}</td>
+                                    <td>{{ jobDesc.jobDescription.version }}</td>
+                                    <td>{{ jobDesc.jobDescription.elaborationDate | date: 'dd/MM/y'}}</td>
+                                    <td [ngClass]="
+                                        {'text-success': jobDesc.jobDescription.status === 'Vigente',
+                                         'text-danger': jobDesc.jobDescription.status === 'Rechazada',
+                                         'text-primary': jobDesc.jobDescription.status === 'En revisión'}">
+                                        {{ jobDesc.jobDescription.status }}
+                                    </td>
+                                    <td class="d-flex align-items-center">
+                                        <a class="text-mexicanPink btn-action" [routerLink]="['descripcion',  jobDesc.jobDescription._id]">
+                                            <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="Ver detalles de DP"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <app-pagination *ngIf="totalPagesJD > 1" (selectedPage)="getDPByCreator( $event )" [totalPages]="totalPagesJD" [pages]="pagesJD"></app-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <div class="container-fluid container-page">
+    <div class="row">
+        <div class="col-md-9">
+            <app-requisition-details [requisitionShown]="requisitionShown"></app-requisition-details>
+        </div>
+
+        <div class="col-md-3">
+            <div class="row">
+                <div *ngIf="isValidator" class="col-md-12">
+                    <div class="card nxr_card ">
+                        <h6 class="card-header">Requisiciones <small>(Por aprobar)</small></h6>
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-center mb-2">
+                                <a href="" class="btn btn-dark btn-sm" [routerLink]="['validar-requisiciones']">VER LISTADO</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card nxr_card ">
+                        <h6 class="card-header">Requisiciones</h6>
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-center mb-2">
+                                <a href="" class="btn btn-dark btn-sm" [routerLink]="['requisicion']"><i class="fas fa-plus-circle"></i> NUEVA REQUISICIÓN</a>
+                            </div>
+                            <div *ngIf="myPersonnelRequisitions.length === 0" class="alert alert-pink mt-4" role="alert">
+                                Sin requisiciones
+                            </div>
+                            <div *ngIf="myPersonnelRequisitions.length > 0" class="table-responsive">
+                                <table class="table table-borderless table-striped">
+                                    <thead class="card-thead">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Vacantes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let requisition of myPersonnelRequisitions; let requisitionIndex = index;" class="pointer" (click)="getPersonnelRequisition( requisition._id )">
+                                            <td>{{ requisitionIndex + 1 }}</td>
+                                            <td>{{ requisition.position.positionName }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <app-pagination *ngIf="totalPagesReq > 1" (selectedPage)="getRequisitionsByPetitioner( $event )" [totalPages]="totalPagesReq" [pages]="pagesReq"></app-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div> -->

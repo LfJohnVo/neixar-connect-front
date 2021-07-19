@@ -1,0 +1,258 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col-md-12 m-0 p-0">
+            <div class="row m-0 p-0 d-flex justify-content-center">
+                <div class="col-md-3">
+                    <div class="card nxr_card card-indicator">
+                        <div class="card-body">
+                            <h5 class="card-number">{{ generalCounters.current }}</h5>
+                            <h6 class="card-description">VACANTES VIGENTES</h6>
+                            <hr>
+                        </div>
+                        <div *ngIf="!isRecruiter" class="card-footer" (click)="seeVacancies('current')">
+                            Ver listado <i class="fas fa-arrow-circle-right"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card nxr_card card-indicator">
+                        <div class="card-body">
+                            <h5 class="card-number">{{ generalCounters.expired }}</h5>
+                            <h6 class="card-description">VACANTES VENCIDAS</h6>
+                            <hr>
+                        </div>
+                        <div *ngIf="!isRecruiter" class="card-footer" (click)="seeVacancies('expired')">
+                            Ver listado <i class="fas fa-arrow-circle-right"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card nxr_card card-indicator">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-number">{{ generalCounters.covered }}</h5>
+                                <p class="card-number" style="font-size: 1rem">{{ generalCounters.month }}</p>
+                            </div>
+                            <h6 class="card-description">VACANTES CUBIERTAS</h6>
+                            <hr>
+                        </div>
+                        <div *ngIf="!isRecruiter" class="card-footer" (click)="seeVacancies('completed')">
+                            Ver listado <i class="fas fa-arrow-circle-right"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card nxr_card card-indicator">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-number">{{ generalCounters.closed }}</h5>
+                                <p class="card-number" style="font-size: 1rem">{{ generalCounters.month }}</p>
+                            </div>
+                            <h6 class="card-description">VACANTES CERRADAS</h6>
+                            <hr>
+                        </div>
+                        <div *ngIf="!isRecruiter" class="card-footer" (click)="seeVacancies('closed')">
+                            Ver listado <i class="fas fa-arrow-circle-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Recursos</h6>
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row row-panel">
+                            <div class="col-md-12 col-lg-12 btn-col">
+                                <button [routerLink]="['candidatos']" class="btn btn-dark btn-block">Candidatos</button>
+                            </div>
+                            <div class="col-md-12 col-lg-12 btn-col">
+                                <button [routerLink]="['cartera-neixar']" class="btn btn-dark btn-block">Cartera NEIXAR</button>
+                            </div>
+                            <div *ngIf="!isRecruiter" class="col-md-12 col-lg-12 btn-col">
+                                <button [routerLink]="['asignaciones']" class="btn btn-dark btn-block">Asignaciones</button>
+                            </div>
+                            <div *ngIf="isRecruiter" class="col-md-12 col-lg-12 btn-col">
+                                <button [routerLink]="['mis-vacantes']" class="btn btn-dark btn-block">Mis Vacantes</button>
+                            </div>
+                            <div *ngIf="!isRecruiter" class="col-md-12 col-lg-12 btn-col">
+                                <button (click)="getConfig()" class="btn btn-dark btn-block">Configuración</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div [ngClass]="{'col-md-6': isRecruiter, 'col-md-5': !isRecruiter}">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Asignaciones por Reclutador <small>({{ generalCounters.month }})</small></h6>
+                <div class="card-body">
+                    <div class="container">
+                        <app-doughnut-chart [data]="doughnutChartData" [labels]="doughnutChartLabels" [colors]="chartColors"></app-doughnut-chart>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="isRecruiter" class="col-md-3">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Mis Vacantes</h6>
+                <div class="card-body">
+                    <div class="container p-0">
+                        <div>
+                            <div class="circular-indicator">
+                                <span>{{ recruiterCounters.current }}</span>
+                            </div>
+                            <div class="circular-indicator-label">
+                                <span>asignadas</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="circular-indicator">
+                                <span>{{ recruiterCounters.covered }}</span>
+                            </div>
+                            <div class="circular-indicator-label">
+                                <span>cubiertas</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="circular-indicator">
+                                <span>{{ recruiterCounters.expired }}</span>
+                            </div>
+                            <div class="circular-indicator-label">
+                                <span>vencidas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!isRecruiter" class="col-md-4">
+            <div class="card nxr_card">
+                <h6 class="card-header">Requisiciones <small>(Por asignar)</small></h6>
+                <div class="card-body">
+                    <div class="container">
+                        <div *ngIf="requisitionsToAssign.length <= 0" class="alert alert-pink mb-0" role="alert">
+                            Sin requisiciones por asignar.
+                        </div>
+                        <div *ngIf="requisitionsToAssign.length > 0" class="table-responsive">
+                            <table class="table table-borderless table-striped">
+                                <thead class="card-thead">
+                                    <tr>
+                                        <th scope="col">REQUISICIÓN</th>
+                                        <th scope="col">ACCIÓN</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let requisition of requisitionsToAssign">
+                                        <td>{{ requisition.position.positionName }}</td>
+                                        <td class="text-center">
+                                            <a class="text-mexicanPink btn-action" data-toggle="modal" data-target="#requisitionAssignmentModal" (click)="selectRequisition( requisition )" href=""><i class="fas fa-user-check"></i></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <app-pagination *ngIf="totalPagesReq > 1" (selectedPage)="getRecruitmentsToBeAssigned( $event )" [totalPages]="totalPagesReq" [pages]="pagesReq"></app-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Requisition Assignment-->
+<div class="modal fade" id="requisitionAssignmentModal" tabindex="-1" role="dialog" aria-labelledby="requisitionAssignmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Asignación de Requisición</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <p class="modal-msg text-justify">Por favor asigna la requisición de personal al reclutador correspondiente.</p>
+                    <form [formGroup]="assignmentForm" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-8">
+                                <select class="form-control input-border-bottom mb-3" id="selectRecruiter" [ngClass]="{ 'is-invalid': !assignmentForm.get('recruiter').valid }" formControlName="recruiter" (change)="getSelectedRecruiter($event.target.value)">
+                                        <option [value]="''" selected disabled> Selecciona una opción </option>
+                                        <option *ngFor="let recruiter of recruiters" [value]="recruiter._id">{{ recruiter.p_information?.name | firstname }} {{ recruiter.p_information?.firstSurname }} ({{ recruiter.w_information?.area.name }})</option>
+                                    </select>
+                                <small *ngIf="assignmentForm.controls['recruiter'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                    </form>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary pointer" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-green pointer" (click)='assignRequisition()'>Asignar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Requisition Assignment -->
+
+<!-- Modal Config -->
+<div class="modal fade" id="configModal" tabindex="-1" role="dialog" aria-labelledby="configModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title">Configuración <small>(Notificación de nuevo ingreso)</small></h6>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <form [formGroup]="configForm" (ngSubmit)="saveReceivers()" novalidate="novalidate">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="d-flex justify-content-between align-items-center ml-0 pl-0 col-4">
+                                    <p class="label-info mr-2 text-green" style="font-size: 1rem">DESTINATARIOS</p>
+                                    <button type="button" class="btn btn-dark btn-sm" (click)="addReceiver()"><i class="fas fa-plus-circle"></i></button>
+                                </div>
+                                <div class="container-profile-info">
+                                    <div class="row"  formArrayName="receivers">
+                                        <div class="col-md-6" *ngFor="let receiver of configForm.get('receivers')['controls']; let receiverIndex = index" [formGroupName]="receiverIndex">
+                                            <div class="d-flex justify-content-start align-items-center">
+                                                <p class="label-info m-0" for="selectReceiver">DESTINATARIO {{ receiverIndex + 1 }}</p>
+                                                <button class="text-green btn-action btn-link" [disabled]="configForm.get('receivers').controls.length === 1" (click)="deleteReceiver( receiverIndex )">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                            <select class="form-control input-border-bottom mb-3" id="selectReceiver" [ngClass]="{ 'is-invalid': !receiver.get('receiver').valid }" formControlName="receiver"  (change)="setEmailReceiver($event.target.value, receiverIndex)">
+                                                <option [value]="''" selected disabled> Selecciona una opción </option>
+                                                <option *ngFor="let person of employees" [value]="person._id">{{ person.p_information?.name | firstname }} {{ person.p_information?.firstSurname }} ({{ person.w_information?.area.name }})</option>
+                                            </select>
+                                            <small *ngIf="receiver.get('receiver').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary pointer" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-green pointer" (click)='saveReceivers()'>Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal Config -->

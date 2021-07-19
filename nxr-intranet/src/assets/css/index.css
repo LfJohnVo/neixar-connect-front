@@ -1,0 +1,359 @@
+    body {
+        background: -moz-linear-gradient(315deg, #0c204f 0%, #0c204f 17%, #93A3B5 100%, #93A3B5 100%);
+        /* ff3.6+ */
+        background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, #0c204f), color-stop(17%, #0c204f), color-stop(100%, #93A3B5), color-stop(100%, #93A3B5));
+        /* safari4+,chrome */
+        background: -webkit-linear-gradient(315deg, #0c204f 0%, #0c204f 17%, #93A3B5 100%, #93A3B5 100%);
+        /* safari5.1+,chrome10+ */
+        background: -o-linear-gradient(315deg, #0c204f 0%, #0c204f 17%, #93A3B5 100%, #93A3B5 100%);
+        /* opera 11.10+ */
+        background: -ms-linear-gradient(315deg, #0c204f 0%, #0c204f 17%, #93A3B5 100%, #93A3B5 100%);
+        /* ie10+ */
+        background: linear-gradient(135deg, #0c204f 0%, #0c204f 17%, #93A3B5 100%, #93A3B5 100%);
+        /* w3c */
+        filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#0c204f', endColorstr='#93A3B5', GradientType=1);
+        /* ie6-9 */
+        height: 100%;
+        margin: 0;
+        background-attachment: fixed;
+        color: white;
+    }
+    
+    a {
+        transition: all 0.4s;
+        -webkit-transition: all 0.4s;
+        -o-transition: all 0.4s;
+        -moz-transition: all 0.4s;
+    }
+    
+    a:focus {
+        outline: none !important;
+    }
+    
+    a:hover {
+        text-decoration: none;
+        color: #fff;
+    }
+    
+    .login-container {
+        margin: auto;
+        min-height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+    }
+    
+    .inner-container {
+        padding-bottom: 2rem!important;
+        margin-bottom: 0!important;
+        background: none;
+    }
+    
+    .logo-login {
+        width: 100%;
+        display: block;
+        margin: auto;
+    }
+    
+    .white-line {
+        background: #fff;
+        margin-top: 2rem;
+    }
+    
+    .login-form {
+        width: 70%;
+        margin: 2rem auto;
+    }
+    
+    input,
+    select {
+        margin: 0.5rem auto;
+        border: none;
+    }
+    
+    .login-link {
+        text-align: left;
+        margin-top: 64px;
+        color: #afc43f;
+    }
+    
+    input:focus,
+    select:focus {
+        -webkit-box-shadow: 0px 0px 10px 1px #afc43f !important;
+        box-shadow: 0px 0px 10px 1px #afc43f !important;
+        border: #afc43f;
+    }
+    
+    .btn-login {
+        height: 45px;
+        border-radius: 25px;
+        -webkit-transition: all 0.4s;
+        -o-transition: all 0.4s;
+        -moz-transition: all 0.4s;
+        transition: all 0.4s;
+    }
+    
+    .wrap-inputinfo {
+        position: relative;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .inputinfo {
+        line-height: 1.5;
+        color: #666666;
+        display: block;
+        width: 100%;
+        height: 45px;
+        border-radius: 25px;
+        padding: 0 30px 0 68px;
+    }
+    
+    .symbol-inputinfo {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: flex;
+        align-items: center;
+        position: absolute;
+        border-radius: 25px;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding-left: 35px;
+        pointer-events: none;
+        color: #666666;
+        -webkit-transition: all 0.4s;
+        -o-transition: all 0.4s;
+        -moz-transition: all 0.4s;
+        transition: all 0.4s;
+    }
+    
+    .inputinfo:focus+.symbol-inputinfo {
+        color: #afc43f;
+        padding-left: 28px;
+    }
+    
+    .btn-outline-success {
+        border-color: #afc43f;
+        color: #afc43f;
+        border-radius: 15px;
+    }
+    
+    .btn-outline-success:hover {
+        background-color: #afc43f;
+        border-color: #afc43f;
+        color: #fff;
+    }
+    /* NAVBAR */
+    
+    .navbar {
+        background-color: #0c204f!important;
+    }
+    /* UTILITIES */
+    
+    .rounded-cross {
+        border-top-left-radius: 20px !important;
+        border-bottom-right-radius: 20px !important;
+    }
+    
+    .border-blue {
+        border-color: #0c204f !important;
+        border-width: 2px !important;
+    }
+    
+    .indicator {
+        background-color: #fff;
+        font-family: 'Square721 BT';
+        font-style: normal;
+        padding: 20px;
+        height: 100%;
+    }
+    
+    .header {
+        color: #333333 !important;
+        margin-bottom: 0;
+        margin-left: 10px;
+    }
+    
+    .vertical-scrollable {
+        max-height: 200px;
+        overflow-y: auto;
+        color: #333333 !important;
+    }
+    
+    .horizontal-scrollable {
+        overflow-x: auto;
+        color: #333333 !important;
+    }
+    
+    .container-window {
+        background: #E0E0E0;
+        padding: 15px !important;
+        min-height: 95vh;
+        color: #333333 !important;
+    }
+    
+    .time-linetime {
+        padding-bottom: 10px;
+        padding-top: 25px;
+        color: #333333;
+    }
+    
+    .status-linetime {
+        padding-top: 15px;
+        height: 10px;
+    }
+    
+    .month-clock {
+        font-size: 1rem;
+    }
+    
+    .day-clock {
+        font-size: 5rem;
+    }
+    
+    .time-clock {
+        font-size: 1.5rem;
+    }
+    
+    .text-green {
+        color: #afc43f;
+    }
+    
+    .text-mexicanPink {
+        color: #C71c79;
+    }
+    
+    .alert-pink {
+        color: #c71c79;
+        border-color: #c71c79;
+    }
+    
+    .badge-availability {
+        font-size: 17px;
+        width: 100%;
+    }
+    
+    .table-header {
+        background: #0c204f;
+        color: white;
+    }
+    
+    .btn-green {
+        color: #fff;
+        background-color: #afc43f;
+        border-color: #afc43f;
+    }
+    
+    .btn-green:hover {
+        background-color: #b0c43fb6;
+        border-color: #b0c43fb6;
+    }
+    
+    .btn-green:focus {
+        -webkit-box-shadow: 0px 0px 10px 1px #afc43f !important;
+        box-shadow: 0px 0px 10px 1px #afc43f !important;
+    }
+    
+    .form-control:disabled {
+        background-color: #F7F4F5;
+        color: #b0b0b0;
+    }
+    /* PAGINATION */
+    
+    .page-link:hover {
+        text-decoration: none;
+        background-color: rgba(0, 0, 0, .075);
+        border-color: #afc43f;
+    }
+    
+    .page-item.active .page-link {
+        z-index: 1;
+        color: #fff;
+        background-color: #0c204f;
+        border-color: #0c204f;
+    }
+    /* MODALS */
+    
+    .modal-content {
+        color: #333333;
+        font-family: 'Square721 BT';
+        font-style: normal;
+    }
+    
+    .modal-content>.modal-header {
+        background: #0c204f;
+        color: white;
+    }
+    
+    .modal-header-danger {
+        background: #C70039 !important;
+    }
+    
+    .modal-msg {
+        font-size: 18px;
+    }
+    
+    .btn-delete {
+        color: #c71c79 !important;
+    }
+    
+    .btn-delete:hover {
+        color: #666666 !important;
+        text-decoration: none;
+    }
+    /*.indicator {
+    font-family: 'Square721 BT';
+    font-style: normal;
+    background-color: #fff;
+    border-color: #dfdfdf;
+    border-width: 1px;
+    border-radius: 0;
+    border-style: solid;
+    padding: 20px;
+    height: 100%;
+}*/
+    /* *** FUENTES *** */
+    
+    @font-face {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 400;
+        src: local('Roboto'), local('Roboto-Regular'), url(../fonts/Roboto-Regular.ttf) format('truetype');
+    }
+    
+    @font-face {
+        font-family: 'Roboto';
+        font-style: italic;
+        font-weight: 400;
+        src: local('Roboto Italic'), local('Roboto-Italic'), url(../fonts/Roboto-Italic.ttf) format('truetype');
+    }
+    
+    @font-face {
+        font-family: 'Roboto';
+        font-style: bold;
+        font-weight: 400;
+        src: local('Roboto Bold'), local('Roboto-Bold'), url(../fonts/Roboto-Bold.ttf) format('truetype');
+    }
+    
+    @font-face {
+        font-family: 'Square721 BT';
+        font-style: normal;
+        font-weight: 400;
+        src: local('Square721 BT Roman'), local('Square721 BT-Roman'), url(../fonts/square-721-bt.ttf) format('truetype');
+    }
+    
+    @font-face {
+        font-family: 'Square721 BT';
+        font-style: bold;
+        font-weight: 400;
+        src: local('Square721 BT Bold'), local('Square721 BT-Bold'), url(../fonts/square-721-bold-italic-bt.ttf) format('truetype');
+    }
+    
+    ;

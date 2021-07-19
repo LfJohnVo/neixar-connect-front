@@ -1,0 +1,176 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header">{{ userInfo?.p_information?.name }} {{ userInfo?.p_information?.firstSurname }} {{ userInfo?.p_information?.secondSurname }}</h6>
+                <div class="card-body">
+                    <div class="alert alert-pink" role="alert" *ngIf="objectives.length > 0 && evaluated">
+                        Tu evaluación del Semestre {{ period }} fue registrada el {{ evaluationInfo?.date | date:'dd/MM/yyyy HH:mm' }}hrs.
+                    </div>
+                    <div class="table-responsive" *ngIf="objectives.length > 0">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th scope="col" class="align-middle">#</th>
+                                    <th scope="col" class="align-middle">OBJETIVO</th>
+                                    <th scope="col" class="align-middle">CRITERIO DE ACEPTACIÓN</th>
+                                    <th scope="col" class="align-middle">RESULTADO ESPERADO</th>
+                                    <th scope="col" class="align-middle">PESO</th>
+                                    <th scope="col" class="align-middle">AVANCE</th>
+                                    <th scope="col" class="align-middle">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let objective of objectives; let i = index;">
+                                    <td class="align-middle" scope="row">{{ i + 1 }}</td>
+                                    <td class="align-middle text-justify">{{ objective.description }}</td>
+                                    <td class="align-middle text-justify">{{ objective.acceptance_criteria }}</td>
+                                    <td class="align-middle text-justify">{{ objective.expected_result }}</td>
+                                    <td class="align-middle">{{ objective.weighing }} %</td>
+                                    <td class="align-middle">{{ objective.progress || 0 }} %</td>
+                                    <td class="align-middle">
+                                        <a class="text-mexicanPink btn-action" data-toggle="modal" data-target="#DetailsObjectiveModal" (click)="getObjective(objective._id)"><i class="fas fa-info-circle"></i></a>
+                                        <span *ngIf="( objective.validated && period == '1' ) || ( objective.validated2 && period == '2' )" class="badge badge-date badge-pill">Validado</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><strong>TOTAL</strong></td>
+                                    <td><strong>100%</strong></td>
+                                    <td><strong>{{ totalProgress }}%</strong></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div *ngIf="objsValidated" class="d-flex justify-content-end">
+                        <p class="area-user">Objetivos aprobados.</p>
+                    </div>
+                    <div class="alert alert-pink" role="alert" *ngIf="!hasPermissions && objectives.length <= 0 && !evaluated">
+                        El período para dar de alta tus objetivos ha concluido. <br> Para llevar a cabo el registro, por favor acude al departamento de Capital Humano.
+                    </div>
+                    <form *ngIf="objectives.length == 0 && hasPermissions" [formGroup]="objectivesForm" (ngSubmit)="saveObjectives()" (keydown.enter)="$event.preventDefault()" novalidate="novalidate">
+                        <div class="d-flex align-items-center justify-content-end mb-2">
+                            <button type="button" [disabled]="total == 100" class="btn btn-dark" (click)="addObjective()"><i class="fas fa-plus-circle"></i> AGREGAR</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-striped" formArrayName="objectives">
+                                <thead class="card-thead">
+                                    <tr>
+                                        <th scope="col" class="align-middle">#</th>
+                                        <th scope="col" class="align-middle">OBJETIVO</th>
+                                        <th scope="col" class="align-middle">CRITERIO DE CUMPLIMIENTO</th>
+                                        <th scope="col" class="align-middle">RESULTADO ESPERADO</th>
+                                        <th scope="col" class="align-middle">FECHA DE CUMPLIMIENTO</th>
+                                        <th scope="col" class="align-middle">PESO</th>
+                                        <th scope="col" class="align-middle"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let obj of objectivesForm.get('objectives').controls; let i = index" [formGroupName]="i">
+                                        <td class="align-middle" scope="row">{{ i + 1 }}</td>
+                                        <td class="align-middle"><input type="text" class="form-control input-border-bottom" placeholder="Ingresa el objetivo" [ngClass]="{ 'is-invalid': !obj.controls.description.valid }" formControlName="description" name="description"></td>
+                                        <td class="align-middle"><input type="text" class="form-control input-border-bottom" placeholder="Ingresa el criterio de aceptación" [ngClass]="{ 'is-invalid': !obj.controls.acceptance_criteria.valid }" formControlName="acceptance_criteria"
+                                                name="acceptance_criteria"></td>
+                                        <td class="align-middle"><input type="text" class="form-control input-border-bottom" placeholder="Ingresa el resultado esperado" [ngClass]="{ 'is-invalid': !obj.controls.expected_result.valid }" formControlName="expected_result" name="expected_result"></td>
+                                        <td class="align-middle"><input type="text" class="form-control input-border-bottom" placeholder="dd/mm/aaaa" [ngClass]="{ 'is-invalid': !obj.controls.commitment_date.valid }" formControlName="commitment_date" name="commitment_date"></td>
+                                        <td class="align-middle"><input type="number" min="0" max="100" class="form-control input-border-bottom" [ngClass]="{ 'is-invalid': !obj.controls.weighing.valid }" formControlName="weighing" name="weighing"></td>
+                                        <td class="align-middle"><button class="text-mexicanPink btn-action btn-link" (click)="deleteObjective( i )"><i class="fas fa-times"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h5>TOTAL: <span>{{ total }}%</span></h5>
+                            <button type="submit" class="btn btn-green">Guardar</button>
+                        </div>
+                    </form>
+                    <div class="text-center text-mexicanPink" *ngIf="errorMessage && objectives.length > 0">
+                        <span>{{ errorMessage }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Info Objectives -->
+<div class="modal fade" id="DetailsObjectiveModal" tabindex="-1" role="dialog" aria-labelledby="DetailsObjectiveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Detalle de objetivo</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="label-info text-green">OBJETIVO</h6>
+                            <p class="data-info text-justify">{{ objective?.description }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="label-info text-green">CRITERIO DE ACEPTACIÓN</h6>
+                            <p class="data-info text-justify">{{ objective?.acceptance_criteria }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="label-info text-green">RESULTADO ESPERADO</h6>
+                            <p class="data-info text-justify">{{ objective?.expected_result }}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="label-info text-green">FECHA DE CUMPLIMIENTO</h6>
+                            <p class="data-info">{{ objective?.commitment_date | date:'dd/MM/yyyy' || 'Sin registro' }}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="label-info text-green">PESO</h6>
+                            <p class="data-info">{{ objective?.weighing }} %</p>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="d-flex align-items-center">
+                                <h6 class="header">Primer Semestre</h6>
+                            </div>
+                            <hr class="separator">
+                        </div>
+                        <div class="col-md-9">
+                            <h6 class="label-info text-green">EVIDENCIA</h6>
+                            <p class="data-info text-justify">{{ objective?.progress_description || 'Por registrar'}}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h5><span *ngIf="objective?.validated" class="badge badge-date badge-pill">Validado</span></h5>
+                            <h5><span *ngIf="!objective?.validated" class="badge badge-danger badge-pill">No Validado</span></h5>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="d-flex align-items-center">
+                                <h6 class="header">Segundo Semestre</h6>
+                            </div>
+                            <hr class="separator">
+                        </div>
+                        <div class="col-md-9">
+                            <h6 class="label-info text-green">EVIDENCIA</h6>
+                            <p class="data-info text-justify">{{ objective?.progress_description2 || 'Por registrar'}}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h5><span *ngIf="objective?.validated2" class="badge badge-date badge-pill">Validado</span></h5>
+                            <h5><span *ngIf="!objective?.validated2" class="badge badge-danger badge-pill">No Validado</span></h5>
+                        </div>
+                        <div class="col-md-9"></div>
+                        <div class="col-md-3 ">
+                            <h6 class="label-info text-green">AVANCE</h6>
+                            <h4 class="data-info"><strong>{{ objective?.progress || 0 }}%</strong></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Info Objectives -->

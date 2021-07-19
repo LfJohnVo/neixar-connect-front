@@ -1,0 +1,101 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Listado de competencias <small>( {{ total }} )</small></h6>
+                <div class="card-body">
+                    <div class="d-flex justify-content-end mb-2">
+                        <a class="btn btn-dark" [routerLink]="['nueva_competencia']"><i class="fas fa-plus-circle"></i> AGREGAR</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">COMPETENCIA</th>
+                                    <th scope="col">TIPO</th>
+                                    <th scope="col">NIVEL DE PUESTO</th>
+                                    <th scope="col">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let competency of competencies; let competencyIndex = index;">
+                                    <td scope="row">{{ competencyIndex + 1 }}</td>
+                                    <td>{{ competency.competency }}</td>
+                                    <td>{{ competency.type }}</td>
+                                    <td>{{ competency.typePosition }}</td>
+                                    <td class="d-flex align-items-center">
+                                        <a class="text-mexicanPink btn-action" data-toggle="modal" data-target="#DetailsCompetencyModal" (click)="competencyChosen = competency"><i class="fas fa-info-circle"></i></a>
+                                        <a class="text-mexicanPink btn-action" [routerLink]="['editar', competency._id]">
+                                            <i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar competencia"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <app-pagination *ngIf="totalPages > 1" (selectedPage)="getAllCompetencies( $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Info Competency -->
+<div class="modal fade" id="DetailsCompetencyModal" tabindex="-1" role="dialog" aria-labelledby="DetailsCompetencyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Detalle de Competencia</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h3><span class="badge badge-green">{{ competencyChosen?.competency }}</span></h3>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="label-info text-green">TIPO</h6>
+                            <p class="data-info text-justify">{{ competencyChosen?.type }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="label-info text-green">NIVEL DE PUESTO</h6>
+                            <p class="data-info text-justify">{{ competencyChosen?.typePosition }}</p>
+                        </div>
+                        <div class="col-md-12">
+                            <h6 class="label-info text-green">DESCRIPCIÓN</h6>
+                            <p class="data-info text-justify">{{ competencyChosen?.description }}</p>
+                        </div>
+                        <div class="col-md-12">
+                            <h6 class="label-info text-green">PREGUNTAS <small>(Evaluación 360°)</small></h6>
+                            <div class="table-responsive mt-2">
+                                <table class="table table-borderless table-striped">
+                                    <thead class="card-thead">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">ENUNCIADO</th>
+                                            <th scope="col">NIVEL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let question of competencyChosen?.questions; let questionIndex = index;">
+                                            <td scope="row">{{ questionIndex + 1 }}</td>
+                                            <td>{{ question.question }}</td>
+                                            <td>{{ question.level }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Info Competency -->

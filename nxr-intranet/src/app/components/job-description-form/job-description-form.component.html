@@ -1,0 +1,441 @@
+<form [formGroup]="typeForm" novalidate="novalidate" *ngIf="!isHR">
+    <div class="row">
+        <div class="col">
+            <div class="d-flex align-items-center">
+                <h5 class="header">Acción a realizar</h5>
+            </div>
+            <hr class="title-separator">
+            <div class="container-profile-info">
+                <div class="form-group col-md-6">
+                    <div id="typeInput">
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input class="form-check-input" type="radio" formControlName="type" id="typeInputNV" value="NVERSION" (click)="checkType('NVERSION')">
+                            <label class="custom-control-label" for="typeInputV">Nueva versión DP</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input class="form-check-input" type="radio" formControlName="type" id="typeInputNP" value="NPUESTO" (click)="checkType('NPUESTO')">
+                            <label class="custom-control-label" for="typeInputNP">Puesto de nueva creación</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form [formGroup]="descriptionForm" (ngSubmit)="getFormData()" novalidate="novalidate">
+
+    <div class="row">
+        <div class="col">
+            <div class="d-flex align-items-center">
+                <h5 class="header">Identificación del puesto</h5>
+            </div>
+            <hr class="title-separator">
+            <div class="container-profile-info">
+                <div class="row">
+                    <div *ngIf="actionType==='NVERSION' && !isHR" class="col-md-6">
+                        <h6 class="label-info" for="selectPosition">Puesto</h6>
+                        <select class="form-control input-border-bottom" id="selectPosition" [ngClass]="{ 'is-invalid': !descriptionForm.get('position').valid }" formControlName="position" (change)="changePosition($event.target.value)">
+                                        <option [value]="''" disabled selected> Selecciona un puesto </option>
+                                        <option *ngFor="let position of allowedPositions; let i = index" [value]="i">{{ position?.name }}  ({{ position?.department.name }})</option>
+                                      </select>
+                        <small *ngIf="descriptionForm.controls['position'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div *ngIf="actionType==='NPUESTO'" class="col-md-6">
+                        <h6 class="label-info" for="nameInput">Puesto <small>(Nombre propuesto)</small></h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="nameInput" [ngClass]="{ 'is-invalid': !descriptionForm.get('name').valid }" placeholder="Propón un nombre para el puesto" formControlName="name">
+                        <small *ngIf="descriptionForm.get('name').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div *ngIf="actionType==='NPUESTO'" class="form-group col-md-6">
+                        <h6 class="label-info" for="positionLevelSelect">Tipo de puesto</h6>
+                        <select class="form-control input-border-bottom mb-3" id="positionLevelSelect" [ngClass]="{ 'is-invalid': !descriptionForm.get('type').valid }" formControlName="type" (change)="checkPosType($event.target.value)">
+                                  <option value="" selected disabled> Selecciona una opción </option>
+                                  <option value="Estratégico" >Estratégico</option>
+                                  <option value="Táctico" >Táctico</option>
+                                  <option value="Operativo" >Operativo</option>
+                              </select>
+                        <small *ngIf="descriptionForm.controls['type'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-6" formGroupName="jobDescription">
+                        <h6 class="label-info" for="versionInput">Versión</h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="versionInput" [ngClass]="{ 'is-invalid': !descriptionForm.get('jobDescription.version').valid }" placeholder="Ingresa el nombre de la versión de la DP" [attr.disabled]="true" formControlName="version">
+                        <small *ngIf="descriptionForm.get('jobDescription.version').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div *ngIf="isHR" class="col-md-6" formGroupName="jobDescription">
+                        <h6 class="label-info" for="selectEmp">Elaborado por</h6>
+                        <select class="form-control input-border-bottom" id="selectEmp" [ngClass]="{ 'is-invalid': !descriptionForm.get('jobDescription.elaboratedBy').valid }" formControlName="elaboratedBy">
+                          <option [value]="''" disabled selected> Selecciona un colaborador</option>
+                          <option *ngFor="let employee of employees" [value]="employee._id">{{ employee.p_information.name }} {{ employee.p_information.firstSurname }} {{ employee.p_information.secondSurname }} ( {{ employee.w_information.area.name }} )</option>
+                      </select>
+                        <small *ngIf="descriptionForm.get('jobDescription.elaboratedBy').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div *ngIf="actionType==='NPUESTO'" class="col-md-6">
+                        <h6 class="label-info" for="departmentSelectPosition">Departamento</h6>
+                        <select class="form-control input-border-bottom" id="departmentSelectPosition" [ngClass]="{ 'is-invalid': !descriptionForm.get('department').valid }" formControlName="department">
+                            <option [value]="''" disabled selected> Selecciona un departamento </option>
+                            <option *ngFor="let department of departments" [value]="department._id">{{ department.name }}</option>
+                          </select>
+                        <small *ngIf="descriptionForm.controls['department'].errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+
+                    <div class="col-md-6" formGroupName="jobDescription">
+                        <h6 class="label-info" for="bossSelect">Jefe Directo <small>(Puesto)</small></h6>
+                        <select class="form-control input-border-bottom mb-3" id="bossSelect" [ngClass]="{ 'is-invalid': !descriptionForm.get('jobDescription.immediate_boss').valid }" formControlName="immediate_boss">
+                          <option [value]="''" selected> Selecciona un puesto </option>
+                          <option *ngFor="let position of positions" [value]="position._id">{{ position.name }} ({{ position?.department.name }})</option>
+                      </select>
+                        <small *ngIf="descriptionForm.get('jobDescription.immediate_boss').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+
+                    <form #fboss="ngForm" class="col-md-6">
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <h6 class="label-info" for="empInput">Subordinados Directos</h6>
+                                <div id="empInput">
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" name="emp" id="empInputY" [value]="true" [(ngModel)]="hasEmp" (click)="checkEmp(true)">
+                                        <label class="custom-control-label" for="empInputY">Sí</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" name="emp" id="empInputN" [value]="false" [(ngModel)]="hasEmp" (click)="checkEmp(false)">
+                                        <label class="custom-control-label" for="empInputN">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="row" formGroupName="jobDescription">
+                    <!-- <div *ngIf="hasBoss" class="col-md-6">
+                        <h6 class="label-info" for="bossSelect">Jefe Directo <small>(Puesto)</small></h6>
+                        <select class="form-control input-border-bottom mb-3" id="bossSelect" [ngClass]="{ 'is-invalid': !descriptionForm.get('jobDescription.immediate_boss').valid }" formControlName="immediate_boss">
+                          <option [value]="''" selected> Selecciona un puesto </option>
+                          <option *ngFor="let position of positions" [value]="position._id">{{ position.name }} ({{ position?.department.name }})</option>
+                      </select>
+                        <small *ngIf="descriptionForm.get('jobDescription.immediate_boss').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div> -->
+                    <div *ngIf="hasEmp" class="col-md-6">
+                        <h6 class="label-info" for="positionSelect">Subordinados Directos <small>(Puestos)</small></h6>
+                        <div class="table-responsive mt-2">
+                            <table class="table table-borderless table-striped" formArrayName="subordinates">
+                                <thead class="card-thead">
+                                    <tr>
+                                        <th scope="col" class="align-middle">PUESTO</th>
+                                        <th scope="col" class="align-middle"><button type="button" class="btn btn-dark p-0" (click)="addSubordinate()"><i class="fas fa-plus-circle"></i></button></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let obj of descriptionForm.get('jobDescription.subordinates')['controls']; let i = index" [formGroupName]="i">
+                                        <td class="align-middle">
+                                            <select class="form-control input-border-bottom" [ngClass]="{ 'is-invalid': !obj.controls.position.valid }" formControlName="position" name="position">
+                                              <option [value]="''" disabled selected> Selecciona un puesto </option>
+                                              <option *ngFor="let position of positions" [value]="position._id">{{ position?.name }} ({{ position?.department.name }})</option>
+                                          </select>
+                                        </td>
+                                        <td class="align-middle"><button class="text-green btn-action btn-link" [disabled]="descriptionForm.get('jobDescription.subordinates')['controls'].length === 1" (click)="deleteSubordinate( i )"><i class="fas fa-times"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row" formGroupName="jobDescription">
+        <div class="col">
+            <div class="d-flex align-items-center">
+                <h5 class="header">Razón de ser del puesto</h5>
+            </div>
+            <hr class="title-separator">
+            <div class="container-profile-info">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h6 class="label-info" for="missionInput">Misión del Puesto <small>(Objetivo General)</small></h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="missionInput" [ngClass]="{ 'is-invalid': !descriptionForm.get('jobDescription.mission').valid }" placeholder="Describe la misión del puesto" formControlName="mission">
+                        <small *ngIf="descriptionForm.get('jobDescription.mission').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <h6 class="label-info mr-2" for="positionSelect">Responsabilidades Clave <small>(Mínimo 3, máximo 8)</small></h6>
+                            <button type="button" [disabled]="descriptionForm.get('jobDescription.responsabilities')['controls'].length === 8" class="btn btn-dark" (click)="addResponsability()"><i class="fas fa-plus-circle"></i> Agregar Responsabilidad</button>
+                        </div>
+                        <div formArrayName="responsabilities">
+                            <div class="container-profile-info" *ngFor="let obj of descriptionForm.get('jobDescription.responsabilities')['controls']; let i = index" [formGroupName]="i">
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <h6 class="text-green m-0">Responsabilidad Clave {{ i + 1 }}</h6>
+                                    <button class="text-green btn-action btn-link" [disabled]="descriptionForm.get('jobDescription.responsabilities')['controls'].length === 3" (click)="deleteResponsability( i )"><i class="fas fa-times"></i></button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                <h6 class="label-info" for="respInput">Responsabilidad
+                                                    <i class="far fa-question-circle text-mexicanPink" data-toggle="tooltip" data-placement="right" title="Las responsabilidades son las tareas asignadas para el cumplimiento de los objetivos definidos."></i>
+                                                </h6>
+                                                <input type="text" class="form-control input-border-bottom mb-3" placeholder="Describe la responsabilidad" [ngClass]="{ 'is-invalid': !obj.controls.responsability.valid }" formControlName="responsability" name="responsability">
+                                                <small *ngIf="obj.get('responsability').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                            <div class="col-sm-12 col-md-3">
+                                                <h6 class="label-info" for="respInput">% Ponderación</h6>
+                                                <input type="number" class="form-control input-border-bottom mb-3" placeholder="Ingresa la ponderación" [ngClass]="{ 'is-invalid': !obj.controls.weighing.valid }" formControlName="weighing" name="weighing">
+                                                <small *ngIf="obj.get('weighing').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                <small *ngIf="obj.get('weighing').errors?.min" class="invalid-feedback">Este atributo no puede ser 0.</small>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <h6 class="label-info" for="respInput">KPI</h6>
+                                                <input type="text" class="form-control input-border-bottom mb-3" placeholder="Describe el KPI" [ngClass]="{ 'is-invalid': !obj.controls.kpi.valid }" formControlName="kpi" name="kpi">
+                                                <small *ngIf="obj.get('kpi').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex justify-content-start align-items-center">
+                                            <h6 class="label-info mr-2" for="positionSelect">Descripción de Funciones
+                                                <i class="far fa-question-circle text-mexicanPink" data-toggle="tooltip" data-placement="right" title="Las funciones describen las actividades diarias a realizar."></i>
+                                            </h6>
+                                            <button type="button" class="btn btn-dark" (click)="addFunction( obj.controls.functionsDescription )"><i class="fas fa-plus-circle"></i> Agregar Función</button>
+                                        </div>
+                                        <div formArrayName="functionsDescription">
+                                            <div class="container-profile-info" *ngFor="let func of obj.get('functionsDescription').controls; let j = index" [formGroupName]="j">
+                                                <div class="d-flex justify-content-start align-items-center">
+                                                    <h6 class="text-green m-0">Función {{ j + 1 }}</h6><button class="text-green btn-action btn-link" [disabled]="obj.get('functionsDescription').controls.length === 1" (click)="deleteFunction( obj.controls.functionsDescription, j )"><i class="fas fa-times"></i></button>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <h6 class="label-info" for="respInput">Función</h6>
+                                                        <input type="text" class="form-control input-border-bottom mb-3" placeholder="Describe la funcionalidad" [ngClass]="{ 'is-invalid': !func.controls.function.valid }" formControlName="function" name="function">
+                                                        <small *ngIf="func.get('function').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <h6 class="label-info" for="respInput">Autoridad</h6>
+                                                        <input type="text" class="form-control input-border-bottom mb-3" placeholder="Describe la autoridad" [ngClass]="{ 'is-invalid': !func.controls.authority.valid }" formControlName="authority" name="authority">
+                                                        <small *ngIf="func.get('authority').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <h6 class="label-info" for="respInput">Red de Interacción</h6>
+                                                        <input type="text" class="form-control input-border-bottom mb-3" placeholder="Describe la red de interacción" [ngClass]="{ 'is-invalid': !func.controls.interaction.valid }" formControlName="interaction" name="interaction">
+                                                        <small *ngIf="func.get('interaction').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" formGroupName="jobDescription">
+        <div class="col">
+            <div class="d-flex align-items-center">
+                <h5 class="header">Perfil del Puesto</h5>
+            </div>
+            <hr class="title-separator">
+            <div class="container-profile-info">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="minimumEducationInput">Escolaridad <small>(Mínima requerida)</small></h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="minimumEducationInput" [ngClass]="{ 'is-invalid': !descriptionForm.get('jobDescription.minimumEducation').valid }" placeholder="Describe la escolaridad mínima requerida" formControlName="minimumEducation">
+                        <small *ngIf="descriptionForm.get('jobDescription.minimumEducation').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="desirableEducationInput">Escolaridad <small>(Deseable)</small></h6>
+                        <input type="text" class="form-control input-border-bottom mb-3" id="desirableEducationInput" [ngClass]="{ 'is-invalid': !descriptionForm.get('jobDescription.desirableEducation').valid }" placeholder="Describe la escolaridad deseable" formControlName="desirableEducation">
+                        <small *ngIf="descriptionForm.get('jobDescription.desirableEducation').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="minimumEnglishInput">Inglés <small>(Mínimo)</small></h6>
+                        <select class="form-control input-border-bottom" [ngClass]="{ 'is-invalid': !descriptionForm.get('jobDescription.minimumEnglish').valid }" formControlName="minimumEnglish" name="minimumEnglish">
+                            <option [value]="''" disabled selected> Selecciona un nivel</option>
+                            <option value="N/A">No requerido</option>
+                            <option value="Básico">Básico</option>
+                            <option value="Intermedio">Intermedio</option>
+                            <option value="Avanzado">Avanzado</option>
+                        </select>
+                        <small *ngIf="descriptionForm.get('jobDescription.minimumEnglish').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="label-info" for="desirableEnglishInput">Inglés <small>(Deseable)</small></h6>
+                        <select class="form-control input-border-bottom" [ngClass]="{ 'is-invalid': !descriptionForm.get('jobDescription.desirableEnglish').valid }" formControlName="desirableEnglish" name="desirableEnglish">
+                            <option [value]="''" disabled selected> Selecciona un nivel</option>
+                            <option value="N/A">No requerido</option>
+                            <option value="Básico">Básico</option>
+                            <option value="Intermedio">Intermedio</option>
+                            <option value="Avanzado">Avanzado</option>
+                        </select>
+                        <small *ngIf="descriptionForm.get('jobDescription.desirableEnglish').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h6 class="label-info" for="positionSelect">Experiencia</h6>
+                        <div class="table-responsive mt-2">
+                            <table class="table table-borderless table-striped" formArrayName="experience">
+                                <thead class="card-thead">
+                                    <tr>
+                                        <th scope="col" class="align-middle">Mínima requerida</th>
+                                        <th scope="col" class="align-middle">Tiempo</th>
+                                        <th scope="col" class="align-middle">Deseable</th>
+                                        <th scope="col" class="align-middle">Tiempo</th>
+                                        <th scope="col" class="align-middle"><button type="button" class="btn btn-dark p-0" (click)="addExperience()"><i class="fas fa-plus-circle"></i></button></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let obj of descriptionForm.get('jobDescription.experience')['controls']; let i = index" [formGroupName]="i">
+                                        <td class="align-middle">
+                                            <input type="text" class="form-control input-border-bottom" placeholder="Describe la experiencia mínima" [ngClass]="{ 'is-invalid': !obj.controls.minimumRequire.valid }" formControlName="minimumRequire" name="minimumRequire">
+                                        </td>
+                                        <td class="align-middle">
+                                            <input type="text" class="form-control input-border-bottom" placeholder="Ingresa el tiempo mínimo" [ngClass]="{ 'is-invalid': !obj.controls.timeRequire.valid }" formControlName="timeRequire" name="timeRequire">
+                                        </td>
+                                        <td class="align-middle">
+                                            <input type="text" class="form-control input-border-bottom" placeholder="Describe la experiencia deseable" [ngClass]="{ 'is-invalid': !obj.controls.desirable.valid }" formControlName="desirable" name="desirable">
+                                        </td>
+                                        <td class="align-middle">
+                                            <input type="text" class="form-control input-border-bottom" placeholder="Ingresa el tiempo deseable" [ngClass]="{ 'is-invalid': !obj.controls.timeDesirable.valid }" formControlName="timeDesirable" name="timeDesirable">
+                                        </td>
+                                        <td class="align-middle"><button class="text-green btn-action btn-link" [disabled]="descriptionForm.get('jobDescription.experience').controls.length === 1" (click)="deleteExperience( i )"><i class="fas fa-times"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h6 class="label-info">Herramientas y Software</h6>
+                        <div class="table-responsive mt-2">
+                            <table class="table table-borderless table-striped" formArrayName="softwareAndTools">
+                                <thead class="card-thead">
+                                    <tr>
+                                        <th scope="col" class="align-middle">Mínimo requerido</th>
+                                        <th scope="col" class="align-middle">Nivel de conocimiento</th>
+                                        <th scope="col" class="align-middle">Deseable</th>
+                                        <th scope="col" class="align-middle">Nivel de conocimiento</th>
+                                        <th scope="col" class="align-middle"><button type="button" class="btn btn-dark p-0" (click)="addSofwareTool()"><i class="fas fa-plus-circle"></i></button></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let obj of descriptionForm.get('jobDescription.softwareAndTools')['controls']; let i = index" [formGroupName]="i">
+                                        <td class="align-middle">
+                                            <input type="text" class="form-control input-border-bottom" placeholder="Describe el conocimiento mínimo" [ngClass]="{ 'is-invalid': !obj.controls.minimumKnowledge.valid }" formControlName="minimumKnowledge" name="minimumKnowledge">
+                                        </td>
+                                        <td class="align-middle">
+                                            <select class="form-control input-border-bottom" [ngClass]="{ 'is-invalid': !obj.controls.levelOfKnowledge.valid }" formControlName="levelOfKnowledge" name="levelOfKnowledge">
+                                              <option [value]="''" disabled selected> Selecciona un nivel</option>
+                                              <option value="Sin experiencia">Sin experiencia</option>
+                                              <option value="Básico">Básico</option>
+                                              <option value="Medio">Medio</option>
+                                              <option value="Avanzado">Avanzado</option>
+                                              <option value="Experto">Experto</option>
+                                          </select>
+                                        </td>
+                                        <td class="align-middle">
+                                            <input type="text" class="form-control input-border-bottom" placeholder="Describe el conocimiento deseable" [ngClass]="{ 'is-invalid': !obj.controls.desirableKnowledge.valid }" formControlName="desirableKnowledge" name="desirableKnowledge">
+                                        </td>
+                                        <td class="align-middle">
+                                            <select class="form-control input-border-bottom" [ngClass]="{ 'is-invalid': !obj.controls.levelDesirable.valid }" formControlName="levelDesirable" name="levelDesirable">
+                                              <option [value]="''" disabled selected> Selecciona un nivel</option>
+                                              <option value="Sin experiencia">Sin experiencia</option>
+                                              <option value="Básico">Básico</option>
+                                              <option value="Medio">Medio</option>
+                                              <option value="Avanzado">Avanzado</option>
+                                              <option value="Experto">Experto</option>
+                                          </select>
+                                        </td>
+                                        <td class="align-middle"><button class="text-green btn-action btn-link" [disabled]="descriptionForm.get('jobDescription.softwareAndTools').controls.length === 1" (click)="deleteSofwareTool( i )"><i class="fas fa-times"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="label-info">Competencias Organizacionales</h6>
+                        <div class="table-responsive mt-2">
+                            <table class="table table-borderless table-striped" formArrayName="organizationalCompetencies">
+                                <thead class="card-thead">
+                                    <tr>
+                                        <th scope="col" class="align-middle">Competencia</th>
+                                        <th scope="col" class="align-middle">Nivel</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let obj of descriptionForm.get('jobDescription.organizationalCompetencies')['controls']; let i = index" [formGroupName]="i">
+                                        <td class="align-middle">
+                                            {{ orgCompetencies[i]?.competency }}
+                                        </td>
+                                        <td class="align-middle">
+                                            <select class="form-control input-border-bottom" [ngClass]="{ 'is-invalid': !obj.controls.level.valid }" formControlName="level" name="level">
+                                              <option [value]="''" disabled selected> Selecciona un nivel</option>
+                                              <option value="N/A">N/A</option>
+                                              <option value="Básico">Básico</option>
+                                              <option value="Medio">Medio</option>
+                                              <option value="Avanzado">Avanzado</option>
+                                              <option value="Experto">Experto</option>
+                                          </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="label-info">Competencias Específicas
+                            <i class="fas fa-book text-mexicanPink"></i>
+                        </h6>
+                        <div class="table-responsive mt-2">
+                            <table class="table table-borderless table-striped" formArrayName="specificCompetencies">
+                                <thead class="card-thead">
+                                    <tr>
+                                        <th scope="col" class="align-middle">Competencia</th>
+                                        <th scope="col" class="align-middle">Nivel</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let obj of descriptionForm.get('jobDescription.specificCompetencies')['controls']; let i = index" [formGroupName]="i">
+                                        <td class="align-middle">
+                                            <!-- <input type="text" class="form-control input-border-bottom" placeholder="Ingresa la competencia" [ngClass]="{ 'is-invalid': !obj.controls.competition.valid }" formControlName="competition" name="competition"> -->
+                                            <select class="form-control input-border-bottom" [ngClass]="{ 'is-invalid': !obj.controls.competition.valid }" formControlName="competition" name="competition" (change)="changeComp($event.target.value)">
+                                              <option [value]="''" disabled selected> Selecciona una competencia </option>
+                                              <option *ngFor="let comp of speCompetencies" [value]="comp._id" [disabled]="arrayComp.indexOf(comp._id) > -1">{{ comp.competency }}</option>
+                                          </select>
+                                        </td>
+                                        <td class="align-middle">
+                                            <select class="form-control input-border-bottom" [ngClass]="{ 'is-invalid': !obj.controls.level.valid }" formControlName="level" name="level">
+                                              <option [value]="''" disabled selected> Selecciona un nivel</option>
+                                              <option value="N/A">N/A</option>
+                                              <option value="Básico">Básico</option>
+                                              <option value="Medio">Medio</option>
+                                              <option value="Avanzado">Avanzado</option>
+                                              <option value="Experto">Experto</option>
+                                          </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+        <span>{{ errorMessage }}</span>
+    </div>
+    <div class="modal-footer d-flex justify-content-end">
+        <button type="submit" class="btn btn-green">Guardar</button>
+    </div>
+</form>

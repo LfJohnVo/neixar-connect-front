@@ -1,0 +1,101 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row m-0 p-0 d-flex justify-content-center">
+        <div class="col-md-4">
+            <div class="card nxr_card card-indicator">
+                <div class="card-body">
+                    <h5 class="card-number">{{ sgiIndicators }}</h5>
+                    <h6 class="card-description">INDICADORES SGI</h6>
+                    <hr>
+                </div>
+                <div class="card-footer" (click)="viewIndicators()">
+                    Ver indicadores <i class="fas fa-arrow-circle-right"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card nxr_card card-indicator">
+                <div class="card-body">
+                    <h5 class="card-number">{{ processIndicators }}</h5>
+                    <h6 class="card-description">INDICADORES PROCESOS</h6>
+                    <hr>
+                </div>
+                <div class="card-footer" (click)="viewIndicators()">
+                    Ver indicadores <i class="fas fa-arrow-circle-right"></i>
+                </div>
+            </div>
+        </div>
+        <!-- <div *ngFor="let item of averages" class="col-md-4">
+            <div class="card nxr_card card-indicator">
+                <div class="card-body">
+                    <h5 class="card-number">{{ item.average | number:'.1-2' }} %</h5>
+                    <h6 class="card-description">{{ (item._id || 'OBJETIVOS SGI') | uppercase }}</h6>
+                    <hr>
+                </div>
+                <div class="card-footer cursor-auto">
+                    Promedio Anual
+                </div>
+            </div>
+        </div> -->
+    </div>
+    <div class="row m-0 p-0 d-flex justify-content-center">
+        <div class="col-md-6">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Cumplimiento anual <small>(Indicadores SGI)</small></h6>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <div class="form-group m-0 col-md-9">
+                            <select class="form-control input-border-bottom m-0" (change)="changeSgiIndicator($event.target.value)">
+                                <option *ngFor="let indicator of sgiIndicatorsArray"  [value]="indicator._id">{{ indicator.indicator }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group m-0 col-md-3">
+                            <select class="form-control input-border-bottom m-0" (change)="changeSgiYear($event.target.value)">
+                                <option *ngFor="let year of years" [value]="year._id">{{year._id}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="text-center text-green mb-0"><strong>{{ sgiIndicator?.objective.standard }}</strong></p>
+                    <p class="text-center text-lightblue"><strong>{{ sgiIndicator?.indicator }}</strong></p>
+                    <div style="display: block">
+                        <canvas baseChart #sgiChart [datasets]="sgiData" [labels]="labels" [chartType]="barChartType" [colors]="sgiColors" [options]="barChartOptions"></canvas>
+                    </div>
+                    <div class="d-flex justify-content-between" style="    font-size: 0.7rem; font-weight: 500;">
+                        <p>{{ sgiIndicator?.frecuency }}</p>
+                        <p>Prom. Anual: {{ sgiIndicator?.average }}%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Cumplimiento anual <small>(Indicadores PROCESOS)</small></h6>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <div class="form-group m-0 col-md-9">
+                            <select class="form-control input-border-bottom m-0" (change)="changeProcessIndicator($event.target.value)">
+                                        <option *ngFor="let indicator of processIndicatorsArray" [value]="indicator._id">{{ indicator.indicator }}</option>
+                                    </select>
+                        </div>
+                        <div class="form-group m-0 col-md-3">
+                            <select class="form-control input-border-bottom m-0" (change)="changeProcessYear($event.target.value)">
+                                        <option *ngFor="let year of years" [value]="year._id">{{year._id}}</option>
+                                    </select>
+                        </div>
+                    </div>
+                    <p class="text-center text-green mb-0"><strong>{{ processIndicator?.objective.process }}</strong></p>
+                    <p class="text-center text-lightblue"><strong>{{ processIndicator?.indicator }}</strong></p>
+                    <div style="display: block">
+                        <canvas baseChart #processChart [datasets]="processData" [labels]="labels" [chartType]="barChartType" [colors]="processColors" [options]="barChartOptions"></canvas>
+                    </div>
+                    <div class="d-flex justify-content-between" style="font-size: 0.7rem; font-weight: 500;">
+                        <p>{{ processIndicator?.frecuency }}</p>
+                        <p>Prom. Anual: {{ processIndicator?.average }}%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

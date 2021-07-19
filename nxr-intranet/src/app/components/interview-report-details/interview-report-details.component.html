@@ -1,0 +1,72 @@
+<div class="container-profile-info">
+    <div *ngIf="reports.length > 1" class="d-flex justify-content-end mb-2">
+        <div class="form-group m-0 mr-3">
+            <p class="label-info">ENTREVISTA</p>
+            <select class="form-control input-border-bottom m-0" (change)="changeReport($event.target.value)">
+                <option *ngFor="let report of reports">{{ report.interviewerName }}</option>
+            </select>
+        </div>
+    </div>
+  <div class="row">
+      <div class="col-md-6 text-center">
+          <p class="label-info">ENTREVISTADOR</p>
+          <p class="data-info">{{ report?.interviewerName | uppercase }}</p>
+      </div>
+      <div class="col-md-6 text-center">
+          <p class="label-info">FECHA DE REGISTRO</p>
+          <p class="data-info">{{ report?.interviewDate | date:'dd/MM/y' }}</p>
+      </div>
+      <div *ngIf="showCandidateAndVacancy" class="col-md-6 text-center">
+          <p class="label-info">CANDIDATO</p>
+          <p class="data-info">{{ report?.candidateName | uppercase }}</p>
+      </div>
+      <div *ngIf="showCandidateAndVacancy" class="col-md-6 text-center">
+          <p class="label-info">PUESTO A OCUPAR</p>
+          <p class="data-info">{{ report?.positionName | uppercase }}</p>
+      </div>
+      <div class="col-md-12">
+          <p class="label-info text-center form-section-header" for="technicalKnowledgeInput">CONOCIMIENTOS TÉCNICOS</p>
+          <p class="data-info text-justify mt-2">{{ report?.technical_Knowledge }}</p>
+      </div>
+      <div class="col-md-6">
+          <p class="label-info text-center form-section-header" for="technicalKnowledgeInput">FORTALEZAS</p>
+          <pre class="data-info text-justify mt-2">{{ report?.strengths }}</pre>
+      </div>
+      <div class="col-md-6">
+          <p class="label-info text-center form-section-header" for="technicalKnowledgeInput">ÁREAS DE OPORTUNIDAD</p>
+          <pre class="data-info text-justify mt-2">{{ report?.areasOfOpportunity }}</pre>
+      </div>
+      <div class="col-md-12">
+          <p class="label-info text-center form-section-header" for="technicalKnowledgeInput">ÁREAS DE OPORTUNIDAD</p>
+          <p class="text-center mb-0 mt-2"> <strong>1 </strong>- No muestra la habilidad &nbsp;&nbsp; <strong>2 </strong>- Muestra la habilidad pocas veces</p>
+          <p class="text-center mb-0"> <strong>3 </strong>- Muestra la habilidad algunas veces &nbsp;&nbsp; <strong>4 </strong>- Muestra la habilidad con frecuencia</p>
+          <p class="text-center mb-0"> <strong>5 </strong>- Siempre muestra la habilidad</p>
+          <div class="row mt-3">
+              <p class="data-info col-md-6"><span class="text-green">Administración del tiempo:</span> &nbsp;&nbsp;<strong>{{ report?.competencies[0].timeManagement }}</strong></p>
+              <p class="data-info col-md-6"><span class="text-green">Comunicación e influencia:</span> &nbsp;&nbsp;<strong>{{ report?.competencies[0].communicationAndInfluence }}</strong></p>
+              <p class="data-info col-md-6"><span class="text-green">Trabajo en equipo:</span> &nbsp;&nbsp;<strong>{{ report?.competencies[0].teamwork }}</strong></p>
+              <p class="data-info col-md-6"><span class="text-green">Orientación a resultados/Toma de decisiones:</span> &nbsp;&nbsp;<strong>{{ report?.competencies[0].decisionMaking }}</strong></p>
+              <p class="data-info col-md-6"><span class="text-green">Análisis y síntesis:</span> &nbsp;&nbsp;<strong>{{ report?.competencies[0].analysisAndSynthesis }}</strong></p>
+          </div>
+      </div>
+      <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="label-info text-center form-section-header" for="technicalKnowledgeInput">PRUEBA TÉCNICA APLICADA</p>
+                <p class="data-info text-justify mt-2"><span class="text-green">Resultado de evaluación técnica:</span> &nbsp;&nbsp;<strong>{{ report?.evaluationResult }}</strong></p>
+                <h6 class="text-center">
+                  <span class="badge" [ngClass]="{'badge-green': report?.approvedEvaluation === 'Sí', 'badge-danger': report?.approvedEvaluation === 'No'}">{{ (report?.approvedEvaluation === 'Sí') ? 'APROBADO' : 'NO APROBADO'  }}</span>
+                </h6>
+            </div>
+            <div class="col-md-6">
+                <p class="label-info text-center form-section-header" for="technicalKnowledgeInput">ACEPTACIÓN O RECHAZO DEL CANDIDATO</p>
+                <h5 class="text-center mt-2">
+                    <span class="badge" [ngClass]="{'badge-green':report?.acceptedCandidate  === 'Sí', 'badge-danger': report?.acceptedCandidate  === 'No'}">{{ (report?.acceptedCandidate  === 'Sí') ? 'CANDIDATO ACEPTADO' : 'CANDIDATO RECHAZADO'  }}</span>
+                </h5>
+                <p class="label-info">JUSTIFICACIÓN</p>
+                <p class="data-info text-justify">{{ report?.justification }}</p>
+            </div>
+        </div>          
+      </div>
+  </div>
+</div>

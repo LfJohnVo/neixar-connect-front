@@ -1,0 +1,24 @@
+<div class="row page-titles">
+    <div class="col-md-5 align-self-center">
+        <h3 class="text-green" style="font-family:  'Quicksand', sans-serif;
+        font-weight: bold;">{{ currentPageTitle[currentPageTitle.length-1] }}</h3>
+    </div>
+    <div class="col-md-7 align-self-center">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-wrapper">
+                <!-- <li *ngIf="currentPageTitle != 'Inicio'" class="breadcrumb-item active" aria-current="page">{{ currentPageTitle }}</li> -->
+                <ng-container *ngFor="let breadcrumb of currentPageTitle; let i = index;">
+                    <!-- <li class="breadcrumb-item">
+                        <a [routerLink]="[routes[i]]">{{ breadcrumb }} {{ routes[i] }}</a>
+                    </li> -->
+                    <li *ngIf="i!=currentPageTitle.length-1" class="breadcrumb-item">
+                        <a [routerLink]="[routes[i]]">{{ breadcrumb }}</a>
+                    </li>
+                    <li *ngIf="i==currentPageTitle.length-1" class="breadcrumb-item " [ngClass]="{ 'active': i==currentPageTitle.length-1 }" aria-current="page">
+                        {{ breadcrumb }}
+                    </li>
+                </ng-container>
+            </ol>
+        </nav>
+    </div>
+</div>

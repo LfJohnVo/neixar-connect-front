@@ -1,0 +1,127 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header">{{ userInfo?.p_information.name }} {{ userInfo?.p_information.firstSurname }} {{ userInfo?.p_information.secondSurname }}</h6>
+                <div class="card-body">
+                    <div class="d-flex justify-content-end mb-2">
+                        <a href="" class="btn btn-dark" data-toggle="modal" data-target="#NewPromotionModal" (click)="setData()"><i class="fas fa-plus-circle"></i> NUEVA PROMOCIÓN</a>
+                    </div>
+                    <div class="alert alert-pink" role="alert" *ngIf="promotions?.length == 0">
+                        {{ userInfo?.p_information.name }} {{ userInfo?.p_information.firstSurname }} {{ userInfo?.p_information.secondSurname }} ingresó el {{ userInfo?.w_information.admission_date | date:'dd/MM/yyyy' }} como {{ userInfo?.w_information.position.name }}
+                    </div>
+                    <div class="table-responsive" *ngIf="promotions?.length > 0">
+                        <table class="table table-borderless table-striped">
+                            <thead class="card-thead">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">FECHA</th>
+                                    <th scope="col">PUESTO ANTERIOR</th>
+                                    <th scope="col">SALARIO</th>
+                                    <th scope="col">PUESTO PROMOCIÓN</th>
+                                    <th scope="col">SALARIO</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let promotion of promotions; let i = index">
+                                    <td scope="row">{{ i + 1 }}</td>
+                                    <td>{{ promotion.date | date:'dd/MM/yyyy' }}</td>
+                                    <td>{{ promotion.prev_position.name }}</td>
+                                    <td>{{ promotion.prev_salary | currency:'MXN':'symbol-narrow':'.2-2' }}</td>
+                                    <td>{{ promotion.new_position.name }}</td>
+                                    <td>{{ promotion.new_salary | currency:'MXN':'symbol-narrow':'.2-2' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- <app-pagination *ngIf="totalPages > 1" (selectedPage)="getDepartments( $event )" [totalPages]="totalPages" [pages]="pages"></app-pagination> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal New Department -->
+<div class="modal fade" id="NewPromotionModal" tabindex="-1" role="dialog" aria-labelledby="NewPromotionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Nueva Promoción</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form [formGroup]="PromotionForm" (ngSubmit)="savePromotion()" novalidate="novalidate">
+                        <div class="row">
+                            <div class="form-group col-md-6" formGroupName="newData">
+                                <h6 class="label-info" for="departmentSelectEmployee">DEPARTAMENTO</h6>
+                                <select (change)="fillDropDowns($event.target.value)" class="form-control input-border-bottom mb-3" id="departmentSelectEmployee" [ngClass]="{ 'is-invalid': !PromotionForm.get('newData.area').valid }" formControlName="area">
+                                    <option [value]="''" disabled selected> Selecciona un departamento </option>
+                                    <option *ngFor="let department of departments" [value]="department._id">{{ department.name }}</option>
+                                </select>
+                                <small *ngIf="PromotionForm.get('newData.area').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6" formGroupName="promotion">
+                                <h6 class="label-info" for="positionSelect">PUESTO</h6>
+                                <select class="form-control input-border-bottom mb-3" id="positionSelect" [ngClass]="{ 'is-invalid': !PromotionForm.get('promotion.new_position').valid }" formControlName="new_position">
+                                    <option [value]="''" disabled selected> Selecciona un puesto </option>
+                                    <option *ngFor="let position of positions" [value]="position._id">{{ position.name }}</option>
+                                </select>
+                                <small *ngIf="PromotionForm.get('promotion.new_position').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                            </div>
+                            <div class="form-group col-md-6" formGroupName="newData">
+                                <h6 class="label-info" for="contractInputEmployee">TIPO DE CONTRATO</h6>
+                                <div id="contractInputEmployee">
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" formControlName="contract_type" id="contractInputEmployeeD" value="DETERMINADO" (click)="checkContractType('DETERMINADO')">
+                                        <label class="custom-control-label" for="contractInputEmployeeD">Determinado</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input class="form-check-input" type="radio" formControlName="contract_type" id="contractInputEmployeeI" value="INDETERMINADO" (click)="checkContractType('INDETERMINADO')">
+                                        <label class="custom-control-label" for="contractInputEmployeeI">Indeterminado</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6" formGroupName="newData">
+                                <h6 class="label-info" for="terminationDateInputEmployee">FECHA TERMINO DE CONTRATO</h6>
+                                <input type="text" class="form-control input-border-bottom mb-3" id="terminationDateInputEmployee" [ngClass]="{ 'is-invalid': !PromotionForm.get('newData.contract_termination_date').valid }" placeholder="dd/mm/aaaa" formControlName="contract_termination_date">
+                                <small *ngIf="PromotionForm.get('newData.contract_termination_date').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="PromotionForm.get('newData.contract_termination_date').errors?.pattern" class="invalid-feedback">Este atributo debe tener el formato dd/mm/aaaa.</small>
+                            </div>
+                            <div class="form-group col-md-6" formGroupName="newData">
+                                <h6 class="label-info" for="dailySalarySAFInputEmployee">IMPORTE DIARIO SAF</h6>
+                                <input type="number" min="0" class="form-control input-border-bottom mb-3" id="dailySalarySAFInputEmployee" [ngClass]="{ 'is-invalid': !PromotionForm.get('newData.daily_salary_saf').valid }" placeholder="Ingresa el salario diario SAF" formControlName="daily_salary_saf">
+                                <small *ngIf="PromotionForm.get('newData.daily_salary_saf').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="PromotionForm.get('newData.daily_salary_saf').errors?.min" class="invalid-feedback">Este atributo no puede ser igual a 0.</small>
+                            </div>
+                            <div class="form-group col-md-6" formGroupName="newData">
+                                <h6 class="label-info" for="monthlySalarySAFInputEmployee">IMPORTE MENSUAL SAF</h6>
+                                <input type="number" min="0" class="form-control input-border-bottom mb-3" id="monthlySalarySAFInputEmployee" [ngClass]="{ 'is-invalid': !PromotionForm.get('newData.monthly_salary_saf').valid }" placeholder="Ingresa el salario mensual SAF" formControlName="monthly_salary_saf">
+                                <small *ngIf="PromotionForm.get('newData.monthly_salary_saf').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="PromotionForm.get('newData.monthly_salary_saf').errors?.min" class="invalid-feedback">Este atributo no puede ser igual a 0.</small>
+                            </div>
+                            <div class="form-group col-md-6" formGroupName="newData">
+                                <h6 class="label-info" for="amountsdiSAFInputEmployee">IMPORTE SDI SAF</h6>
+                                <input type="number" min="0" class="form-control input-border-bottom mb-3" id="amountsdiSAFInputEmployee" [ngClass]="{ 'is-invalid': !PromotionForm.get('newData.amount_sdi_saf').valid }" placeholder="Ingresa el importe SDI SAF" formControlName="amount_sdi_saf">
+                                <small *ngIf="PromotionForm.get('newData.amount_sdi_saf').errors?.required" class="invalid-feedback">Este atributo es obligatorio.</small>
+                                <small *ngIf="PromotionForm.get('newData.amount_sdi_saf').errors?.min" class="invalid-feedback">Este atributo no puede ser igual a 0.</small>
+                            </div>
+                        </div>
+                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                            <span>{{ errorMessage }}</span>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-green">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal New Department -->

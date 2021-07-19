@@ -1,0 +1,53 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#afc43f" type="ball-clip-rotate">
+</ngx-spinner>
+<div class="container-fluid container-page">
+    <div class="row">
+        <div class="col">
+            <div class="card nxr_card ">
+                <h6 class="card-header" *ngIf="team?.length > 0">TUS COLABORADORES</h6>
+                <h6 class="card-header" *ngIf="team?.length == 0">{{ department }}</h6>
+                <div class="card-body">
+                    <div class="alert alert-pink" role="alert" *ngIf="disabled && team?.length > 0">
+                        Recuerda que debes cambiar tu contraseña y aceptar las politicas de evaluación para poder evaluar a tus colaboradores.
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row" *ngIf="team?.length > 0">
+                            <div class="col-md-4" *ngFor="let member of team">
+                                <div class="card nxr_card">
+                                    <div class="card-userheader small-userheader header-gray"></div>
+                                    <div class="card-body pb-0">
+                                        <div class="user">
+                                            <a>
+                                                <img class="avatar mb-0" [src]="member.img | image" alt="...">
+                                                <h5 class="username mb-0">
+                                                    {{ member.p_information.name | firstname | titlecase }} {{ member.p_information.firstSurname | titlecase }}
+                                                </h5>
+                                            </a>
+                                            <p class="user-position">
+                                                {{ member.position[0].name }}
+                                            </p>
+                                            <div class="d-flex align-items-center">
+                                                <h6 class="header">Evaluación <small *ngIf="period == '1'">(Actual)</small><small *ngIf="period == '2'">(Final)</small></h6>
+                                            </div>
+                                            <hr class="separator">
+                                            <div class="progress">
+                                                <div *ngIf="member.evaluation[0]?.total > 0" class="progress-bar progress-bar-striped progress-bar-animated bg-pink" role="progressbar" [attr.aria-valuenow]="member.evaluation[0]?.total" aria-valuemin="0" aria-valuemax="100" [style.width]="member.evaluation[0]?.total + '%'">{{ member.evaluation[0]?.total }}%</div>
+                                                <div *ngIf="!member.evaluation[0]" class="text-mexicanPink w-100 text-center">Por validar</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="!member.evaluation[0]" [ngStyle]="{'cursor':disabled ? 'not-allowed' : 'pointer' }" class="card-footer" (click)="viewObjectives(member._id)">
+                                        Validar <i class="fas fa-arrow-circle-right"></i>
+                                    </div>
+                                    <div *ngIf="member.evaluation[0]?.total > 0" [ngStyle]="{'cursor':disabled ? 'not-allowed' : 'pointer' }" class="card-footer" (click)="viewObjectives(member._id)">
+                                        Ver Detalles <i class="fas fa-arrow-circle-right"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

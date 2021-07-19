@@ -1,0 +1,229 @@
+<div class="container-fluid container-page">
+    <div class="row" *ngIf="candidates.length === 0">
+        <div class="col-md-12">
+            <div class="card nxr_card ">
+                <h6 class="card-header">Candidatos</h6>
+                <div class="card-body">
+                    <div class="alert alert-pink mt-4" role="alert">
+                        Actualmente no cuentas con candidatos asignados por entrevistar.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="candidates.length > 0">
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card nxr_card ">
+                        <h6 class="card-header">Informe de Entrevista</h6>
+                        <div class="card-body">
+                            <div class="container-profile-info">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="label-info">CANDIDATO</p>
+                                        <p class="data-info">{{ selectedCandidate?.candidateName | uppercase }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="label-info">PUESTO A OCUPAR</p>
+                                        <p class="data-info">{{ selectedCandidate?.positionName | uppercase }}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <form [formGroup]="interviewForm" (ngSubmit)="saveInterview()" class="w-100" novalidate="novalidate">
+                                        <div class="container-profile-info">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p class="label-info text-center form-section-header" for="technicalKnowledgeInput">CONOCIMIENTOS TÉCNICOS</p>
+                                                    <textarea class="form-control input-border-bottom" id="technicalKnowledgeInput" [ngClass]="{ 'is-invalid': !interviewForm.get('technical_Knowledge').valid, 'mb-3': interviewForm.get('technical_Knowledge').valid }" placeholder="Describe los conocimientos técnicos del candidato"
+                                                        formControlName="technical_Knowledge"></textarea>
+                                                    <small *ngIf="interviewForm.get('technical_Knowledge').errors?.required" class="invalid-feedback mb-2">Este atributo es obligatorio.</small>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <p class="label-info text-center form-section-header" for="strengthsInput">FORTALEZAS</p>
+                                                    <textarea class="form-control input-border-bottom" id="strengthsInput" [ngClass]="{ 'is-invalid': !interviewForm.get('strengths').valid, 'mb-3': interviewForm.get('technical_Knowledge').valid }" placeholder="Enlista las fortalezas" formControlName="strengths"></textarea>
+                                                    <small *ngIf="interviewForm.get('strengths').errors?.required" class="invalid-feedback mb-2">Este atributo es obligatorio.</small>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <p class="label-info text-center form-section-header" for="opportunityInput">ÁREA DE OPORTUNIDAD</p>
+                                                    <textarea class="form-control input-border-bottom" id="opportunityInput" [ngClass]="{ 'is-invalid': !interviewForm.get('areasOfOpportunity').valid, 'mb-3': interviewForm.get('technical_Knowledge').valid }" placeholder="Enlista las áreas de oportunidad"
+                                                        formControlName="areasOfOpportunity"></textarea>
+                                                    <small *ngIf="interviewForm.get('areasOfOpportunity').errors?.required" class="invalid-feedback mb-2">Este atributo es obligatorio.</small>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <p class="label-info text-center form-section-header">COMPETENCIAS</p>
+                                                    <p class="text-center mb-0 mt-2"> <strong>1 </strong>- No muestra la habilidad &nbsp;&nbsp; <strong>2 </strong>- Muestra la habilidad pocas veces</p>
+                                                    <p class="text-center mb-0"> <strong>3 </strong>- Muestra la habilidad algunas veces &nbsp;&nbsp; <strong>4 </strong>- Muestra la habilidad con frecuencia</p>
+                                                    <p class="text-center mb-0"> <strong>5 </strong>- Siempre muestra la habilidad</p>
+                                                    <div class="row" formGroupName="competencies">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group row d-flex align-items-center">
+                                                                <label for="comp1" class="col-sm-6 col-form-label text-green"><strong>Administración del tiempo</strong></label>
+                                                                <div class="col-sm-3">
+                                                                    <input type="number" min="1" max="5" class="form-control input-border-bottom" id="comp1" [ngClass]="{ 'is-invalid': !interviewForm.get('competencies.timeManagement').valid, 'mb-3': interviewForm.get('competencies.timeManagement').valid }" formControlName="timeManagement">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group row d-flex align-items-center">
+                                                                <label for="comp2" class="col-sm-6 col-form-label text-green"><strong>Comunicación e influencia</strong></label>
+                                                                <div class="col-sm-3">
+                                                                    <input type="number" min="1" max="5" class="form-control input-border-bottom" id="comp2" [ngClass]="{ 'is-invalid': !interviewForm.get('competencies.communicationAndInfluence').valid, 'mb-3': interviewForm.get('competencies.communicationAndInfluence').valid }"
+                                                                        formControlName="communicationAndInfluence">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group row d-flex align-items-center">
+                                                                <label for="comp3" class="col-sm-6 col-form-label text-green"><strong>Trabajo en equipo</strong></label>
+                                                                <div class="col-sm-3">
+                                                                    <input type="number" min="1" max="5" class="form-control input-border-bottom" id="comp3" [ngClass]="{ 'is-invalid': !interviewForm.get('competencies.teamwork').valid, 'mb-3': interviewForm.get('competencies.teamwork').valid }" formControlName="teamwork">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group row d-flex align-items-center">
+                                                                <label for="comp4" class="col-sm-6 col-form-label text-green"><strong>Orientación a resultados/Toma de decisiones</strong></label>
+                                                                <div class="col-sm-3">
+                                                                    <input type="number" min="1" max="5" class="form-control input-border-bottom" id="comp4" [ngClass]="{ 'is-invalid': !interviewForm.get('competencies.decisionMaking').valid, 'mb-3': interviewForm.get('competencies.decisionMaking').valid }" formControlName="decisionMaking">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group row d-flex align-items-center">
+                                                                <label for="comp5" class="col-sm-6 col-form-label text-green"><strong>Análisis y síntesis</strong></label>
+                                                                <div class="col-sm-3">
+                                                                    <input type="number" min="1" max="5" class="form-control input-border-bottom" id="comp5" [ngClass]="{ 'is-invalid': !interviewForm.get('competencies.analysisAndSynthesis').valid, 'mb-3': interviewForm.get('competencies.analysisAndSynthesis').valid }"
+                                                                        formControlName="analysisAndSynthesis">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <p class="label-info text-center form-section-header" for="opportunityInput">PRUEBA TÉCNICA APLICADA</p>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group row d-flex align-items-center">
+                                                                <label for="technicalTest" class="col-sm-6 col-form-label text-green"><strong>Resultado de evaluación técnica</strong></label>
+                                                                <div class="col-sm-3">
+                                                                    <input type="number" min="1" max="10" class="form-control input-border-bottom" id="technicalTest" [ngClass]="{ 'is-invalid': !interviewForm.get('evaluationResult').valid, 'mb-3': interviewForm.get('evaluationResult').valid }" formControlName="evaluationResult">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 d-flex align-items-center">
+                                                            <div>
+                                                                <div class="custom-control custom-radio custom-control-inline">
+                                                                    <input class="form-check-input" type="radio" formControlName="approvedEvaluation" id="approvedCandidateYes" value="Sí">
+                                                                    <label class="custom-control-label" for="approvedCandidateYes">Aprobado</label>
+                                                                </div>
+                                                                <div class="custom-control custom-radio custom-control-inline">
+                                                                    <input class="form-check-input" type="radio" formControlName="approvedEvaluation" id="approvedCandidateNo" value="No">
+                                                                    <label class="custom-control-label" for="approvedCandidateNo">No aprobado</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <p class="label-info text-center form-section-header" for="acceptedCandidate">ACEPTACIÓN O RECHAZO DEL CANDIDATO</p>
+                                                    <div class="row">
+                                                        <div class="col-md-6 d-flex align-items-center">
+                                                            <div class="row mt-2">
+                                                                <div class="custom-control custom-radio col-md-12">
+                                                                    <input class="form-check-input" type="radio" formControlName="acceptedCandidate" id="acceptedCandidateYes" value="Sí">
+                                                                    <label class="custom-control-label" for="acceptedCandidateYes">Candidato Aceptado</label>
+                                                                </div>
+                                                                <div class="custom-control custom-radio col-md-12">
+                                                                    <input class="form-check-input" type="radio" formControlName="acceptedCandidate" id="acceptedCandidateNo" value="No">
+                                                                    <label class="custom-control-label" for="acceptedCandidateNo">Candidato Rechazado</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <p class="label-info text-center mt-3" for="justificationInput">JUSTIFICACIÓN</p>
+                                                            <textarea class="form-control input-border-bottom" id="justificationInput" [ngClass]="{ 'is-invalid': !interviewForm.get('justification').valid, 'mb-3': interviewForm.get('technical_Knowledge').valid }" placeholder="Describe el por qué de tu decisión" formControlName="justification"></textarea>
+                                                            <small *ngIf="interviewForm.get('justification').errors?.required" class="invalid-feedback mb-2">Este atributo es obligatorio.</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                                            <span>{{ errorMessage }}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-end" [ngClass]="{'mt-3': !errorMessage}">
+                                            <button [disabled]="interviewForm.invalid" type="button" class="btn btn-green" data-toggle="modal" data-target="#acceptModal">Guardar Informe</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card nxr_card ">
+                        <h6 class="card-header">Candidatos</h6>
+                        <div class="card-body">
+                            <!-- <div *ngIf="myPersonnelRequisitions.length === 0" class="alert alert-pink mt-4" role="alert">
+                              Sin requisiciones
+                          </div> -->
+                            <!-- <div *ngIf="myPersonnelRequisitions.length > 0" class="table-responsive"> -->
+                            <div class="table-responsive">
+                                <table class="table table-borderless table-striped">
+                                    <thead class="card-thead">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Candidato</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let candidate of candidates; let candidateIndex = index;" class="pointer" (click)="getCandidate( candidate )">
+                                            <td>{{ candidateIndex + 1 }}</td>
+                                            <td>{{ candidate.candidateName | titlecase}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- <app-pagination *ngIf="totalPagesReq > 1" (selectedPage)="getRequisitionsByPetitioner( $event )" [totalPages]="totalPagesReq" [pages]="pagesReq"></app-pagination> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Accept -->
+<div class="modal fade" id="acceptModal" tabindex="-1" role="dialog" aria-labelledby="acceptModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Confirmación</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-msg text-justify">¿Estás seguro que la información registrada en el informe de entrevista de <strong>{{ selectedCandidate?.candidateName }}</strong> es correcta?</p>
+                <p class="modal-msg">Una vez guardado no se podrá modificar.</p>
+            </div>
+            <div class="text-center text-mexicanPink" *ngIf="errorMessage">
+                <span>{{ errorMessage }}</span>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-green" (click)="acceptedInterview( )">Confirmar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Accept-->
