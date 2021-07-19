@@ -2,7 +2,7 @@
 export var GLOBAL = {
     //urlAPI: 'https://localhost:4100/api/',
     //urlAPI: 'http://107.170.254.146:4100/api/',
-    urlAPI: 'http://3.96.32.250:4100/api/',
+    urlAPI: 'http://192.168.9.49:4100/api/',
     pagination: 3,
     evaluationStartDate: '2019-7-08 09:00',
     evaluationEndDate: '2019-07-19 18:30',
@@ -10,7 +10,7 @@ export var GLOBAL = {
     firstPEendDate: '19/07 18:29:59',
     secondPEstartDate: '01/01 09:00:00', //PE Performance Evaluation
     secondPEendDate: '13/01 17:50:59',
-    shortSecondPEstartDate: '01/01', 
+    shortSecondPEstartDate: '01/01',
     shortSecondPEendDate: '14/01', // Se pone un día más dado que en este formato sería 15/11 00:00:00
     ROstartDate: '15/01', //RO Registration of Objectives
     ROendDate: '11/07',
