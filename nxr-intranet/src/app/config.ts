@@ -2,7 +2,7 @@
 export var GLOBAL = {
     //urlAPI: 'https://localhost:4100/api/',
     //urlAPI: 'http://107.170.254.146:4100/api/',
-    urlAPI: 'http://192.168.9.49:4100/api/',
+    urlAPI: 'http://189.204.247.5:4100/api/',
     pagination: 3,
     evaluationStartDate: '2019-7-08 09:00',
     evaluationEndDate: '2019-07-19 18:30',
